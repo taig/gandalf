@@ -20,7 +20,6 @@ extends	android.AutoBuild
 				"com.android.support" % "appcompat-v7" % "22.2.0" ::
 				"com.android.support" % "support-v4" % "22.2.0" ::
 				"com.android.support" % "design" % "22.2.0" ::
-				"org.scalaz" %% "scalaz-core" % "7.1.3" ::
 				"com.geteit" %% "robotest" % "0.10" % "test" ::
 				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
 				Nil
