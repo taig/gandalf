@@ -8,7 +8,7 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object	Build
 extends	android.AutoBuild
 {
-	val main = Project( "better-safe-than-sorry", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
+	val main = Project( "bettersafethansorry", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
 		.settings(
 			fork in Test := true,
 			javacOptions ++= (
@@ -49,14 +49,14 @@ extends	android.AutoBuild
 			typedResources in Android := false
 		)
 		.settings(
-			description := "Data validation for Scala on Android",
-			homepage := Some( url( "https://github.com/taig/better-safe-than-sorry" ) ),
-			licenses := Seq( "MIT" -> url( "https://raw.githubusercontent.com/taig/better-safe-than-sorry/master/LICENSE" ) ),
+			description := "Form validation for Scala on Android",
+			homepage := Some( url( "https://github.com/taig/bettersafethansorry" ) ),
+			licenses := Seq( "MIT" -> url( "https://raw.githubusercontent.com/taig/bettersafethansorry/master/LICENSE" ) ),
 			organizationHomepage := Some( url( "http://taig.io" ) ),
 			pomExtra :=
 			{
 				<issueManagement>
-					<url>https://github.com/taig/better-safe-than-sorry/issues</url>
+					<url>https://github.com/taig/bettersafethansorry/issues</url>
 					<system>GitHub Issues</system>
 				</issueManagement>
 				<developers>
@@ -86,9 +86,9 @@ extends	android.AutoBuild
 			} ),
 			scmInfo := Some(
 				ScmInfo(
-					url( "https://github.com/taig/better-safe-than-sorry" ),
-					"scm:git:git://github.com/taig/better-safe-than-sorry.git",
-					Some( "scm:git:git@github.com:taig/better-safe-than-sorry.git" )
+					url( "https://github.com/taig/bettersafethansorry" ),
+					"scm:git:git://github.com/taig/bettersafethansorry.git",
+					Some( "scm:git:git@github.com:taig/bettersafethansorry.git" )
 				)
 			),
 			sonatypeProfileName := "io.taig",
