@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+	<string name="validation_string_required">Required</string>
+	<string name="validation_string_email">Not a valid email address</string>
+
+</resources>
