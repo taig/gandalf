@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Patterns
 import io.taig.android.bsts.{R, Rule, Transformation}
 
-case class	Email( implicit context: Context )
+case class	Email( implicit val context: Context )
 extends		Rule[String]
 with		Transformation[String]
 {

@@ -8,7 +8,7 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object	Build
 extends	android.AutoBuild
 {
-	val main = Project( "bettersafethansorry", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
+	val main = Project( "bettersafethansorry", file( "." ), settings = /*androidBuildAar ++*/ sonatypeSettings )
 		.settings(
 			fork in Test := true,
 			javacOptions ++= (
@@ -42,7 +42,7 @@ extends	android.AutoBuild
 		.settings(
 			minSdkVersion in Android := "8",
 			platformTarget in Android := "android-22",
-			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
+			//sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
 			targetSdkVersion in Android := "22",
 			transitiveAndroidLibs in Android := false,
 			typedResources in Android := false

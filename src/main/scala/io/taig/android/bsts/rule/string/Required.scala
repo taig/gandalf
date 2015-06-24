@@ -3,7 +3,7 @@ package io.taig.android.bsts.rule.string
 import android.content.Context
 import io.taig.android.bsts.{R, Rule, Transformation}
 
-case class	Required()( implicit context: Context )
+case class	Required( implicit val context: Context )
 extends		Rule[String]
 with		Transformation[String]
 {

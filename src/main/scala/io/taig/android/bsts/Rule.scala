@@ -2,8 +2,10 @@ package io.taig.android.bsts
 
 import android.content.Context
 
-abstract class Rule[T]( implicit context: Context )
+trait Rule[T]
 {
+	implicit def context: Context
+
 	/**
 	 * The actual rule logic
 	 * 

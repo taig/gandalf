@@ -2,6 +2,9 @@
 
 <resources>
 
+	<string name="validation_matches">Does not match</string>
+	<string name="validation_matches_target">Does not match %1$s</string>
+
 	<string name="validation_string_required">Required</string>
 	<string name="validation_string_email">Not a valid email address</string>
 
