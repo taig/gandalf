@@ -8,9 +8,8 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object	Build
 extends	android.AutoBuild
 {
-	val main = Project( "bettersafethansorry", file( "." ), settings = /*androidBuildAar ++*/ sonatypeSettings )
+	val main = Project( "bettersafethansorry", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
 		.settings(
-			fork in Test := true,
 			javacOptions ++= (
 				"-source" :: "1.7" ::
 				"-target" :: "1.7" ::
@@ -20,17 +19,10 @@ extends	android.AutoBuild
 				"com.android.support" % "appcompat-v7" % "22.2.0" ::
 				"com.android.support" % "support-v4" % "22.2.0" ::
 				"com.android.support" % "design" % "22.2.0" ::
-				"com.geteit" %% "robotest" % "0.10" % "test" ::
-				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
 				Nil
 			),
 			name := "BetterSafeThanSorry",
 			organization := "io.taig.android",
-			resolvers ++= (
-				( "RoboTest releases" at "https://raw.github.com/zbsz/mvn-repo/master/releases/" ) ::
-				Resolver.sonatypeRepo( "snapshots" ) ::
-				Nil
-			),
 			scalaVersion := "2.11.6",
 			scalacOptions ++= (
 				"-deprecation" ::
@@ -42,7 +34,7 @@ extends	android.AutoBuild
 		.settings(
 			minSdkVersion in Android := "8",
 			platformTarget in Android := "android-22",
-			//sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
+			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
 			targetSdkVersion in Android := "22",
 			transitiveAndroidLibs in Android := false,
 			typedResources in Android := false
@@ -92,5 +84,21 @@ extends	android.AutoBuild
 			),
 			sonatypeProfileName := "io.taig",
 			startYear := Some( 2015 )
+		)
+
+	lazy val test = flavorOf( main, "test" )
+		.settings(
+			fork in Test := true,
+			libraryDependencies ++= (
+				"com.geteit" %% "robotest" % "0.10" % "test" ::
+				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
+				Nil
+			),
+			libraryProject in Android := false,
+			resolvers ++= (
+				( "RoboTest releases" at "https://raw.github.com/zbsz/mvn-repo/master/releases/" ) ::
+				Resolver.sonatypeRepo( "snapshots" ) ::
+				Nil
+			)
 		)
 }
