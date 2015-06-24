@@ -31,7 +31,7 @@ extends	android.AutoBuild
 				Resolver.sonatypeRepo( "snapshots" ) ::
 				Nil
 			),
-			scalaVersion := "2.11.7",
+			scalaVersion := "2.11.6",
 			scalacOptions ++= (
 				"-deprecation" ::
 				"-feature" ::
