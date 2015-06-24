@@ -2,6 +2,7 @@ package io.taig.android.bsts.ops
 
 import android.view.View
 import io.taig.android.bsts._
+import io.taig.android.bsts.resource.R
 
 /**
  * Allow attaching validation rules to a View

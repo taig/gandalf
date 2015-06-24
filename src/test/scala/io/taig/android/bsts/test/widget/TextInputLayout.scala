@@ -2,6 +2,7 @@ package io.taig.android.bsts.test.widget
 
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import io.taig.android.bsts._
+import io.taig.android.bsts.resource.R
 import io.taig.android.bsts.rule.string.Required
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config

@@ -3,6 +3,7 @@ package io.taig.android.bsts
 import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.EditText
+import io.taig.android.bsts.resource.R
 
 /**
  * Describe how validation rules, extraction and feedback should be attached to and extracted from a View

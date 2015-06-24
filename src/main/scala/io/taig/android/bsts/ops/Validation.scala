@@ -2,6 +2,7 @@ package io.taig.android.bsts.ops
 
 import android.view.{View, ViewGroup}
 import io.taig.android.bsts._
+import io.taig.android.bsts.resource.R
 
 /**
  * Every View may kick off a validation, checking itself and its children (if they were previously made Validatable)

@@ -1,7 +1,8 @@
 package io.taig.android.bsts.rule.string
 
 import android.content.Context
-import io.taig.android.bsts.{R, Rule, Transformation}
+import io.taig.android.bsts.resource.R
+import io.taig.android.bsts.{Rule, Transformation}
 
 case class	Required( implicit val context: Context )
 extends		Rule[String]
