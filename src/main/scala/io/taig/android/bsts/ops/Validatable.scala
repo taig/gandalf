@@ -21,7 +21,7 @@ trait Validatable[V <: View, T]
 
 	def withRules( rules: Seq[Rule[T]] ): V =
 	{
-		view.setTag( R.id.validation_hooking, hooking.extract( _: V ) )
+		view.setTag( R.id.validation_hooking, () => hooking.extract( view ) )
 		hooking.attach( view, rules, extraction, feedback )
 		view
 	}

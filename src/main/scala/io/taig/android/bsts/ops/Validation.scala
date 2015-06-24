@@ -7,28 +7,26 @@ import io.taig.android.bsts.resource.R
 /**
  * Every View may kick off a validation, checking itself and its children (if they were previously made Validatable)
  */
-trait Validation[V <: View, T]
+trait Validation[T]
 {
-	def view: V
+	def view: View
 
 	/**
-	 * Validate this view and all of his children
+	 * Validate this view and all of its children, and update the Ui to show or hide error messages
 	 *
 	 * This method traverses the child views and checks for the R.id.validation_hooking tag.
-	 * If it finds a view it will execute the validation. Only if all children pass the validation, this method will
-	 * return <code>true</code>.
+	 * If it finds a view it will execute the validation and update the Ui. Only if all children pass the validation,
+	 * this method will return <code>true</code>.
 	 */
 	def validate(): Boolean =
 	{
-		val extract = view
-			.getTag( R.id.validation_hooking )
-			.asInstanceOf[V => ( Seq[Rule[T]], Extraction[V, T], Feedback[V] )]
-
-		view match
-		{
-			case _ if extract != null =>
+		children( view )
+			.map( view =>
 			{
-				val ( rules, extraction, feedback ) = extract( view )
+				val ( rules, extraction, feedback ) = view
+					.getTag( R.id.validation_hooking )
+					.asInstanceOf[() => ( Seq[Rule[T]], Extraction[View, T], Feedback[View] )]
+					.apply()
 
 				Validation( rules ).validate( extraction( view ) ) match
 				{
@@ -43,36 +41,43 @@ trait Validation[V <: View, T]
 						false
 					}
 				}
-			}
-			case viewGroup: ViewGroup =>
+			} )
+			.forall( _ == true )
+	}
+
+	/**
+	 * Validate this view and all of its children
+	 */
+	def check(): Boolean =
+	{
+		children( view )
+			.forall( view  =>
 			{
-				children( viewGroup )
-					// Don't do .forall( _.validate() == true ), because it will stop on the first false and will
-					// therefore not propagate all errors to the Ui, but only the first one
-					.map( _.validate() )
-					.forall( _ == true )
-			}
-			case _ => true
-		}
+				val ( rules, extraction, _ ) = view
+					.getTag( R.id.validation_hooking )
+					.asInstanceOf[() => ( Seq[Rule[T]], Extraction[View, T], Feedback[View] )]
+					.apply()
+
+				Validation( rules ).validate( extraction( view ) ) match
+				{
+					case Success( _ ) => true
+					case Failure( _, _ ) => false
+				}
+			} )
 	}
 
 	/**
 	 * Recursively find all children that have rules attached
 	 */
-	private def children( view: ViewGroup ) =
+	private def children( view: View ): Seq[View] = view match
 	{
-		def discover( view: ViewGroup ): Seq[View] =
+		case _ if view.getTag( R.id.validation_hooking ) != null => Seq( view )
+		case viewGroup: ViewGroup =>
 		{
-			( 0 to view.getChildCount - 1 )
-				.map( view.getChildAt )
-				.collect
-				{
-					case validatable if validatable.getTag( R.id.validation_rules ) != null => Seq( validatable )
-					case group: ViewGroup => discover( group )
-				}
-				.flatten
+			( 0 to viewGroup.getChildCount - 1 )
+				.map( viewGroup.getChildAt )
+				.flatMap( children )
 		}
-
-		discover( view )
+		case _ => Seq.empty
 	}
 }

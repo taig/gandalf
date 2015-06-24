@@ -11,6 +11,6 @@ package object bsts
 	)
 	extends			ops.Validatable[V, T]
 
-	implicit class	ValidationView[V <: View, T]( val view: V )
-	extends			ops.Validation[V, T]
+	implicit class	ValidationView[T]( val view: View )
+	extends			ops.Validation[T]
 }
