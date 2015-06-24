@@ -8,24 +8,27 @@ import android.widget.EditText
  * Describe how to propagate error messages to the Ui
  */
 trait	Feedback[V <: View]
-extends	( ( V, Seq[String] ) => Unit )
+extends	( ( V, Option[Seq[String]] ) => Unit )
 
 object Feedback
 {
 	implicit val textInputLayout = new Feedback[TextInputLayout]
 	{
-		override def apply( view: TextInputLayout, errors: Seq[String] ) = view.setError( errors.head )
+		override def apply( view: TextInputLayout, errors: Option[Seq[String]] ) =
+		{
+			view.setError( errors.map( _.head ).orNull )
+		}
 	}
 
 	implicit val editText = new Feedback[EditText]
 	{
-		override def apply( view: EditText, errors: Seq[String] ) = view.getParent match
+		override def apply( view: EditText, errors: Option[Seq[String]] ) = view.getParent match
 		{
 			case textInputLayout: TextInputLayout =>
 			{
 				implicitly[Feedback[TextInputLayout]].apply( textInputLayout, errors )
 			}
-			case _ => view.setError( errors.head )
+			case _ => view.setError( errors.map( _.head ).orNull )
 		}
 	}
 }
