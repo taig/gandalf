@@ -32,14 +32,14 @@ trait Validation[V <: View, T]
 
 				Validation( rules ).validate( extraction( view ) ) match
 				{
-					case Success( _ ) => true
+					case Success( _ ) =>
+					{
+						feedback( view, None )
+						true
+					}
 					case Failure( _, errors ) =>
 					{
-						view
-							.getTag( R.id.validation_feedback )
-							.asInstanceOf[Feedback[V]]
-							.apply( view, errors )
-
+						feedback( view, Some( errors ) )
 						false
 					}
 				}
