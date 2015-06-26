@@ -1,5 +1,8 @@
 # BetterSafeThanSorry
-Form validation for Scala on Android
+
+> Form validation for Scala on Android
+
+[![Build Status](https://travis-ci.org/Taig/BetterSafeThanSorry.svg?branch=develop)](https://travis-ci.org/Taig/BetterSafeThanSorry)
 
 ## Installation
 
