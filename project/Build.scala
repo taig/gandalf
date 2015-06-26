@@ -23,7 +23,7 @@ extends	android.AutoBuild
 			),
 			name := "BetterSafeThanSorry",
 			organization := "io.taig.android",
-			scalaVersion := "2.11.6",
+			scalaVersion := "2.11.7",
 			scalacOptions ++= (
 				"-deprecation" ::
 				"-feature" ::
