@@ -8,7 +8,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers, RobolectricSuite}
 
-@Config( sdk = Array( LOLLIPOP ), manifest = "src/main/AndroidManifest.xml" )
+@Config( sdk = Array( LOLLIPOP ) )
 class	EditText
 extends	FlatSpec
 with	Matchers

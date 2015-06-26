@@ -6,7 +6,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.scalatest.{FlatSpec, Matchers, RobolectricSuite}
 
-@Config( sdk = Array( LOLLIPOP ), manifest = "src/main/AndroidManifest.xml" )
+@Config( sdk = Array( LOLLIPOP ) )
 class	Phone
 extends	FlatSpec
 with	Matchers
