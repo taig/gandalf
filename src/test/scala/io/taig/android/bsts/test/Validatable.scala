@@ -1,9 +1,10 @@
 package io.taig.android.bsts.test
 
 import android.os.Build.VERSION_CODES.LOLLIPOP
-import android.view.{ViewGroup, View}
+import android.view.View
 import android.widget.{EditText, FrameLayout}
 import io.taig.android.bsts._
+import io.taig.android.bsts.resource.R
 import io.taig.android.bsts.rule.string.Required
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -54,7 +55,7 @@ with	RobolectricSuite
 		parent.validate() shouldBe false
 	}
 
-	it should "succeed if one all its children pass validation" in
+	it should "succeed if all its children pass validation" in
 	{
 		val parent = new FrameLayout( context )
 
@@ -104,5 +105,30 @@ with	RobolectricSuite
 		editText1.setText( "" )
 		editText1.validate() shouldBe false
 		parentParent.validate() shouldBe false
+	}
+
+	it should "be possible to clear all error messages" in
+	{
+		val parent = new FrameLayout( context )
+
+		val editText1 = new EditText( context )
+		val editText2 = new EditText( context )
+
+		parent.addView( editText1 )
+		parent.addView( new View( context ) )
+		parent.addView( editText2 )
+
+		editText1 withRule Required()
+		editText2 withRule Required()
+
+		parent.validate()
+
+		editText1.getError shouldBe context.getString( R.string.validation_string_required )
+		editText2.getError shouldBe context.getString( R.string.validation_string_required )
+
+		parent.clear()
+
+		editText1.getError shouldBe null
+		editText2.getError shouldBe null
 	}
 }

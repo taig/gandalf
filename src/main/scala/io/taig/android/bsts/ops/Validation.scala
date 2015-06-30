@@ -67,6 +67,23 @@ trait Validation[T]
 	}
 
 	/**
+	 * Remove error message of this view and all of its children
+	 */
+	def clear(): Unit =
+	{
+		children( view )
+			.foreach( view =>
+			{
+				val ( _, _, feedback ) = view
+					.getTag( R.id.validation_hooking )
+					.asInstanceOf[() => ( Seq[Rule[T]], Extraction[View, T], Feedback[View] )]
+					.apply()
+
+				feedback( view, None )
+			} )
+	}
+
+	/**
 	 * Recursively find all children that have rules attached
 	 */
 	private def children( view: View ): Seq[View] = view match
