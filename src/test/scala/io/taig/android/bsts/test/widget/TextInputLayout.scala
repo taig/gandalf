@@ -30,7 +30,7 @@ with	RobolectricSuite
 
 	"A TextInputLayout" should "be validatable" in
 	{
-		textInputLayout withRule Required()
+		textInputLayout obeys Required()
 		textInputLayout.validate() shouldBe false
 		editText.setText( "asdf" )
 		textInputLayout.validate() shouldBe true
@@ -38,14 +38,14 @@ with	RobolectricSuite
 
 	it should "have an error message attached after failed validation" in
 	{
-		textInputLayout withRule Required()
+		textInputLayout obeys Required()
 		textInputLayout.validate()
 		textInputLayout.getError.toString shouldBe context.getString( R.string.validation_string_required )
 	}
 
 	it should "not alter the underlying EditText's error message" in
 	{
-		textInputLayout withRule Required()
+		textInputLayout obeys Required()
 		textInputLayout.validate()
 		editText.getError shouldBe null
 	}

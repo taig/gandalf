@@ -49,7 +49,7 @@ with	RobolectricSuite
 		parent.addView( editText )
 		parent.addView( new View( context ) )
 
-		editText withRule Required()
+		editText obeys Required()
 
 		editText.validate() shouldBe false
 		parent.validate() shouldBe false
@@ -69,8 +69,8 @@ with	RobolectricSuite
 		parent.addView( new View( context ) )
 		parent.addView( editText2 )
 
-		editText1 withRule Required()
-		editText2 withRule Required()
+		editText1 obeys Required()
+		editText2 obeys Required()
 
 		editText1.validate() shouldBe true
 		editText2.validate() shouldBe true
@@ -95,8 +95,8 @@ with	RobolectricSuite
 		parent.addView( new View( context ) )
 		parent.addView( editText2 )
 
-		editText1 withRule Required()
-		editText2 withRule Required()
+		editText1 obeys Required()
+		editText2 obeys Required()
 
 		editText1.validate() shouldBe true
 		editText2.validate() shouldBe true
@@ -118,8 +118,8 @@ with	RobolectricSuite
 		parent.addView( new View( context ) )
 		parent.addView( editText2 )
 
-		editText1 withRule Required()
-		editText2 withRule Required()
+		editText1 obeys Required()
+		editText2 obeys Required()
 
 		parent.validate()
 

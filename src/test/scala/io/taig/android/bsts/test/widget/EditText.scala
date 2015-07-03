@@ -28,7 +28,7 @@ with	RobolectricSuite
 
 	"An EditText" should "be validatable" in
 	{
-		editText withRule Required()
+		editText obeys Required()
 		editText.validate() shouldBe false
 		editText.setText( "asdf" )
 		editText.validate() shouldBe true
@@ -36,7 +36,7 @@ with	RobolectricSuite
 
 	it should "have an error message attached after failed validation" in
 	{
-		editText withRule Required()
+		editText obeys Required()
 		editText.validate()
 		editText.getError.toString shouldBe context.getString( R.string.validation_string_required )
 	}
@@ -45,7 +45,7 @@ with	RobolectricSuite
 	{
 		val wrapper = new TextInputLayout( context )
 		wrapper.addView( editText )
-		editText withRule Required()
+		editText obeys Required()
 		editText.validate()
 		editText.getError shouldBe null
 		wrapper.getError shouldBe context.getString( R.string.validation_string_required )

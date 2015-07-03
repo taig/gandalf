@@ -2,24 +2,12 @@
 
 <resources>
 
+	<item name="validation_description"
+		  type="id" />
+
 	<!-- Used to attach a view tag containing validation rules -->
 
 	<item name="validation_rules"
-		  type="id" />
-
-	<!-- Used to attach a view tag containing validation extraction -->
-
-	<item name="validation_extraction"
-		  type="id" />
-
-	<!-- Used to attach a view tag containing validation feedback -->
-
-	<item name="validation_feedback"
-		  type="id" />
-
-	<!-- Used to attach a view tag containing the hooking strategy -->
-
-	<item name="validation_hooking"
 		  type="id" />
 
 </resources>
