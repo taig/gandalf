@@ -2,7 +2,7 @@ package io.taig.android.bsts.operation
 
 import android.view.{View, ViewGroup}
 import io.taig.android.bsts._
-import io.taig.android.bsts.description.Descriptions
+import io.taig.android.bsts.description.Description
 import io.taig.android.bsts.resource.R
 
 /**
@@ -27,7 +27,7 @@ trait Action[V <: View, T]
 			.map( view =>
 			{
 				val rules = view.getTag( R.id.validation_rules ).asInstanceOf[Option[Seq[Rule[T]]]]
-				val description = view.getTag( R.id.validation_description ).asInstanceOf[Descriptions[View, T]]
+				val description = view.getTag( R.id.validation_description ).asInstanceOf[Description[View, T]]
 
 				rules
 					.map( Validation( _ ).validate( description.extract( view ) ) )
@@ -53,7 +53,7 @@ trait Action[V <: View, T]
 			rules
 				.map( rules =>
 				{
-					val description = view.getTag( R.id.validation_description ).asInstanceOf[Descriptions[View, T]]
+					val description = view.getTag( R.id.validation_description ).asInstanceOf[Description[View, T]]
 					Validation( rules ).validate( description.extract( view ) ).isSuccess
 				} )
 				.getOrElse( true )
@@ -68,7 +68,7 @@ trait Action[V <: View, T]
 		children( view ).foreach( view =>
 		{
 			view.getTag( R.id.validation_description )
-				.asInstanceOf[Descriptions[View, T]]
+				.asInstanceOf[Description[View, T]]
 				.feedback( view, None )
 		} )
 	}

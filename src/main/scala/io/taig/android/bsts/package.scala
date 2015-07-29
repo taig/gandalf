@@ -18,8 +18,4 @@ package object bsts
 
 	implicit class	ValidationView[V <: View, T]( val view: V )
 	extends			operation.Validation[V, T]
-
-	private[bsts]
-	implicit class	HookingView[V <: View, T]( val view: V )
-	extends			operation.Hooking[V, T]
 }

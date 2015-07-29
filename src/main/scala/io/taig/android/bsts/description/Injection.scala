@@ -7,7 +7,7 @@ import android.widget.EditText
 /**
  * Describe how to inject a value into a View
  */
-trait Injection[V <: View, T]
+trait Injection[-V <: View, T]
 {
 	def inject( view: V, value: T ): Unit
 }

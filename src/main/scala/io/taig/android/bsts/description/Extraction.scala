@@ -7,7 +7,7 @@ import android.widget.EditText
 /**
  * Describe how to extract a value that should be validated from the View
  */
-trait Extraction[V <: View, T]
+trait Extraction[-V <: View, T]
 {
 	def extract( view: V ): T
 }

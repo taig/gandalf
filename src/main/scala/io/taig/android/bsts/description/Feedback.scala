@@ -7,7 +7,7 @@ import android.widget.EditText
 /**
  * Describe how to show or remove error messages in a View
  */
-trait Feedback[V <: View]
+trait Feedback[-V <: View]
 {
 	def feedback( view: V, messages: Option[Seq[String]] ): Unit
 }
