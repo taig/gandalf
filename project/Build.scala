@@ -16,9 +16,9 @@ extends	android.AutoBuild
 				Nil
 			),
 			libraryDependencies ++= (
-				"com.android.support" % "appcompat-v7" % "22.2.0" ::
-				"com.android.support" % "support-v4" % "22.2.0" ::
-				"com.android.support" % "design" % "22.2.0" ::
+				"com.android.support" % "appcompat-v7" % "22.2.1" ::
+				"com.android.support" % "support-v4" % "22.2.1" ::
+				"com.android.support" % "design" % "22.2.1" ::
 				Nil
 			),
 			name := "BetterSafeThanSorry",
@@ -90,7 +90,7 @@ extends	android.AutoBuild
 		.settings(
 			fork in Test := true,
 			libraryDependencies ++= (
-				"com.geteit" %% "robotest" % "0.11" % "test" ::
+				"com.geteit" %% "robotest" % "0.13" % "test" ::
 				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
 				Nil
 			),
