@@ -16,5 +16,5 @@ with		Transformation[String]
 		value.length == 0 || Patterns.PHONE.matcher( value ).matches()
 	}
 
-	override def message( value: String ) = context.getString( R.string.validation_string_required )
+	override def message( value: String ) = context.getString( R.string.validation_string_phone )
 }

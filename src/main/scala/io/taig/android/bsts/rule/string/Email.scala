@@ -16,5 +16,5 @@ with		Transformation[String]
 		value.length == 0 || Patterns.EMAIL_ADDRESS.matcher( value ).matches()
 	}
 
-	override def message( value: String ) = context.getString( R.string.validation_string_required )
+	override def message( value: String ) = context.getString( R.string.validation_string_email )
 }
