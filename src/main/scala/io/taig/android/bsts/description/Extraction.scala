@@ -14,15 +14,16 @@ trait Extraction[V <: View, T]
 
 object Extraction
 {
-	implicit object	EditText
-	extends			Extraction[EditText, String]
+	implicit val `Extraction[EditText, String]` = new Extraction[EditText, String]
 	{
 		override def extract( view: EditText ) = view.getText.toString
 	}
 
-	implicit object	TextInputLayout
-	extends			Extraction[TextInputLayout, String]
+	implicit val `Extraction[TextInputLayout, String]` = new Extraction[TextInputLayout, String]
 	{
-		override def extract( view: TextInputLayout ) = implicitly[Extraction[EditText, String]].extract( view.getEditText )
+		override def extract( view: TextInputLayout ) =
+		{
+			implicitly[Extraction[EditText, String]].extract( view.getEditText )
+		}
 	}
 }

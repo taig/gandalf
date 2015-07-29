@@ -14,14 +14,12 @@ trait Injection[V <: View, T]
 
 object Injection
 {
-	implicit object	EditText
-	extends			Injection[EditText, String]
+	implicit val `Injection[EditText, String]` = new Injection[EditText, String]
 	{
 		override def inject( view: EditText, value: String ) = view.setText( value )
 	}
 
-	implicit object	TextInputLayout
-	extends			Injection[TextInputLayout, String]
+	implicit val `Injection[TextInputLayout, String]` = new Injection[TextInputLayout, String]
 	{
 		override def inject( view: TextInputLayout, value: String ) =
 		{

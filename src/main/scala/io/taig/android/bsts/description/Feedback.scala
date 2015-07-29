@@ -14,8 +14,7 @@ trait Feedback[V <: View]
 
 object Feedback
 {
-	implicit object	TextInputLayout
-	extends			Feedback[TextInputLayout]
+	implicit val `Feedback[TextInputLayout]` = new Feedback[TextInputLayout]
 	{
 		override def feedback( view: TextInputLayout, errors: Option[Seq[String]] ) =
 		{
@@ -23,8 +22,7 @@ object Feedback
 		}
 	}
 
-	implicit object	EditText
-	extends			Feedback[EditText]
+	implicit val `Feedback[EditText]` = new Feedback[EditText]
 	{
 		override def feedback( view: EditText, errors: Option[Seq[String]] ) = view.getParent match
 		{

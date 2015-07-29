@@ -38,9 +38,7 @@ object Hooking
 	/**
 	 * Attach an OnFocusChangeListener to the EditText that triggers validation when the focus leaves the widget
 	 */
-	implicit object	EditText
-	extends			Hooking[EditText, String]
-	with			View.OnFocusChangeListener
+	implicit val `Hooking[EditText, String]` = new Hooking[EditText, String] with View.OnFocusChangeListener
 	{
 		override def attach( view: EditText, rules: Seq[Rule[String]] )( implicit description: Descriptions[EditText, String] ) =
 		{
@@ -68,9 +66,7 @@ object Hooking
 	/**
 	 * Attach an OnFocusChangeListener to the EditText that triggers validation when the focus leaves the widget
 	 */
-	implicit object	TextInputLayout
-	extends			Hooking[TextInputLayout, String]
-	with			View.OnFocusChangeListener
+	implicit val `Hooking[TextInputLayout, String]` = new Hooking[TextInputLayout, String] with View.OnFocusChangeListener
 	{
 		override def attach( view: TextInputLayout, rules: Seq[Rule[String]] )( implicit description: Descriptions[TextInputLayout, String] ) =
 		{
