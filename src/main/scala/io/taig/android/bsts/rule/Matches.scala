@@ -10,7 +10,7 @@ with	Transformation[T]
 	/**
 	 * The name of the target, used to build the message ("Does not match target")
 	 */
-	def target: Option[String]
+	def target: scala.Option[String]
 
 	/**
 	 * The target value to check against
