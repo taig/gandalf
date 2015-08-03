@@ -10,5 +10,5 @@ extends		Length
 {
 	override def f = _ >= value
 
-	override def message( value: String ) = context.getString( R.string.validation_string_min, value )
+	override def message( value: String ) = context.getString( R.string.validation_string_min ).format( this.value )
 }

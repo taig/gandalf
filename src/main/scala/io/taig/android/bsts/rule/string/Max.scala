@@ -8,5 +8,5 @@ extends		Length
 {
 	override def f = _ <= value
 
-	override def message( value: String ) = context.getString( R.string.validation_string_max, value )
+	override def message( value: String ) = context.getString( R.string.validation_string_max ).format( this.value )
 }

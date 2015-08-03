@@ -23,7 +23,7 @@ with	Transformation[T]
 
 	override def message( value: T ) = target match
 	{
-		case Some( target ) => context.getString( R.string.validation_matches_target, target )
+		case Some( target ) => context.getString( R.string.validation_matches_target ).format( target )
 		case None => context.getString( R.string.validation_matches )
 	}
 }
