@@ -1,6 +1,6 @@
 package io.taig.android.bsts.operation
 
-import android.view.{View, ViewGroup}
+import android.view.View
 import io.taig.android.bsts._
 import io.taig.android.bsts.description.Description
 import io.taig.android.bsts.resource.R
@@ -14,6 +14,8 @@ trait Action[V <: View, T]
 {
 	def view: V
 
+	private val ruleChildren = view.children( _.getTag( R.id.validation_rules ) != null )
+
 	/**
 	 * Validate this view and all of its children, and update the Ui to show or hide error messages
 	 *
@@ -23,7 +25,7 @@ trait Action[V <: View, T]
 	 */
 	def validate(): Boolean =
 	{
-		children( view )
+		ruleChildren
 			.map( view =>
 			{
 				val rules = view.getTag( R.id.validation_rules ).asInstanceOf[Option[Seq[Rule[T]]]]
@@ -46,7 +48,7 @@ trait Action[V <: View, T]
 	 */
 	def check(): Boolean =
 	{
-		children( view ).forall( view =>
+		ruleChildren.forall( view =>
 		{
 			val rules = view.getTag( R.id.validation_rules ).asInstanceOf[Option[Seq[Rule[T]]]]
 
@@ -65,26 +67,11 @@ trait Action[V <: View, T]
 	 */
 	def clear(): Unit =
 	{
-		children( view ).foreach( view =>
+		ruleChildren.foreach( view =>
 		{
 			view.getTag( R.id.validation_description )
 				.asInstanceOf[Description[View, T]]
 				.feedback( view, None )
 		} )
-	}
-
-	/**
-	 * Recursively find all children that have rules attached
-	 */
-	private def children( view: View ): Seq[View] = view match
-	{
-		case _ if view.getTag( R.id.validation_rules ) != null => Seq( view )
-		case viewGroup: ViewGroup =>
-		{
-			( 0 to viewGroup.getChildCount - 1 )
-				.map( viewGroup.getChildAt )
-				.flatMap( children )
-		}
-		case _ => Seq.empty
 	}
 }

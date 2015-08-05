@@ -10,4 +10,7 @@
 	<item name="validation_rules"
 		  type="id" />
 
+	<item name="view_name"
+		  type="id" />
+
 </resources>
