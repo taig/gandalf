@@ -8,7 +8,7 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object	Build
 extends	android.AutoBuild
 {
-	val main = Project( "bettersafethansorry", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
+	val main = Project( "better-safe-than-sorry", file( "." ), settings = androidBuildAar )
 		.settings(
 			javacOptions ++= (
 				"-source" :: "1.7" ::
@@ -16,9 +16,9 @@ extends	android.AutoBuild
 				Nil
 			),
 			libraryDependencies ++= (
-				"com.android.support" % "appcompat-v7" % "22.2.1" ::
-				"com.android.support" % "support-v4" % "22.2.1" ::
-				"com.android.support" % "design" % "22.2.1" ::
+				"com.android.support" % "appcompat-v7" % "23.0.0" ::
+				"com.android.support" % "support-v4" % "23.0.0" ::
+				"com.android.support" % "design" % "23.0.0" ::
 				Nil
 			),
 			name := "BetterSafeThanSorry",
