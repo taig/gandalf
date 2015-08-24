@@ -4,11 +4,10 @@ import android.view.View
 
 import io.taig.android.bsts.description
 
-trait Event[V <: View]
-{
-	def view: V
+trait Event[V <: View] {
+    def view: V
 
-	def onAttach()( implicit e: description.Event[V] ) = e.onAttach( view )
+    def onAttach()( implicit e: description.Event[V] ) = e.onAttach( view )
 
-	def onDetach()( implicit e: description.Event[V] ) = e.onDetach( view )
+    def onDetach()( implicit e: description.Event[V] ) = e.onDetach( view )
 }
