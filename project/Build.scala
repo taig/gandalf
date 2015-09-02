@@ -29,7 +29,7 @@ object Build extends sbt.Build
                 "-feature" ::
                 Nil
             ),
-            version := "1.0.0-SNAPSHOT"
+            version := "1.0.1-SNAPSHOT"
         )
 
     lazy val test = flavorOf( main, "test" )
