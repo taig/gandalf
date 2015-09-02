@@ -2,7 +2,7 @@ package io.taig.android.bsts.description
 
 import android.support.design.widget.TextInputLayout
 import android.view.View
-import android.widget.EditText
+import android.widget.TextView
 
 /**
  * Describe how to inject a value into a View
@@ -12,13 +12,13 @@ trait Injection[-V <: View, T] {
 }
 
 object Injection {
-    implicit val `Injection[EditText, String]` = new Injection[EditText, String] {
-        override def inject( view: EditText, value: String ) = view.setText( value )
+    implicit val `Injection[TextView, String]` = new Injection[TextView, String] {
+        override def inject( view: TextView, value: String ) = view.setText( value )
     }
 
     implicit val `Injection[TextInputLayout, String]` = new Injection[TextInputLayout, String] {
         override def inject( view: TextInputLayout, value: String ) = {
-            implicitly[Injection[EditText, String]].inject( view.getEditText, value )
+            implicitly[Injection[TextView, String]].inject( view.getEditText, value )
         }
     }
 }
