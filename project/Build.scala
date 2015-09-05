@@ -1,45 +1,69 @@
-import sbt._
 import sbt.Keys._
-import android.Keys._
+import sbt._
+import android._
 import android.Plugin._
-import xerial.sbt.Sonatype._
-import xerial.sbt.Sonatype.SonatypeKeys._
+import android.Keys._
 
-object Build extends sbt.Build
-{
-    val main = Project( "better-safe-than-sorry", file( "." ), settings = androidBuildAar )
+object Build extends sbt.Build {
+    lazy val common = Seq(
+        name := "BetterSafeThanSorry",
+        normalizedName := "better-safe-than-sorry",
+        organization := "io.taig",
+        scalacOptions ++= (
+            "-deprecation" ::
+            "-feature" ::
+            Nil
+        ),
+        scalaVersion := "2.11.7",
+        version := "1.0.1-SNAPSHOT"
+    )
+
+    lazy val bsts = project.in( file( "." ) )
+        .settings( common )
         .settings(
-            javacOptions ++= (
-                "-source" :: "1.7" ::
-                "-target" :: "1.7" ::
-                Nil
-            ),
+            publishArtifact := false
+        )
+        .aggregate( core, android, androidTest )
+
+    lazy val core = project.in( file( "core" ) )
+        .settings( common )
+        .settings(
             libraryDependencies ++= (
-                "com.android.support" % "appcompat-v7" % "23.0.0" ::
-                "com.android.support" % "support-v4" % "23.0.0" ::
-                "com.android.support" % "design" % "23.0.0" ::
+                "com.chuusai" %% "shapeless" % "2.2.5" ::
+                "org.spire-math" %% "cats" % "0.2.0" ::
+                "org.scalatest" %% "scalatest" % "3.0.0-M7" % "test" ::
+                "org.scalacheck" %% "scalacheck" % "1.12.4" % "test" ::
                 Nil
-            ),
-            name := "BetterSafeThanSorry",
-            normalizedName := "better-safe-than-sorry",
-            organization := "io.taig.android",
-            scalaVersion := "2.11.7",
-            scalacOptions ++= (
-                "-deprecation" ::
-                "-feature" ::
-                Nil
-            ),
-            version := "1.0.1-SNAPSHOT"
+            )
         )
 
-    lazy val test = flavorOf( main, "test" )
+    lazy val android = project.in( file( "android" ) )
+        .settings( androidBuildAar )
+        .settings( common )
+        .settings(
+            libraryDependencies ++= (
+                "com.android.support" % "design" % "23.0.1" ::
+                Nil
+            ),
+            organization += ".android"
+        )
+        .settings( inConfig( Android )( Seq(
+            minSdkVersion := "7",
+            platformTarget := "android-23",
+            targetSdkVersion := "23",
+            typedResources := false
+        ) ) )
+        .dependsOn( core )
+    
+    lazy val androidTest = flavorOf( android, "android-test" )
         .settings(
             fork in Test := true,
             libraryDependencies ++= (
-                "com.geteit" %% "robotest" % "0.12" ::
-                "org.scalatest" %% "scalatest" % "2.2.5" ::
+                "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
+                "com.geteit" %% "robotest" % "0.12" % "test" ::
                 Nil
             ),
-            libraryProject in Android := false
+            libraryProject in Android := false,
+            publishArtifact := false
         )
 }

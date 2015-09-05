@@ -1,0 +1,28 @@
+package io.taig.android
+
+import android.view.View
+import io.taig.bsts._
+
+package object bsts {
+    implicit class ActionView[V <: View]( view: V ) extends operation.Action[V]( view )
+
+    implicit class FeedbackView[V <: View: Feedback]( view: V ) extends operation.Feedback[V]( view )
+
+    implicit class NameView[V <: View]( view: V ) extends operation.Name[V]( view )
+
+    implicit class ValidatableView[V <: View, T]( view: V )( implicit description: Description[V, T] )
+        extends operation.Validatable[V, T]( view )
+
+    implicit class RuntimeRule[R <: Rule]( rule: R )(
+        implicit
+        definition: Definition[R],
+        show:       Show[R],
+        adjust:     Adjust[R],
+        empty:      Empty[R]
+    ) extends operation.Runtime[R]( rule )
+
+    implicit class SearchView( view: View ) extends operation.Search( view )
+
+    implicit class WidgetView[V <: View, T]( view: V )( implicit widget: Data[V, T] )
+        extends operation.Data[V, T]( view )
+}
