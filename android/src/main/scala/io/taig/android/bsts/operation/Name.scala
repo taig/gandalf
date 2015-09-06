@@ -1,7 +1,7 @@
 package io.taig.android.bsts.operation
 
 import android.view.View
-import io.taig.android.bsts.R
+import io.taig.android.bsts.resource.R
 
 /**
  * Attach a name to a view which is useful to match error messages to the view structure

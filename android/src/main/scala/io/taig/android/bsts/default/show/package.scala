@@ -1,7 +1,7 @@
 package io.taig.android.bsts.default
 
 import android.content.Context
-import io.taig.android.bsts.R
+import io.taig.android.bsts.resource.R
 import io.taig.bsts.rule._
 import io.taig.bsts.{ Rule, Show }
 

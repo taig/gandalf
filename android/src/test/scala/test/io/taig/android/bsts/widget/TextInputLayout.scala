@@ -3,6 +3,7 @@ package test.io.taig.android.bsts.widget
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import io.taig.android.bsts._
 import io.taig.android.bsts.default.show._
+import io.taig.android.bsts.resource.R
 import io.taig.bsts.Show
 import io.taig.bsts.rule._
 import org.robolectric.annotation.Config

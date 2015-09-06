@@ -2,8 +2,8 @@ package io.taig.android.bsts.operation
 
 import android.view.View
 import io.taig.android.bsts._
-import io.taig.bsts.{ Failure, Success, Rule, Validation }
-import shapeless.HList
+import io.taig.android.bsts.resource.R
+import io.taig.bsts.{ Failure, Success, Rule }
 
 /**
  * Operations that enable a view to run validation checks and clear error messages on itself and all its children

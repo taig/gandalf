@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.{ EditText, FrameLayout }
 import io.taig.android.bsts._
 import io.taig.android.bsts.default.show._
+import io.taig.android.bsts.resource.R
 import io.taig.bsts._
 import io.taig.bsts.rule._
 import org.robolectric.annotation.Config
