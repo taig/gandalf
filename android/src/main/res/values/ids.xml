@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <item name="bsts_description"
+          type="id" />
+
+    <!-- Used to attach a view tag containing validation rules -->
+
+    <item name="bsts_rules"
+          type="id" />
+
+    <item name="bsts_name"
+          type="id" />
+
+</resources>
