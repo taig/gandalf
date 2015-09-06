@@ -6,9 +6,13 @@ import android.view.View
  * Collection of all type classes that are necessary to make a view validatable
  */
 trait Description[-V <: View, T]
-    extends Data[V, T]
-    with Event[V]
-    with Feedback[V]
+        extends Data[V, T]
+        with Event[V]
+        with Feedback[V] {
+    override def onDetach( view: V ) = {}
+
+    override def onAttach( view: V ) = {}
+}
 
 object Description {
     implicit def `Description`[V <: View: Event: Feedback, T]( implicit d: Data[V, T] ) = new Description[V, T] {
