@@ -2,7 +2,7 @@
 
 > Form validation for Scala on Android
 
-[![Build Status](https://travis-ci.org/Taig/BetterSafeThanSorry.svg?branch=develop)](https://travis-ci.org/Taig/BetterSafeThanSorry)
+[![Circle CI](https://circleci.com/gh/Taig/BetterSafeThanSorry/tree/develop.svg?style=svg)](https://circleci.com/gh/Taig/BetterSafeThanSorry/tree/develop)
 
 ## Installation
 
