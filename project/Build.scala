@@ -30,8 +30,6 @@ object Build extends sbt.Build {
         .settings(
             libraryDependencies ++= (
                 "com.chuusai" %% "shapeless" % "2.2.5" ::
-                "org.spire-math" %% "cats-macros" % "0.2.0" ::
-                "org.spire-math" %% "cats-core" % "0.2.0" ::
                 "org.scalatest" %% "scalatest" % "3.0.0-M7" % "test" ::
                 "org.scalacheck" %% "scalacheck" % "1.12.4" % "test" ::
                 Nil

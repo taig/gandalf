@@ -3,7 +3,6 @@ package test.io.taig.bsts
 import io.taig.bsts._
 import io.taig.bsts.default.show._
 import io.taig.bsts.rule._
-import cats.std.all._
 
 class Rule extends Suite {
     "Email" should "allow valid emails" in {
@@ -31,13 +30,13 @@ class Rule extends Suite {
 
     "Matches" should "allow equality" in {
         Matches( "asdf" ).validate( "asdf" ) shouldBe a[Success]
-        Matches.value( 123 ).validate( 123 ) shouldBe a[Success]
+        Matches( 123 ).validate( 123 ) shouldBe a[Success]
         Matches( 0x123 ).validate( 0x123 ) shouldBe a[Success]
     }
 
     it should "not allow inequality" in {
         Matches( "asdf" ).validate( "fdsa" ) shouldBe a[Failure]
-        Matches.value( 123 ).validate( 321 ) shouldBe a[Failure]
+        Matches( 123 ).validate( 321 ) shouldBe a[Failure]
         Matches( 0x123 ).validate( 0x321 ) shouldBe a[Failure]
     }
 
