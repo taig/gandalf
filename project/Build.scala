@@ -23,7 +23,7 @@ object Build extends sbt.Build {
         .settings(
             publishArtifact := false
         )
-        .aggregate( core, android, androidTest )
+        .aggregate( core, android )
 
     lazy val core = project.in( file( "core" ) )
         .settings( common )
@@ -42,6 +42,11 @@ object Build extends sbt.Build {
         .settings( androidBuildAar )
         .settings( common )
         .settings(
+            javacOptions ++= (
+                "-source" :: "1.7" ::
+                "-target" :: "1.7" ::
+                Nil
+            ),
             libraryDependencies ++= (
                 "com.android.support" % "design" % "23.0.1" ::
                 Nil
@@ -64,7 +69,6 @@ object Build extends sbt.Build {
                 "com.geteit" %% "robotest" % "0.12" % "test" ::
                 Nil
             ),
-            libraryProject in Android := false,
-            publishArtifact := false
+            libraryProject in Android := false
         )
 }
