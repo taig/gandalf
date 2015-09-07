@@ -1,8 +1,8 @@
 package io.taig.android.bsts.operation
 
-import android.util.Log
 import io.taig.bsts._
 import io.taig.bsts
+import io.taig.bsts.rule.Required
 
 case class Runtime[R <: Rule]( rule: R )(
         implicit
@@ -14,7 +14,7 @@ case class Runtime[R <: Rule]( rule: R )(
     override def validate( value: R#Value ) = {
         val adjusted = adjust.adjust( value )
 
-        empty.isEmpty( adjusted ) match {
+        !rule.isInstanceOf[Required[_]] && empty.isEmpty( adjusted ) match {
             case true  ⇒ Success( adjusted )
             case false ⇒ new ValidatableRule( rule )( definition, show, Adjust( identity ) ).validate( adjusted )
         }
