@@ -20,35 +20,38 @@ abstract class Action[V <: View]( view: V ) {
      * If it finds a view it will execute the validation and update the Ui. Only if all children pass the validation,
      * this method will return <code>true</code>.
      */
-    def validate(): Boolean = ruleChildren.flatMap( view ⇒ {
+    def validate(): Boolean = ruleChildren.map( view ⇒ {
         type R = Rule
 
         val rules = view.getTag( R.id.bsts_rules ).asInstanceOf[Seq[operation.Runtime[R]]]
         val description = view.getTag( R.id.bsts_description ).asInstanceOf[Description[View, R#Value]]
         val value = description.data( view )
 
-        rules.map( _.validate( value ) match {
-            case Success( _ ) ⇒
-                description.feedback( view, None )
-                true
-            case Failure( _, errors ) ⇒
-                description.feedback( view, Some( errors ) )
-                false
-        } )
+        rules
+            .map( _.validate( value ) )
+            .collect { case Failure( _, errors ) ⇒ errors }
+            .flatten match {
+                case Nil ⇒
+                    description.feedback( view, None )
+                    true
+                case errors ⇒
+                    description.feedback( view, Some( errors ) )
+                    false
+            }
     } ).forall( _ == true )
 
     /**
      * Validate this view and all of its children (without propagating messages to the Ui)
      */
-    def check(): Boolean = ruleChildren.flatMap( view ⇒ {
+    def check(): Boolean = ruleChildren.forall( view ⇒ {
         type R = Rule
 
         val rules = view.getTag( R.id.bsts_rules ).asInstanceOf[Seq[operation.Runtime[R]]]
         val description = view.getTag( R.id.bsts_description ).asInstanceOf[Description[View, R#Value]]
         val value = description.data( view )
 
-        rules.map( _.validate( value ).isSuccess )
-    } ).forall( _ == true )
+        rules.forall( _.validate( value ).isSuccess )
+    } )
 
     /**
      * Remove error message of this view and all of its children

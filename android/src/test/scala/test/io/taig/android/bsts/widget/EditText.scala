@@ -33,6 +33,15 @@ class EditText
         editText.indication shouldBe Some( Seq( context.getString( R.string.bsts_required ) ) )
     }
 
+    it should "have the proper error message attached if multiple Rules are applied" in {
+        editText obeys ( Required[String](), Email )
+        editText.validate()
+        editText.indication shouldBe Some( Seq( context.getString( R.string.bsts_required ) ) )
+        editText.value = "asdf"
+        editText.validate()
+        editText.indication shouldBe Some( Seq( context.getString( R.string.bsts_email ) ) )
+    }
+
     it should "attach the error message to a wrapping TextInputLayout" in {
         val wrapper = new android.support.design.widget.TextInputLayout( context )
         wrapper.addView( editText )
