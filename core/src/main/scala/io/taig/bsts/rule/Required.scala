@@ -12,6 +12,4 @@ object Required {
     implicit def `Definition[Required[T]]`[T]( implicit empty: Empty[Rule.Aux[T]] ) = {
         Definition[Required[T]]( ( value: T ) ⇒ !empty.isEmpty( value ) )
     }
-
-    implicit def `Empty[Required]]`[T] = Empty[Required[T]]( false )
 }

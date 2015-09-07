@@ -80,6 +80,7 @@ class Rule extends Suite {
         Required[String]().validate( "asdf " ) shouldBe a[Success]
         Required[Seq[_]]().validate( Seq( 1, 2, 3 ) ) shouldBe a[Success]
         Required[Option[Int]]().validate( Some( 3 ) ) shouldBe a[Success]
+        Required[Option[_]]().validate( Some( 3 ) ) shouldBe a[Success]
     }
 
     it should "not allow empty values" in {
@@ -88,5 +89,6 @@ class Rule extends Suite {
         Required[Array[String]]().validate( Array.empty ) shouldBe a[Failure]
         Required[Array[_]]().validate( Array.empty ) shouldBe a[Failure]
         Required[Option[Int]]().validate( None ) shouldBe a[Failure]
+        Required[Option[_]]().validate( None ) shouldBe a[Failure]
     }
 }

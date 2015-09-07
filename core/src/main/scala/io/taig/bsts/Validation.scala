@@ -1,6 +1,7 @@
 package io.taig.bsts
 
 import io.taig.bsts.Validation.combine
+import io.taig.bsts.rule.Required
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
 
@@ -27,7 +28,7 @@ object Validation {
             adjust:     Adjust[R],
             empty:      Empty[R]
         ): Case.Aux[R#Value, R, Result[R#Value]] = {
-            at[R#Value, R]( ( value, rule ) ⇒ empty.isEmpty( value ) match {
+            at[R#Value, R]( ( value, rule ) ⇒ !rule.isInstanceOf[Required[_]] && empty.isEmpty( value ) match {
                 case true  ⇒ Success( value )
                 case false ⇒ rule.validate( value )
             } )
@@ -40,7 +41,7 @@ object Validation {
             adjust:     Adjust[R],
             empty:      Empty[R]
         ): Case.Aux[Result[T], R, Result[T]] = {
-            at[Result[T], R]( ( result, rule ) ⇒ empty.isEmpty( result.value ) match {
+            at[Result[T], R]( ( result, rule ) ⇒ !rule.isInstanceOf[Required[_]] && empty.isEmpty( result.value ) match {
                 case true  ⇒ result
                 case false ⇒ rule.validate( result.value )
             } )
