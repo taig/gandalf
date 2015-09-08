@@ -1,7 +1,5 @@
 package io.taig.bsts
 
-import io.taig.bsts.rule.Required
-
 /**
  * Type class to determine whether a value is empty or not
  */

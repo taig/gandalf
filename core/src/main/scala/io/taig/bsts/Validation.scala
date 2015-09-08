@@ -1,7 +1,6 @@
 package io.taig.bsts
 
 import io.taig.bsts.Validation.combine
-import io.taig.bsts.rule.Required
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
 
@@ -21,30 +20,12 @@ object Validation {
     }
 
     object combine extends Poly2 {
-        implicit def head[R <: Rule](
-            implicit
-            definition: Definition[R],
-            show:       Show[R],
-            adjust:     Adjust[R],
-            empty:      Empty[R]
-        ): Case.Aux[R#Value, R, Result[R#Value]] = {
-            at[R#Value, R]( ( value, rule ) ⇒ !rule.isInstanceOf[Required[_]] && empty.isEmpty( value ) match {
-                case true  ⇒ Success( value )
-                case false ⇒ rule.validate( value )
-            } )
+        implicit def head[R <: Rule]( implicit fold: Fold[R] ): Case.Aux[R#Value, R, Result[R#Value]] = {
+            at[R#Value, R]( fold.fold )
         }
 
-        implicit def tail[T, R <: Rule.Aux[T]](
-            implicit
-            definition: Definition[R],
-            show:       Show[R],
-            adjust:     Adjust[R],
-            empty:      Empty[R]
-        ): Case.Aux[Result[T], R, Result[T]] = {
-            at[Result[T], R]( ( result, rule ) ⇒ !rule.isInstanceOf[Required[_]] && empty.isEmpty( result.value ) match {
-                case true  ⇒ result
-                case false ⇒ rule.validate( result.value )
-            } )
+        implicit def tail[T, R <: Rule.Aux[T]]( implicit fold: Fold[R] ): Case.Aux[Result[T], R, Result[T]] = {
+            at[Result[T], R]( fold.fold )
         }
     }
 }
