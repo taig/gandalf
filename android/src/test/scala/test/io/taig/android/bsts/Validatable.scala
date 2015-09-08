@@ -9,6 +9,7 @@ import io.taig.android.bsts.resource.R
 import io.taig.bsts._
 import io.taig.bsts.rule._
 import org.robolectric.annotation.Config
+import shapeless.HNil
 
 import scala.language.implicitConversions
 
@@ -40,8 +41,7 @@ class Validatable extends Suite {
         parent.addView( editText )
         parent.addView( new View( context ) )
 
-        new ValidatableRule( Required[String]() )
-        editText obeys Required[String]()
+        editText obeys Required[String]() :: HNil
 
         editText.validate() shouldBe false
         parent.validate() shouldBe false

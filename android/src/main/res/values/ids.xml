@@ -7,7 +7,7 @@
 
     <!-- Used to attach a view tag containing validation rules -->
 
-    <item name="bsts_rules"
+    <item name="bsts_validation"
           type="id" />
 
     <item name="bsts_name"

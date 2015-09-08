@@ -9,6 +9,7 @@ import io.taig.bsts.rule._
 import org.robolectric.annotation.Config
 import org.scalatest.BeforeAndAfterEach
 import test.io.taig.android.bsts.Suite
+import shapeless._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class EditText
@@ -34,7 +35,7 @@ class EditText
     }
 
     it should "have the proper error message attached if multiple Rules are applied" in {
-        editText obeys ( Required[String](), Email )
+        editText obeys Required[String]() :: Email :: HNil
         editText.validate()
         editText.indication shouldBe Some( Seq( context.getString( R.string.bsts_required ) ) )
         editText.value = "asdf"

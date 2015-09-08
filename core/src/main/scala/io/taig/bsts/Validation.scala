@@ -4,10 +4,7 @@ import io.taig.bsts.Validation.combine
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
 
-case class Validation[T, H <: HList]( rules: H )(
-        implicit
-        folder: LeftFolder.Aux[H, T, combine.type, Result[T]]
-) {
+case class Validation[T, H <: HList]( rules: H )( implicit folder: LeftFolder.Aux[H, T, combine.type, Result[T]] ) {
     def validate( value: T ): Result[T] = rules.foldLeft( value )( combine )
 }
 
