@@ -12,7 +12,7 @@ abstract class Feedback[V <: View: TypeClass]( view: V ) {
     /**
      * Show error messages in this view
      */
-    def indicate( error: String, errors: String* ): Unit = indicate( Some( error +: errors ) )
+    def indicate( error: String ): Unit = indicate( Some( Seq( error ) ) )
 
     /**
      * Retrieve the currently active error messages from this View
