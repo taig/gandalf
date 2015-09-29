@@ -24,7 +24,7 @@ lazy val core = project.in( file( "core" ) )
         libraryDependencies ++= (
             "com.chuusai" %% "shapeless" % "2.2.5" ::
             "org.scalatest" %% "scalatest" % "3.0.0-M7" % "test" ::
-            "org.scalacheck" %% "scalacheck" % "1.12.4" % "test" ::
+            "org.scalacheck" %% "scalacheck" % "1.12.5" % "test" ::
             Nil
         )
     )

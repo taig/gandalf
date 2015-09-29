@@ -20,7 +20,6 @@ class Validation extends Suite {
     }
 
     it should "work with Required" in {
-        println( validation( Required[Option[String]]() ).validate( None ) )
         validation( Required[Option[String]]() ).validate( None ) shouldBe a[Failure]
         validation( Required[Option[String]]() :: HNil ).validate( Some( "" ) ) shouldBe a[Success]
         validation( Required[String]() ).validate( "asdf" ) shouldBe a[Success]

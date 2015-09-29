@@ -1,2 +1,4 @@
 *target/
+android-test/
 proguard-sbt.txt
+.history
