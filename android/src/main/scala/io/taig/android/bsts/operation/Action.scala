@@ -2,6 +2,7 @@ package io.taig.android.bsts.operation
 
 import android.view.View
 import io.taig.android.bsts._
+import io.taig.android.bsts
 import io.taig.android.bsts.resource.R
 import io.taig.bsts.{ Validation, Failure, Success, Rule }
 import shapeless.HList
@@ -25,15 +26,15 @@ abstract class Action[V <: View]( view: V ) {
         type R = Rule
 
         val validation = view.getTag( R.id.bsts_validation ).asInstanceOf[Validation[R#Value, HList]]
-        val description = view.getTag( R.id.bsts_description ).asInstanceOf[Description[View, R#Value]]
-        val value = description.data( view )
+        val feedback = view.getTag( R.id.bsts_feedback ).asInstanceOf[bsts.Feedback[View]]
+        val data = view.getTag( R.id.bsts_data ).asInstanceOf[bsts.Data[View, R#Value]]
 
-        validation.validate( value ) match {
+        validation.validate( data.data( view ) ) match {
             case Success( _ ) ⇒
-                description.feedback( view, None )
+                feedback.feedback( view, None )
                 true
             case Failure( _, errors ) ⇒
-                description.feedback( view, Some( errors ) )
+                feedback.feedback( view, Some( errors ) )
                 false
         }
     } ).forall( _ == true )
@@ -45,8 +46,8 @@ abstract class Action[V <: View]( view: V ) {
         type R = Rule
 
         val rules = view.getTag( R.id.bsts_validation ).asInstanceOf[Validation[R#Value, HList]]
-        val description = view.getTag( R.id.bsts_description ).asInstanceOf[Description[View, R#Value]]
-        val value = description.data( view )
+        val data = view.getTag( R.id.bsts_data ).asInstanceOf[bsts.Data[View, R#Value]]
+        val value = data.data( view )
 
         rules.validate( value ).isSuccess
     } )
@@ -55,8 +56,8 @@ abstract class Action[V <: View]( view: V ) {
      * Remove error message of this view and all of its children
      */
     def clear(): Unit = ruleChildren.foreach( view ⇒ {
-        view.getTag( R.id.bsts_description )
-            .asInstanceOf[Description[View, _]]
+        view.getTag( R.id.bsts_feedback )
+            .asInstanceOf[bsts.Feedback[View]]
             .feedback( view, None )
     } )
 
@@ -77,8 +78,8 @@ abstract class Action[V <: View]( view: V ) {
             val view = views( key )
 
             view
-                .getTag( R.id.bsts_description )
-                .asInstanceOf[Description[View, _]]
+                .getTag( R.id.bsts_feedback )
+                .asInstanceOf[bsts.Feedback[View]]
                 .feedback( view, errors.get( key ) )
         } )
 
