@@ -38,7 +38,7 @@ lazy val android = project.in( file( "android" ) )
             Nil
         ),
         libraryDependencies ++= (
-            "com.android.support" % "design" % "23.0.1" ::
+            "com.android.support" % "design" % "23.1.0" ::
             Nil
         ),
         organization += ".android"
