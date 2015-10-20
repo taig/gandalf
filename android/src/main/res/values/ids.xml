@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <item name="bsts_extraction"
+          type="id" />
+
+    <item name="bsts_event"
+          type="id" />
+
+    <item name="bsts_feedback"
+          type="id" />
+
+    <item name="bsts_name"
+          type="id" />
+
+    <!-- Used to attach a view tag containing validation rules -->
+
+    <item name="bsts_validation"
+          type="id" />
+
+</resources>
