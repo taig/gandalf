@@ -8,7 +8,7 @@ lazy val common = Seq(
         Nil
     ),
     scalaVersion := "2.11.7",
-    version := "1.0.2-SNAPSHOT"
+    version := "1.0.3-SNAPSHOT"
 )
 
 lazy val bsts = project.in( file( "." ) )
@@ -21,6 +21,7 @@ lazy val bsts = project.in( file( "." ) )
 lazy val core = project.in( file( "core" ) )
     .settings( common )
     .settings(
+        exportJars := true,
         libraryDependencies ++= (
             "com.chuusai" %% "shapeless" % "2.2.5" ::
             "org.scalatest" %% "scalatest" % "3.0.0-M7" % "test" ::
@@ -43,12 +44,12 @@ lazy val android = project.in( file( "android" ) )
         ),
         organization += ".android"
     )
-    .settings( inConfig( Android )( Seq(
+    .settings(
         minSdkVersion := "7",
         platformTarget := "android-23",
         targetSdkVersion := "23",
         typedResources := false
-    ) ) )
+    )
     .dependsOn( core )
 
 lazy val androidTest = flavorOf( android, "android-test" )

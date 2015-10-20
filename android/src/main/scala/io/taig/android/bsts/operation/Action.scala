@@ -27,9 +27,9 @@ abstract class Action[V <: View]( view: V ) {
 
         val validation = view.getTag( R.id.bsts_validation ).asInstanceOf[Validation[R#Value, HList]]
         val feedback = view.getTag( R.id.bsts_feedback ).asInstanceOf[bsts.Feedback[View]]
-        val data = view.getTag( R.id.bsts_data ).asInstanceOf[bsts.Data[View, R#Value]]
+        val extraction = view.getTag( R.id.bsts_extraction ).asInstanceOf[bsts.Extraction[View, R#Value]]
 
-        validation.validate( data.data( view ) ) match {
+        validation.validate( extraction.extract( view ) ) match {
             case Success( _ ) ⇒
                 feedback.feedback( view, None )
                 true
@@ -46,8 +46,8 @@ abstract class Action[V <: View]( view: V ) {
         type R = Rule
 
         val rules = view.getTag( R.id.bsts_validation ).asInstanceOf[Validation[R#Value, HList]]
-        val data = view.getTag( R.id.bsts_data ).asInstanceOf[bsts.Data[View, R#Value]]
-        val value = data.data( view )
+        val extraction = view.getTag( R.id.bsts_extraction ).asInstanceOf[bsts.Extraction[View, R#Value]]
+        val value = extraction.extract( view )
 
         rules.validate( value ).isSuccess
     } )

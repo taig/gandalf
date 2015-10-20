@@ -2,7 +2,7 @@
 
 <resources>
 
-    <item name="bsts_data"
+    <item name="bsts_extraction"
           type="id" />
 
     <item name="bsts_event"

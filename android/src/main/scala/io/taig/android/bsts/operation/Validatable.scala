@@ -14,7 +14,7 @@ import shapeless.ops.hlist.LeftFolder
 abstract class Validatable[V <: View, T]( view: V )( implicit description: Description[V, T] ) {
     def obeys[S <: T, H <: HList]( validation: Validation[S, H] ): V = {
         description.onAttach( view )
-        view.setTag( R.id.bsts_data, description )
+        view.setTag( R.id.bsts_extraction, description )
         view.setTag( R.id.bsts_event, description )
         view.setTag( R.id.bsts_feedback, description )
         view.setTag( R.id.bsts_validation, validation )
@@ -35,7 +35,7 @@ abstract class Validatable[V <: View, T]( view: V )( implicit description: Descr
     def reset(): Unit = {
         view.getTag( R.id.bsts_event ).asInstanceOf[Event[V]].onDetach( view )
 
-        view.setTag( R.id.bsts_data, null )
+        view.setTag( R.id.bsts_extraction, null )
         view.setTag( R.id.bsts_event, null )
         view.setTag( R.id.bsts_feedback, null )
         view.setTag( R.id.bsts_validation, null )
