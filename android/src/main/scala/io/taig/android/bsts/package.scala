@@ -14,8 +14,5 @@ package object bsts {
 
     implicit class NameView[V <: View]( view: V ) extends operation.Name[V]( view )
 
-    implicit class ValidatableView[V <: View, T]( view: V )( implicit description: Description[V, T] )
-        extends operation.Validatable[V, T]( view )
-
     implicit class SearchView( view: View ) extends operation.Search( view )
 }

@@ -1,18 +1,15 @@
-package io.taig.android.bsts.operation
+package io.taig.android.bsts
 
 import android.view.View
-import io.taig.android.bsts._
 import io.taig.android.bsts.resource.R
+import io.taig.bsts
 import io.taig.bsts.Validation.combine
-import io.taig.bsts._
-import shapeless._
+import io.taig.bsts.{ Result, Rule }
 import shapeless.ops.hlist.LeftFolder
+import shapeless.{ ::, HList, HNil }
 
-/**
- * Operations that enable a view to add validation rules for its content
- */
-abstract class Validatable[V <: View, T]( view: V )( implicit description: Description[V, T] ) {
-    def obeys[S <: T, H <: HList]( validation: Validation[S, H] ): V = {
+class Validation[V <: View, T]( view: V )( implicit description: Description[V, T] ) {
+    def obeys[S <: T, H <: HList]( validation: bsts.Validation[S, H] ): V = {
         description.onAttach( view )
         view.setTag( R.id.bsts_extraction, description )
         view.setTag( R.id.bsts_event, description )
@@ -22,7 +19,7 @@ abstract class Validatable[V <: View, T]( view: V )( implicit description: Descr
     }
 
     def obeys[S <: T, H <: HList]( rules: H )( implicit folder: LeftFolder.Aux[H, S, combine.type, Result[S]] ): V = {
-        obeys( Validation[S, H]( rules ) )
+        obeys( bsts.Validation[S, H]( rules ) )
     }
 
     def obeys[S <: T, R <: Rule]( rule: R )( implicit folder: LeftFolder.Aux[R :: HNil, S, combine.type, Result[S]] ): V = {
@@ -39,5 +36,13 @@ abstract class Validatable[V <: View, T]( view: V )( implicit description: Descr
         view.setTag( R.id.bsts_event, null )
         view.setTag( R.id.bsts_feedback, null )
         view.setTag( R.id.bsts_validation, null )
+    }
+}
+
+object Validation {
+    def apply[T] = new Wrapper[T]
+
+    class Wrapper[T] {
+        def apply[V <: View]( view: V )( implicit description: Description[V, T] ) = new Validation[V, T]( view )
     }
 }
