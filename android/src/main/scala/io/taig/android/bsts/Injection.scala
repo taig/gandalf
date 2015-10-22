@@ -3,17 +3,13 @@ package io.taig.android.bsts
 import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.AdapterView.INVALID_POSITION
-import android.widget.{ AdapterView, CompoundButton, TextView }
+import android.widget.{RadioGroup, AdapterView, CompoundButton, TextView}
 
 trait Injection[-V <: View, -T] {
     def inject( view: V, value: T ): Unit
 }
 
 object Injection {
-    implicit val `Injection[CompoundButton, Boolean]` = new Injection[CompoundButton, Boolean] {
-        override def inject( view: CompoundButton, value: Boolean ) = view.setChecked( value )
-    }
-
     implicit val `Injection[AdapterView, Int]` = new Injection[AdapterView[_], Int] {
         override def inject( view: AdapterView[_], value: Int ) = view.setSelection( value )
     }
@@ -21,6 +17,21 @@ object Injection {
     implicit val `Injection[AdapterView, Option[Int]]` = new Injection[AdapterView[_], Option[Int]] {
         override def inject( view: AdapterView[_], value: Option[Int] ) = {
             `Injection[AdapterView, Int]`.inject( view, value.getOrElse( INVALID_POSITION ) )
+        }
+    }
+
+    implicit val `Injection[CompoundButton, Boolean]` = new Injection[CompoundButton, Boolean] {
+        override def inject( view: CompoundButton, value: Boolean ) = view.setChecked( value )
+    }
+    
+    implicit val `Injection[RadioGroup, Int]` = new Injection[RadioGroup, Int] {
+        override def inject(view: RadioGroup, value: Int) = view.check( value )
+    }
+
+    implicit val `Injection[RadioGroup, Option[Int]]` = new Injection[RadioGroup, Option[Int]] {
+        override def inject(view: RadioGroup, value: Option[Int]) = value match {
+            case Some( value ) => `Injection[RadioGroup, Int]`.inject( view, value )
+            case None => view.clearCheck()
         }
     }
 
