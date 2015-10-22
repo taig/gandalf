@@ -8,7 +8,7 @@ lazy val common = Seq(
         Nil
     ),
     scalaVersion := "2.11.7",
-    version := "0.1.0"
+    version := "0.2.0-SNAPSHOT"
 )
 
 lazy val bsts = project.in( file( "." ) )
