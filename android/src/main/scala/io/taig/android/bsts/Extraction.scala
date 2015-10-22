@@ -16,8 +16,8 @@ object Extraction {
 
     implicit val `Extraction[AdapterView, Option[Int]]` = new Extraction[AdapterView[_], Option[Int]] {
         override def extract( view: AdapterView[_] ) = `Extraction[AdapterView, Int]`.extract( view ) match {
-            case INVALID_POSITION => None
-            case position => Some( position )
+            case INVALID_POSITION ⇒ None
+            case position         ⇒ Some( position )
         }
     }
 
@@ -26,13 +26,13 @@ object Extraction {
     }
 
     implicit val `Extraction[RadioGroup, Int]` = new Extraction[RadioGroup, Int] {
-        override def extract(view: RadioGroup) = view.getCheckedRadioButtonId
+        override def extract( view: RadioGroup ) = view.getCheckedRadioButtonId
     }
 
     implicit val `Extraction[RadioGroup, Option[Int]]` = new Extraction[RadioGroup, Option[Int]] {
-        override def extract(view: RadioGroup) = `Extraction[RadioGroup, Int]`.extract( view ) match {
-            case -1 => None
-            case id => Some( id )
+        override def extract( view: RadioGroup ) = `Extraction[RadioGroup, Int]`.extract( view ) match {
+            case -1 ⇒ None
+            case id ⇒ Some( id )
         }
     }
 
