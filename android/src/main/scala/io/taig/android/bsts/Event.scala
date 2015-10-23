@@ -4,7 +4,7 @@ import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.{ RadioGroup, CompoundButton, AdapterView, EditText }
 
-trait Event[-V <: View] {
+trait Event[V <: View] {
     def onAttach( view: V ): Unit
 
     def onDetach( view: V ): Unit
@@ -17,24 +17,24 @@ object Event {
         override def onDetach( view: V ) = {}
     }
 
-    implicit val `Event[AdapterView[_]]` = noop[AdapterView[_]]
+    implicit def `Event[AdapterView[_]]`[V <: AdapterView[_]] = noop[V]
 
-    implicit val `Event[CompoundButton]` = noop[CompoundButton]
+    implicit def `Event[CompoundButton]`[V <: CompoundButton] = noop[V]
 
-    implicit val `Event[RadioGroup]` = noop[RadioGroup]
+    implicit def `Event[RadioGroup]`[V <: RadioGroup] = noop[V]
 
-    implicit val `Event[EditText]` = new Event[EditText] with View.OnFocusChangeListener {
-        override def onAttach( view: EditText ) = view.setOnFocusChangeListener( this )
+    implicit def `Event[EditText]`[V <: EditText] = new Event[V] with View.OnFocusChangeListener {
+        override def onAttach( view: V ) = view.setOnFocusChangeListener( this )
 
-        override def onDetach( view: EditText ) = view.setOnFocusChangeListener( null )
+        override def onDetach( view: V ) = view.setOnFocusChangeListener( null )
 
         override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate()
     }
 
-    implicit val `Event[TextInputLayout]` = new Event[TextInputLayout] with View.OnFocusChangeListener {
-        override def onAttach( view: TextInputLayout ) = view.setOnFocusChangeListener( this )
+    implicit def `Event[TextInputLayout]`[V <: TextInputLayout] = new Event[V] with View.OnFocusChangeListener {
+        override def onAttach( view: V ) = view.setOnFocusChangeListener( this )
 
-        override def onDetach( view: TextInputLayout ) = view.setOnFocusChangeListener( null )
+        override def onDetach( view: V ) = view.setOnFocusChangeListener( null )
 
         override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate()
     }

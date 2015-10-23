@@ -7,39 +7,33 @@ import android.widget.EditText
 /**
  * Type class that describes how to set or retrieve errors to/from a View
  */
-trait Feedback[-V <: View] {
+trait Feedback[V <: View] {
     def feedback( view: V, errors: Option[Seq[String]] ): Unit
 
     def feedback( view: V ): Option[Seq[String]]
 }
 
 object Feedback {
-    implicit val `Feedback[TextInputLayout]` = new Feedback[TextInputLayout] {
-        override def feedback( view: TextInputLayout, errors: Option[Seq[String]] ) = {
+    implicit def `Feedback[TextInputLayout]`[V <: TextInputLayout] = new Feedback[V] {
+        override def feedback( view: V, errors: Option[Seq[String]] ) = {
             view.setError( errors.flatMap( _.headOption ).orNull )
         }
 
-        override def feedback( view: TextInputLayout ) = {
-            Option( view.getError ).map( errors ⇒ Seq( errors.toString ) )
-        }
+        override def feedback( view: V ) = Option( view.getError ).map( errors ⇒ Seq( errors.toString ) )
     }
 
-    implicit val `Feedback[EditText]` = new Feedback[EditText] {
-        override def feedback( view: EditText, errors: Option[Seq[String]] ) = {
-            view.getParent match {
-                case textInputLayout: TextInputLayout ⇒
-                    implicitly[Feedback[TextInputLayout]].feedback( textInputLayout, errors )
-                case _ ⇒
-                    view.setError( errors.flatMap( _.headOption ).orNull )
-            }
+    implicit def `Feedback[EditText]`[V <: EditText] = new Feedback[V] {
+        override def feedback( view: V, errors: Option[Seq[String]] ) = view.getParent match {
+            case textInputLayout: TextInputLayout ⇒
+                implicitly[Feedback[TextInputLayout]].feedback( textInputLayout, errors )
+            case _ ⇒
+                view.setError( errors.flatMap( _.headOption ).orNull )
         }
 
-        override def feedback( view: EditText ) = {
-            view.getParent match {
-                case textInputLayout: TextInputLayout ⇒
-                    implicitly[Feedback[TextInputLayout]].feedback( textInputLayout )
-                case _ ⇒ Option( view.getError ).map( errors ⇒ Seq( errors.toString ) )
-            }
+        override def feedback( view: V ) = view.getParent match {
+            case textInputLayout: TextInputLayout ⇒
+                implicitly[Feedback[TextInputLayout]].feedback( textInputLayout )
+            case _ ⇒ Option( view.getError ).map( errors ⇒ Seq( errors.toString ) )
         }
     }
 }

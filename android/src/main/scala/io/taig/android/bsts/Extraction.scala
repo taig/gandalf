@@ -5,55 +5,55 @@ import android.view.View
 import android.widget.AdapterView.INVALID_POSITION
 import android.widget._
 
-trait Extraction[-V <: View, T] {
+trait Extraction[V <: View, T] {
     def extract( view: V ): T
 }
 
 object Extraction {
-    implicit val `Extraction[AdapterView, Int]` = new Extraction[AdapterView[_], Int] {
-        override def extract( view: AdapterView[_] ) = view.getSelectedItemPosition
+    implicit def `Extraction[AdapterView, Int]`[V <: AdapterView[_]] = new Extraction[V, Int] {
+        override def extract( view: V ) = view.getSelectedItemPosition
     }
 
-    implicit val `Extraction[AdapterView, Option[Int]]` = new Extraction[AdapterView[_], Option[Int]] {
-        override def extract( view: AdapterView[_] ) = `Extraction[AdapterView, Int]`.extract( view ) match {
+    implicit def `Extraction[AdapterView, Option[Int]]`[V <: AdapterView[_]] = new Extraction[V, Option[Int]] {
+        override def extract( view: V ) = `Extraction[AdapterView, Int]`.extract( view ) match {
             case INVALID_POSITION ⇒ None
             case position         ⇒ Some( position )
         }
     }
 
-    implicit val `Extraction[CompoundButton, Boolean]` = new Extraction[CompoundButton, Boolean] {
-        override def extract( view: CompoundButton ) = view.isChecked
+    implicit def `Extraction[CompoundButton, Boolean]`[V <: CompoundButton] = new Extraction[V, Boolean] {
+        override def extract( view: V ) = view.isChecked
     }
 
-    implicit val `Extraction[RadioGroup, Int]` = new Extraction[RadioGroup, Int] {
-        override def extract( view: RadioGroup ) = view.getCheckedRadioButtonId
+    implicit def `Extraction[RadioGroup, Int]`[V <: RadioGroup] = new Extraction[V, Int] {
+        override def extract( view: V ) = view.getCheckedRadioButtonId
     }
 
-    implicit val `Extraction[RadioGroup, Option[Int]]` = new Extraction[RadioGroup, Option[Int]] {
-        override def extract( view: RadioGroup ) = `Extraction[RadioGroup, Int]`.extract( view ) match {
+    implicit def `Extraction[RadioGroup, Option[Int]]`[V <: RadioGroup] = new Extraction[V, Option[Int]] {
+        override def extract( view: V ) = `Extraction[RadioGroup, Int]`.extract( view ) match {
             case -1 ⇒ None
             case id ⇒ Some( id )
         }
     }
 
-    implicit val `Extraction[TextInputLayout, String]` = new Extraction[TextInputLayout, String] {
-        override def extract( view: TextInputLayout ) = {
+    implicit def `Extraction[TextInputLayout, String]`[V <: TextInputLayout] = new Extraction[V, String] {
+        override def extract( view: V ) = {
             `Extraction[TextView, String]`.extract( view.getEditText )
         }
     }
 
-    implicit val `Extraction[TextInputLayout, Option[String]]` = new Extraction[TextInputLayout, Option[String]] {
-        override def extract( view: TextInputLayout ) = {
+    implicit def `Extraction[TextInputLayout, Option[String]]`[V <: TextInputLayout] = new Extraction[V, Option[String]] {
+        override def extract( view: V ) = {
             `Extraction[TextView, Option[String]]`.extract( view.getEditText )
         }
     }
 
-    implicit val `Extraction[TextView, String]` = new Extraction[TextView, String] {
-        override def extract( view: TextView ) = view.getText.toString
+    implicit def `Extraction[TextView, String]`[V <: TextView] = new Extraction[V, String] {
+        override def extract( view: V ) = view.getText.toString
     }
 
-    implicit val `Extraction[TextView, Option[String]]`: Extraction[TextView, Option[String]] = new Extraction[TextView, Option[String]] {
-        override def extract( view: TextView ) = {
+    implicit def `Extraction[TextView, Option[String]]`[V <: TextView]: Extraction[V, Option[String]] = new Extraction[V, Option[String]] {
+        override def extract( view: V ) = {
             Some( `Extraction[TextView, String]`.extract( view ) ).filter( _.trim.nonEmpty )
         }
     }
