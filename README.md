@@ -6,4 +6,4 @@
 
 ## Installation
 
-`"io.taig.android" %% "better-safe-than-sorry" % "0.1.0"`
+`"io.taig.android" %% "better-safe-than-sorry" % "0.2.0"`
