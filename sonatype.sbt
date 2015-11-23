@@ -1,14 +1,14 @@
 val id = "bettersafethansorry"
 
-description := "Form validation for Scala on Android"
+description in ThisBuild := "Form validation for Scala on Android"
 
-homepage := Some( url( s"https://github.com/taig/$id" ) )
+homepage in ThisBuild := Some( url( s"https://github.com/taig/$id" ) )
 
-licenses := Seq( "MIT" -> url( s"https://raw.githubusercontent.com/taig/$id/master/LICENSE" ) )
+licenses in ThisBuild := Seq( "MIT" -> url( s"https://raw.githubusercontent.com/taig/$id/master/LICENSE" ) )
 
-organizationHomepage := Some( url( "http://taig.io" ) )
+organizationHomepage in ThisBuild := Some( url( "http://taig.io" ) )
 
-pomExtra := {
+pomExtra in ThisBuild := {
     <issueManagement>
         <url>https://github.com/taig/{id}/issues</url>
         <system>GitHub Issues</system>
@@ -23,13 +23,13 @@ pomExtra := {
     </developers>
 }
 
-pomIncludeRepository := { _ => false }
+pomIncludeRepository in ThisBuild := { _ => false }
 
-publishArtifact in Test := false
+publishArtifact in ThisBuild in Test := false
 
-publishMavenStyle := true
+publishMavenStyle in ThisBuild := true
 
-publishTo <<= version ( version => {
+publishTo in ThisBuild <<= version ( version => {
     val url = Some( "https://oss.sonatype.org/" )
 
     if( version.endsWith( "SNAPSHOT" ) ) {
@@ -40,7 +40,7 @@ publishTo <<= version ( version => {
     }
 } )
 
-scmInfo := Some(
+scmInfo in ThisBuild := Some(
     ScmInfo(
         url( s"https://github.com/taig/$id" ),
         s"scm:git:git://github.com/taig/$id.git",
@@ -48,6 +48,6 @@ scmInfo := Some(
     )
 )
 
-sonatypeProfileName := "io.taig"
+sonatypeProfileName in ThisBuild := "io.taig"
 
-startYear := Some( 2015 )
+startYear in ThisBuild := Some( 2015 )

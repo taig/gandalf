@@ -8,7 +8,7 @@ lazy val common = Seq(
         Nil
     ),
     scalaVersion := "2.11.7",
-    version := "0.1.0"
+    version := "0.2.0"
 )
 
 lazy val bsts = project.in( file( "." ) )
@@ -39,7 +39,7 @@ lazy val android = project.in( file( "android" ) )
             Nil
         ),
         libraryDependencies ++= (
-            "com.android.support" % "design" % "23.1.0" ::
+            "com.android.support" % "design" % "23.1.1" ::
             Nil
         ),
         organization += ".android"

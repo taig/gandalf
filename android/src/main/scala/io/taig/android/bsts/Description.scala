@@ -5,7 +5,7 @@ import android.view.View
 /**
  * Collection of all type classes that are necessary to make a view validatable
  */
-trait Description[-V <: View, T]
+trait Description[V <: View, T]
         extends Extraction[V, T]
         with Injection[V, T]
         with Event[V]
