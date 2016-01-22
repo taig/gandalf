@@ -1,25 +1,12 @@
-lazy val common = Seq(
-    name := "BetterSafeThanSorry",
-    normalizedName := "better-safe-than-sorry",
-    organization := "io.taig",
-    scalacOptions ++= (
-        "-deprecation" ::
-        "-feature" ::
-        Nil
-    ),
-    scalaVersion := "2.11.7",
-    version := "0.2.0"
-)
-
 lazy val bsts = project.in( file( "." ) )
-    .settings( common )
+    .settings( Settings.common )
     .settings(
         publishArtifact := false
     )
     .aggregate( core, android )
 
 lazy val core = project.in( file( "core" ) )
-    .settings( common )
+    .settings( Settings.common )
     .settings(
         exportJars := true,
         libraryDependencies ++= (
@@ -31,7 +18,7 @@ lazy val core = project.in( file( "core" ) )
     )
 
 lazy val android = project.in( file( "android" ) )
-    .settings( androidBuildAar ++ common )
+    .settings( androidBuildAar ++ Settings.common )
     .settings(
         javacOptions ++= (
             "-source" :: "1.7" ::
