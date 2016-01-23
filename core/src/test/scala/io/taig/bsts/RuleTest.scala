@@ -49,11 +49,11 @@ class RuleTest extends Suite {
     }
 
     it should "provide a report representation" in {
-        val min = ( length: Int ) ⇒ Rule[String, Int]( "min" )( _.length )( _ >= length ) { ( value, actual ) ⇒
+        def min( length: Int ) = Rule[String, Int]( "min" )( _.length )( _ >= length ) { ( value, actual ) ⇒
             "value" ->> value :: "expected" ->> length :: "actual" ->> actual :: HNil
         }
 
-        implicit val report = Report( min ) as { arguments ⇒
+        implicit val report = Report( min _ ) as { arguments ⇒
             s"Value too short, expected: ${arguments( "expected" )}, actual: ${arguments( "actual" )}"
         }
 
@@ -76,7 +76,7 @@ class RuleTest extends Suite {
         required.validate( "foo" ).toString shouldBe "Success"
         required.validate( "" ).toString shouldBe "Failure(required)"
 
-        val min = ( length: Int ) ⇒ Rule[String, Int]( "min" )( _.length )( _ >= length ) { ( value, actual ) ⇒
+        def min( length: Int ) = Rule[String, Int]( "min" )( _.length )( _ >= length ) { ( value, actual ) ⇒
             "value" ->> value :: "expected" ->> length :: "actual" ->> actual :: HNil
         }
 
