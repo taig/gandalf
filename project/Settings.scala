@@ -2,8 +2,6 @@ import sbt.Keys._
 
 object Settings {
     val common = Seq(
-        name := "BetterSafeThanSorry",
-        normalizedName := "better-safe-than-sorry",
         organization := "io.taig",
         scalacOptions ++= (
             "-deprecation" ::
