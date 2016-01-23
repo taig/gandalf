@@ -7,7 +7,7 @@ lazy val bsts = project.in( file( "." ) )
     )
     .aggregate( core, rules )
 
-lazy val core = project.in( file( "core" ) )
+lazy val core = project
     .settings( Settings.common )
     .settings(
         libraryDependencies ++= (
@@ -18,7 +18,7 @@ lazy val core = project.in( file( "core" ) )
         )
     )
 
-lazy val rules = project.in( file( "rules" ) )
+lazy val rules = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
