@@ -40,10 +40,12 @@ class RuleTest extends Suite {
     }
 
     "validate" should "yield a Validation" in {
-        val rule = Rule.empty[String]( "required" )( _.nonEmpty )
+        val required = Rule.empty[String]( "required" )( _.nonEmpty )
 
-        rule.validate( "" ) shouldBe a[Validation[_, _, _]]
-        rule.validate( "foo" ) shouldBe a[Validation[_, _, _]]
+        required.validate( "" ).isSuccess shouldBe false
+        required.validate( "" ).isFailure shouldBe true
+        required.validate( "foo" ).isSuccess shouldBe true
+        required.validate( "foo" ).isFailure shouldBe false
     }
 
     it should "provide a report representation" in {

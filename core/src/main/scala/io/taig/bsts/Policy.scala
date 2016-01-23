@@ -25,6 +25,10 @@ case class Policy[T, R <: HList]( rules: R ) {
 }
 
 object Policy {
+    def apply[I <: String, T, A <: HList]( rule: Rule[I, T, A] ): Policy[T, Rule[I, T, A] :: HNil] = {
+        Policy( rule :: HNil )
+    }
+
     object validate extends Poly1 {
         implicit def default[I <: String, T, A <: HList] = at[Rule[I, T, A]]( rule ⇒ rule( _: T ) )
     }
@@ -44,6 +48,17 @@ object Policy {
 
         override def raw: List[( String, List[Any] )] = {
             result.foldLeft( List.empty[( String, List[Any] )] )( Validation.raw )
+        }
+
+        override def toString = raw match {
+            case Nil ⇒ "Success"
+            case errors ⇒
+                val list = errors.map {
+                    case ( identifier, Nil )    ⇒ s"$identifier"
+                    case ( identifier, errors ) ⇒ s"($identifier, (${errors.mkString( ", " )}))"
+                }
+
+                s"Failures(${list.mkString( ", " )})"
         }
     }
 
