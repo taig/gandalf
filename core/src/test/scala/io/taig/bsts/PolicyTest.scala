@@ -103,4 +103,11 @@ class PolicyTest extends Suite {
 
         ( r1 combine r2 ) shouldBe Policy( r1 :: r2 :: HNil )
     }
+
+    it should "work with another policy" in {
+        val r1 = Rule.empty[String]( "required" )( _.nonEmpty )
+        val r2 = Rule.empty[String]( "notRequired" )( _.isEmpty )
+
+        ( Policy( r1 ) combine Policy( r2 ) ) shouldBe Policy( r1 :: r2 :: HNil )
+    }
 }

@@ -5,10 +5,10 @@ import shapeless._
 import shapeless.ops.hlist._
 
 case class Policy[T, R <: HList]( rules: R ) {
-    def combine[I <: String, A <: HList, O <: HList]( rule: Rule[I, T, A] )(
+    def combine[S <: HList]( policy: Policy[T, S] )(
         implicit
-        p: Prepend.Aux[R, Rule[I, T, A] :: HNil, O]
-    ): Policy[T, O] = Policy( rules :+ rule )
+        p: Prepend[R, S]
+    ): Policy[T, p.Out] = Policy( rules ++ policy.rules )
 
     def validate[O1 <: HList, O2 <: HList, O3 <: HList, O4 <: HList]( value: T )(
         implicit
