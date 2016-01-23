@@ -149,10 +149,9 @@ object Rule {
         override def raw: Option[( String, List[Any] )] = result.map( _.raw )
 
         override def toString = raw match {
-            case Some( ( identifier, Nil ) ) ⇒ s"Failure($identifier)"
-            case Some( ( identifier, arguments ) ) ⇒
-                s"Failure($identifier, (${arguments.mkString( ", " )}))"
-            case None ⇒ "Success"
+            case Some( ( identifier, Nil ) )       ⇒ s"Failure($identifier)"
+            case Some( ( identifier, arguments ) ) ⇒ s"Failure($identifier, (${arguments.mkString( ", " )}))"
+            case None                              ⇒ "Success"
         }
     }
 }

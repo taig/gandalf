@@ -53,12 +53,12 @@ object Policy {
         override def toString = raw match {
             case Nil ⇒ "Success"
             case errors ⇒
-                val list = errors.map {
+                val message = errors.map {
                     case ( identifier, Nil )    ⇒ s"$identifier"
                     case ( identifier, errors ) ⇒ s"($identifier, (${errors.mkString( ", " )}))"
-                }
+                } mkString ", "
 
-                s"Failures(${list.mkString( ", " )})"
+                s"Failures($message)"
         }
     }
 
