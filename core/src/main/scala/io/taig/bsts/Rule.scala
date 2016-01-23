@@ -7,9 +7,7 @@ import shapeless.ops.hlist.ToTraversable
 trait Rule[I <: String, T, A <: HList] {
     def apply( value: T ): Either[Error[I, A], T]
 
-    def validate( value: T ): Validation[Report[I, A], Option[String], Option[( String, List[Any] )]] = {
-        Rule.Validation( apply( value ).left.toOption )
-    }
+    def validate( value: T ): Rule.Validation[I, A] = Rule.Validation( apply( value ).left.toOption )
 
     def combine[J <: String, B <: HList]( rule: Rule[J, T, B] ): Policy[T, Rule[I, T, A] :: Rule[J, T, B] :: HNil] = {
         Policy( this :: rule :: HNil )
