@@ -1,13 +1,12 @@
 package io.taig.bsts
 
-import io.taig.bsts
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
 
-trait Rule[I <: String, T, A <: HList] {
-    def apply( value: T ): Either[Error[I, A], T]
+abstract class Rule[I <: String, T, A <: HList]( implicit w: Witness.Aux[I] ) {
+    def validate( value: T ): Validation[Error[I, A], T]
 
-    def validate( value: T ): Rule.Validation[I, A] = Rule.Validation( apply( value ).left.toOption )
+    override def toString: String = w.value
 }
 
 object Rule {
@@ -39,11 +38,7 @@ object Rule {
             implicit
             w:  Witness.Aux[I],
             tt: ToTraversable.Aux[HNil, List, Any]
-        ): Rule[I, T, HNil] = new Rule[I, T, HNil] {
-            override def apply( value: T ): Either[Error[I, HNil], T] = {
-                new Builder1[I, T]()( predicate )( _ ⇒ HNil: HNil ).apply( value )
-            }
-        }
+        ): Rule[I, T, HNil] = new Builder1[I, T]()( predicate )( _ ⇒ HNil: HNil )
     }
 
     /**
@@ -80,11 +75,7 @@ object Rule {
             implicit
             w:  Witness.Aux[I],
             tt: ToTraversable.Aux[A, List, Any]
-        ): Rule[I, T, A] = new Rule[I, T, A] {
-            override def apply( value: T ): Either[Error[I, A], T] = {
-                new Builder2[I, T, T]()( identity )( predicate )( ( value, _ ) ⇒ error( value ) ).apply( value )
-            }
-        }
+        ): Rule[I, T, A] = new Builder2[I, T, T]()( identity )( predicate )( ( value, _ ) ⇒ error( value ) )
     }
 
     /**
@@ -125,29 +116,14 @@ object Rule {
             w:  Witness.Aux[I],
             tt: ToTraversable.Aux[A, List, Any]
         ): Rule[I, T, A] = new Rule[I, T, A] {
-            override def apply( value: T ): Either[Error[I, A], T] = {
+            override def validate( value: T ): Validation[Error[I, A], T] = {
                 val computed = transformation( value )
 
                 predicate( computed ) match {
-                    case true  ⇒ Right( value )
-                    case false ⇒ Left( Error( error( value, computed ) ) )
+                    case true  ⇒ Success( value )
+                    case false ⇒ Failure( Error( error( value, computed ) ) )
                 }
             }
-        }
-    }
-
-    case class Validation[I <: String, A <: HList]( result: Option[Error[I, A]] )
-            extends bsts.Validation[Report[I, A], Option[String], Option[( String, List[Any] )]] {
-        override def isSuccess = result.isEmpty
-
-        override def report( implicit r: Report[I, A] ): Option[String] = result.map( _.report )
-
-        override def raw: Option[( String, List[Any] )] = result.map( _.raw )
-
-        override def toString = raw match {
-            case Some( ( identifier, Nil ) )       ⇒ s"Failure($identifier)"
-            case Some( ( identifier, arguments ) ) ⇒ s"Failure($identifier, (${arguments.mkString( ", " )}))"
-            case None                              ⇒ "Success"
         }
     }
 }

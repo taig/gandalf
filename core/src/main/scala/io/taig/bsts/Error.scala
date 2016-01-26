@@ -1,20 +1,26 @@
 package io.taig.bsts
 
+import io.taig.bsts.syntax.ErrorOps
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
+
+import scala.language.implicitConversions
 
 final case class Error[I <: String, A <: HList]( arguments: A )(
         implicit
         w:  Witness.Aux[I],
         tt: ToTraversable.Aux[A, List, Any]
-) extends Validation[Report[I, A], String, ( String, List[Any] )] {
-    override def isSuccess = false
+) {
+    def raw: ( String, List[Any] ) = ( w.value, arguments.toList )
 
-    override def report( implicit r: Report[I, A] ): String = r.report( this )
+    override def toString = {
+        val arguments = this.arguments.toList match {
+            case Nil       ⇒ ""
+            case arguments ⇒ s" (${arguments.mkString( ", " )})"
+        }
 
-    override def raw: ( String, List[Any] ) = ( w.value, arguments.toList )
-
-    override def toString = w.value + arguments.toList.mkString( " (", ", ", ")" )
+        w.value + arguments
+    }
 }
 
 object Error {
@@ -22,4 +28,6 @@ object Error {
         implicit
         tt: ToTraversable.Aux[A, List, Any]
     ): Error[identifier.type, A] = Error( arguments )( Witness.mkWitness( identifier ), tt )
+
+    implicit def syntax[I <: String, A <: HList]( error: Error[I, A] ): ErrorOps[I, A] = new ErrorOps[I, A]( error )
 }
