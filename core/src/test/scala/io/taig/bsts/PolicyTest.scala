@@ -77,10 +77,10 @@ class PolicyTest extends Suite {
     }
 
     "^" should "imitate a logical XOR" in {
-        ( rule.required || rule.min( 3 ) ).validate( "foo" ).isSuccess shouldBe false
-        ( rule.required || rule.min( 6 ) ).validate( "foo" ).isSuccess shouldBe true
-        ( rule.required || rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
-        ( rule.required || rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
+        ( rule.required ^ rule.min( 3 ) ).validate( "foo" ).isSuccess shouldBe false
+        ( rule.required ^ rule.min( 6 ) ).validate( "foo" ).isSuccess shouldBe true
+        ( rule.required ^ rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
+        ( rule.required ^ rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
     }
 
     it should "always evaluate the rhs" in {
