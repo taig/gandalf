@@ -50,7 +50,7 @@ class PolicyTest extends Suite {
         ( rule.required | rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
         ( rule.required | rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
     }
-    
+
     it should "always evaluate the rhs" in {
         intercept[IllegalStateException] {
             ( rule.required | rule.blow ).validate( "foo" )
@@ -67,7 +67,7 @@ class PolicyTest extends Suite {
         ( rule.required || rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
         ( rule.required || rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
     }
-    
+
     it should "only evaluate the rhs when lhs fails" in {
         ( rule.required || rule.blow ).validate( "foo" ).isSuccess shouldBe true
 
@@ -82,7 +82,7 @@ class PolicyTest extends Suite {
         ( rule.required || rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
         ( rule.required || rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
     }
-    
+
     it should "always evaluate the rhs" in {
         intercept[IllegalStateException] {
             ( rule.required ^ rule.blow ).validate( "foo" )

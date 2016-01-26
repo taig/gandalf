@@ -45,6 +45,7 @@ case class Policy[T, R <: HList]( rules: R )(
     ): Validation[Computed[ne.Out0], T] = {
         val values = ncm( value, rules )
         val zipped = nz( rules, values )
+
         ne( zipped ) match {
             case ( true, _ )     ⇒ Success( value )
             case ( false, tree ) ⇒ Failure( tree )
