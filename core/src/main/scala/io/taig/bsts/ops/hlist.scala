@@ -10,11 +10,11 @@ object hlist {
     object Printer extends Printer0 {
         def apply[L <: HList]( implicit printer: Printer[L] ): Printer[L] = printer
 
-        implicit def hnilPrinter[C]: Printer[HNil] = new Printer[HNil] {
+        implicit def hnil[C]: Printer[HNil] = new Printer[HNil] {
             override def apply( t: HNil ) = "HNil"
         }
 
-        implicit def nestedHlistPrinter[H <: HList, T <: HList](
+        implicit def recursion[H <: HList, T <: HList](
             implicit
             ph: Printer[H],
             pt: Printer[T]
@@ -24,7 +24,7 @@ object hlist {
     }
 
     trait Printer0 {
-        implicit def hconsPrinter[H, T <: HList](
+        implicit def hcons[H, T <: HList](
             implicit
             p: Printer[T]
         ): Printer[H :: T] = new Printer[H :: T] {
@@ -40,13 +40,13 @@ object hlist {
     object NestedConstMapper extends NestedConstMapper0 {
         def apply[C, L <: HList]( implicit mapper: NestedConstMapper[C, L] ): Aux[C, L, mapper.Out] = mapper
 
-        implicit def hnilNestedConstMapper[C]: Aux[C, HNil, HNil] = new NestedConstMapper[C, HNil] {
+        implicit def hnil[C]: Aux[C, HNil, HNil] = new NestedConstMapper[C, HNil] {
             type Out = HNil
 
             def apply( c: C, l: HNil ): Out = l
         }
 
-        implicit def nestedHlistNestedConstMapper[H <: HList, T <: HList, C](
+        implicit def recursion[H <: HList, T <: HList, C](
             implicit
             ncmh: NestedConstMapper[C, H],
             ncmt: NestedConstMapper[C, T]
@@ -60,7 +60,7 @@ object hlist {
     trait NestedConstMapper0 {
         type Aux[C, L <: HList, Out0 <: HList] = NestedConstMapper[C, L] { type Out = Out0 }
 
-        implicit def hlistNestedConstMapper[H, T <: HList, C](
+        implicit def hcons[H, T <: HList, C](
             implicit
             ncm: NestedConstMapper[C, T]
         ): Aux[C, H :: T, C :: ncm.Out] = new NestedConstMapper[C, H :: T] {
@@ -75,13 +75,13 @@ object hlist {
     object NestedZip extends NestedZip0 {
         def apply[A <: HList, B <: HList]( implicit zip: NestedZip[A, B] ): Aux[A, B, zip.Out] = zip
 
-        implicit def hnilNestedZip: Aux[HNil, HNil, HNil] = new NestedZip[HNil, HNil] {
+        implicit def hnil: Aux[HNil, HNil, HNil] = new NestedZip[HNil, HNil] {
             override type Out = HNil
 
             override def apply( a: HNil, b: HNil ): Out = HNil
         }
 
-        implicit def hlistNestedZip[H1 <: HList, T1 <: HList, H2 <: HList, T2 <: HList](
+        implicit def recursion[H1 <: HList, T1 <: HList, H2 <: HList, T2 <: HList](
             implicit
             nzh: NestedZip[H1, H2],
             nzt: NestedZip[T1, T2]
@@ -91,7 +91,7 @@ object hlist {
             override def apply( a: H1 :: T1, b: H2 :: T2 ): Out = nzh( a.head, b.head ) :: nzt( a.tail, b.tail )
         }
 
-        implicit def operatorNestedZip[O <: Operator, T1 <: HList, H2, T2 <: HList](
+        implicit def operator[O <: Operator, T1 <: HList, H2, T2 <: HList](
             implicit
             nz: NestedZip[T1, T2]
         ): Aux[O :: T1, H2 :: T2, O :: nz.Out] = new NestedZip[O :: T1, H2 :: T2] {
@@ -104,7 +104,7 @@ object hlist {
     trait NestedZip0 {
         type Aux[A <: HList, B <: HList, Out0 <: HList] = NestedZip[A, B] { type Out = Out0 }
 
-        implicit def hconsNestedZip[H1, T1 <: HList, H2, T2 <: HList](
+        implicit def hcons[H1, T1 <: HList, H2, T2 <: HList](
             implicit
             nz: NestedZip[T1, T2]
         ): Aux[H1 :: T1, H2 :: T2, ( H1, H2 ) :: nz.Out] = new NestedZip[H1 :: T1, H2 :: T2] {
@@ -184,7 +184,7 @@ object hlist {
         protected type Rule[I <: String, T, A <: HList] = ( bsts.Rule[I, T, A], T ) :: HNil
         protected type Validation[I <: String, T, A <: HList] = bsts.Validation[Error[I, A], T] :: HNil
 
-        implicit def recursive[H <: HList, T <: HList, O <: HList](
+        implicit def recursion[H <: HList, T <: HList, O <: HList](
             implicit
             neh: NestedEvaluation.Aux[H, O],
             p:   Printer[Computed[O] :: T]
