@@ -6,15 +6,15 @@ import shapeless.HList
 import scala.language.implicitConversions
 
 trait report {
-    implicit def errorSyntax[I <: String, A <: HList]( error: Error[I, A] ): ops.report[Error[I, A]] = {
+    implicit def errorReportSyntax[I <: String, A <: HList]( error: Error[I, A] ): ops.report[Error[I, A]] = {
         new ops.report( error )
     }
 
-    implicit def ruleFailureSyntax[I <: String, T, A <: HList]( failure: Failure[Error[I, A], T] ): ops.report[Failure[Error[I, A], T]] = {
+    implicit def ruleFailureReportSyntax[I <: String, T, A <: HList]( failure: Failure[Error[I, A], T] ): ops.report[Failure[Error[I, A], T]] = {
         new ops.report[Failure[Error[I, A], T]]( failure )
     }
 
-    implicit def policyFailureSyntax[C <: HList, T]( failure: Failure[Computed[C], T] ): ops.report[Failure[Computed[C], T]] = {
+    implicit def policyFailureReportSyntax[C <: HList, T]( failure: Failure[Computed[C], T] ): ops.report[Failure[Computed[C], T]] = {
         new ops.report[Failure[Computed[C], T]]( failure )
     }
 }

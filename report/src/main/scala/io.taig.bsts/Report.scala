@@ -37,24 +37,20 @@ object Report {
     implicit def `Report[Failure[Rule]]`[I <: String, T, A <: HList](
         implicit
         r: Report.Aux[Error[I, A], String]
-    ): Report.Aux[Failure[Error[I, A], T], String] = {
-        new Report[Failure[Error[I, A], T]] {
-            override type Out = String
+    ): Report.Aux[Failure[Error[I, A], T], String] = new Report[Failure[Error[I, A], T]] {
+        override type Out = String
 
-            override def report( failure: Failure[Error[I, A], T] ): Out = failure.value.report
-        }
+        override def report( failure: Failure[Error[I, A], T] ): Out = failure.value.report
     }
 
     implicit def `Report[Failure[Policy]]`[C <: HList, T](
         implicit
         lf: collect.F[C]
-    ): Report.Aux[Failure[Computed[C], T], lf.Out] = {
-        new Report[Failure[Computed[C], T]] {
-            override type Out = lf.Out
+    ): Report.Aux[Failure[Computed[C], T], lf.Out] = new Report[Failure[Computed[C], T]] {
+        override type Out = lf.Out
 
-            override def report( failure: Failure[Computed[C], T] ): Out = {
-                failure.value.tree.foldLeft( List.empty[String] )( collect )
-            }
+        override def report( failure: Failure[Computed[C], T] ): Out = {
+            failure.value.tree.foldLeft( List.empty[String] )( collect )
         }
     }
 

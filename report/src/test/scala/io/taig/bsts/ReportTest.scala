@@ -10,7 +10,7 @@ class ReportTest extends Suite {
         implicit val min = Report( rule.min _ ) as { args ⇒ s"Mindestens ${args( "expected" )} Zeichen" }
     }
 
-    "report" should "be available for Errors" in {
+    it should "be available for Errors" in {
         import report.required
 
         rule.required.validate( "" ) match {
@@ -23,8 +23,8 @@ class ReportTest extends Suite {
         import report.required
 
         rule.required.validate( "" ) match {
-            case Success( _ )     ⇒ fail()
-            case f @ Failure( _ ) ⇒ f.report shouldBe "Pflichtfeld"
+            case Success( _ )         ⇒ fail()
+            case f @ Failure( error ) ⇒ f.report shouldBe error.report
         }
     }
 

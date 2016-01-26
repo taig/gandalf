@@ -1,5 +1,6 @@
 package io.taig.bsts
 
+import io.taig.bsts.syntax.all._
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
 
@@ -10,15 +11,13 @@ final case class Error[I <: String, A <: HList]( arguments: A )(
         w:  Witness.Aux[I],
         tt: ToTraversable.Aux[A, List, Any]
 ) {
-    def raw: ( String, List[Any] ) = ( w.value, arguments.toList )
-
     override def toString = {
         val arguments = this.arguments.toList match {
             case Nil       ⇒ ""
-            case arguments ⇒ s" (${arguments.mkString( ", " )})"
+            case arguments ⇒ s", (${arguments.mkString( ", " )})"
         }
 
-        w.value + arguments
+        s"Error(${w.value}$arguments)"
     }
 }
 
