@@ -29,11 +29,16 @@ class ReportTest extends Suite {
     }
 
     it should "be available for Policy Failures" in {
-        import report.required
+        import report._
 
         Policy( rule.required ).validate( "" ) match {
             case Success( _ )     ⇒ fail()
             case f @ Failure( _ ) ⇒ f.report shouldBe List( "Pflichtfeld" )
+        }
+
+        ( rule.required & rule.min( 6 ) ).validate( "foo" ) match {
+            case Success( _ )     ⇒ fail()
+            case f @ Failure( _ ) ⇒ f.report shouldBe List( "Mindestens 6 Zeichen" )
         }
     }
 }
