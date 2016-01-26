@@ -1,9 +1,10 @@
 package io.taig.bsts.rules
 
 import io.taig.bsts.Rule
-import scala.Ordering.Implicits._
 import shapeless._
 import shapeless.syntax.singleton._
+
+import scala.Ordering.Implicits._
 
 trait numeric {
     def eq[N: Numeric]( size: N ) = Rule[N]( "eq" )( _ equiv size ) { "value" ->> _ :: HNil }
