@@ -3,19 +3,19 @@ lazy val bsts = project.in( file( "." ) )
     .settings(
         name := "BetterSafeThanSorry",
         normalizedName := "better-safe-than-sorry",
-        publishArtifact := false
+        publishArtifact := false,
+        testOptions in ThisBuild += Tests.Argument( "-oDF" )
     )
     .aggregate( core, rules )
 
 lazy val core = project
     .settings( Settings.common )
     .settings(
-        libraryDependencies ++= (
+        libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.2.5" ::
             "org.scalatest" %% "scalatest" % "3.0.0-M15" % "test" ::
             "org.scalacheck" %% "scalacheck" % "1.12.5" % "test" ::
             Nil
-        )
     )
 
 lazy val rules = project

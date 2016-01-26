@@ -9,12 +9,12 @@ sealed abstract class Operator( name: String ) {
 
 object Operator {
     sealed abstract class Unary( name: String ) extends Operator( name )
-    object ¬ extends Unary( "¬" )
+    case object ¬ extends Unary( "¬" )
 
     sealed abstract class Binary( name: String ) extends Operator( name )
-    object & extends Binary( "&" )
-    object && extends Binary( "&&" )
-    object | extends Binary( "|" )
-    object || extends Binary( "||" )
-    object ^ extends Binary( "^" )
+    case object & extends Binary( "&" )
+    case object && extends Binary( "&&" )
+    case object | extends Binary( "|" )
+    case object || extends Binary( "||" )
+    case object ^ extends Binary( "^" )
 }

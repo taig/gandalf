@@ -1,6 +1,5 @@
 package io.taig.bsts.ops
 
-import io.taig.bsts.Operator.&
 import io.taig.bsts._
 import io.taig.bsts
 import shapeless._
@@ -127,7 +126,7 @@ object hlist {
     object NestedEvaluation extends NestedEvaluation0 {
         def apply[L <: HList]( implicit ne: NestedEvaluation[L] ): Aux[L, ne.Out0] = ne
 
-        implicit def validateRule[I <: String, T, A <: HList] = {
+        implicit def rule[I <: String, T, A <: HList] = {
             new NestedEvaluation[Rule[I, T, A]] {
                 override type Out0 = Validation[I, T, A]
 
@@ -144,27 +143,48 @@ object hlist {
             nel: NestedEvaluation[L],
             ner: NestedEvaluation[R],
             pr:  Printer[R]
-        ) = {
+        ): Aux[L :: O :: R, Computed[nel.Out0] :: O :: Either[Unevaluated[R], Computed[ner.Out0]] :: HNil] = {
             new NestedEvaluation[L :: O :: R] {
                 override type Out0 = Computed[nel.Out0] :: O :: Either[Unevaluated[R], Computed[ner.Out0]] :: HNil
 
-                override def apply( tree: L :: O :: R ) = tree match {
-                    case l :: o :: r ⇒
-                        val ( s1, left ) = nel( l )
-
-                        if ( s1 ) {
-                            ( true, Computed( left :: o :: Left( Unevaluated( r ) ) :: HNil ) )
-                        } else {
-                            val ( s2, res ) = ner( r )
-                            ( s2, Computed( left :: o :: Right( res ) :: HNil ) )
+                override def apply( tree: L :: O :: R ): ( Boolean, Computed[Out0] ) = {
+                    val ( state, left, right ) = tree match {
+                        case l :: Operator.& :: r ⇒ ( nel( l ), ner( r ) ) match {
+                            case ( ( a, l ), ( b, r ) ) ⇒ ( a && b, l, Right( r ) )
                         }
+                        case l :: Operator.&& :: r ⇒ nel( l ) match {
+                            case ( false, l ) ⇒ ( false, l, Left( Unevaluated( r ) ) )
+                            case ( true, l ) ⇒ ner( r ) match {
+                                case ( a, r ) ⇒ ( a, l, Right( r ) )
+                            }
+                        }
+                        case l :: Operator.| :: r ⇒ ( nel( l ), ner( r ) ) match {
+                            case ( ( a, l ), ( b, r ) ) ⇒ ( a || b, l, Right( r ) )
+                        }
+                        case l :: Operator.|| :: r ⇒ nel( l ) match {
+                            case ( true, l ) ⇒ ( true, l, Left( Unevaluated( r ) ) )
+                            case ( false, l ) ⇒ ner( r ) match {
+                                case ( b, r ) ⇒ ( b, l, Right( r ) )
+                            }
+                        }
+                        case l :: Operator.^ :: r ⇒ ( nel( l ), ner( r ) ) match {
+                            case ( ( a, l ), ( b, r ) ) ⇒ ( a != b, l, Right( r ) )
+                        }
+                    }
+
+                    ( state, Computed( left :: tree.tail.head :: right :: HNil ) )
                 }
             }
         }
     }
 
-    trait NestedEvaluation0 extends NestedEvaluation1 {
-        implicit def stepIn[H <: HList, T <: HList, O <: HList](
+    trait NestedEvaluation0 {
+        type Aux[L <: HList, Out1 <: HList] = NestedEvaluation[L] { type Out0 = Out1 }
+
+        protected type Rule[I <: String, T, A <: HList] = ( bsts.Rule[I, T, A], T ) :: HNil
+        protected type Validation[I <: String, T, A <: HList] = bsts.Validation[Error[I, A], T] :: HNil
+
+        implicit def recursive[H <: HList, T <: HList, O <: HList](
             implicit
             neh: NestedEvaluation.Aux[H, O],
             p:   Printer[Computed[O] :: T]
@@ -178,14 +198,5 @@ object hlist {
                 }
             }
         }
-    }
-
-    trait NestedEvaluation1 {
-        type Aux[L <: HList, Out1 <: HList] = NestedEvaluation[L] { type Out0 = Out1 }
-
-        type Rule[I <: String, T, A <: HList] = ( bsts.Rule[I, T, A], T ) :: HNil
-        type Validation[I <: String, T, A <: HList] = bsts.Validation[Error[I, A], T] :: HNil
-
-        var indent = 0
     }
 }

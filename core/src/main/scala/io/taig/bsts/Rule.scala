@@ -4,9 +4,11 @@ import shapeless._
 import shapeless.ops.hlist.ToTraversable
 
 abstract class Rule[I <: String, T, A <: HList]( implicit w: Witness.Aux[I] ) {
+    def name: String = w.value
+
     def validate( value: T ): Validation[Error[I, A], T]
 
-    override def toString: String = w.value
+    override def toString = name
 }
 
 object Rule {

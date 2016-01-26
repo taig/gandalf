@@ -1,8 +1,5 @@
 package io.taig.bsts
 
-import shapeless._
-import io.taig.bsts.Policy._
-
 import scala.language.implicitConversions
 
 object Lab extends App {
@@ -18,5 +15,7 @@ object Lab extends App {
     println( Policy( r1 ).validate( "asdf" ) )
     println( ( r1 & r2 ).validate( "asdf" ) )
     println( ( ( r2 & r1 ) & ( r1 & r2 ) ).validate( "asdf" ) )
-    println( ( ( r1 & r2 ) & ( r3 & r4 ) ).validate( "asdf" ) )
+    println( ( ( r4 & r2 ) & ( r2 & r4 ) ).validate( "asdf" ) )
+    println( ( r1 && r2 ).validate( "asdf" ) )
+    println( ( r1 && r3 ).validate( "asdf" ) )
 }

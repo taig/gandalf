@@ -7,7 +7,7 @@ case class Policy[T, R <: HList]( rules: R )(
         implicit
         p: Printer[R]
 ) {
-    def combine[O <: Operator, S <: HList]( operator: O, policy: Policy[T, S] )(
+    private def combine[O <: Operator, S <: HList]( operator: O, policy: Policy[T, S] )(
         implicit
         p: Printer[Policy.C[R, O, S]]
     ): Policy[T, Policy.C[R, O, S]] = Policy( ( rules :: operator :: ( policy.rules :: HNil ) ) :: HNil )
