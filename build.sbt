@@ -6,7 +6,7 @@ lazy val bsts = project.in( file( "." ) )
         publishArtifact := false,
         testOptions in ThisBuild += Tests.Argument( "-oDF" )
     )
-    .aggregate( core, rules )
+    .aggregate( core, rules, report )
 
 lazy val core = project
     .settings( Settings.common )
@@ -18,11 +18,11 @@ lazy val core = project
             Nil
     )
 
-lazy val report = project
+lazy val rules = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
-lazy val rules = project
+lazy val report = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
