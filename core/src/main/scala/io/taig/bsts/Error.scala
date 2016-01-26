@@ -1,6 +1,5 @@
 package io.taig.bsts
 
-import io.taig.bsts.syntax.ErrorOps
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
 
@@ -28,6 +27,4 @@ object Error {
         implicit
         tt: ToTraversable.Aux[A, List, Any]
     ): Error[identifier.type, A] = Error( arguments )( Witness.mkWitness( identifier ), tt )
-
-    implicit def syntax[I <: String, A <: HList]( error: Error[I, A] ): ErrorOps[I, A] = new ErrorOps[I, A]( error )
 }

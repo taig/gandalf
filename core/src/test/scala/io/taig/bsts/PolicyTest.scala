@@ -50,7 +50,7 @@ class PolicyTest extends Suite {
         ( rule.required | rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
         ( rule.required | rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
     }
-
+    
     it should "always evaluate the rhs" in {
         intercept[IllegalStateException] {
             ( rule.required | rule.blow ).validate( "foo" )
@@ -61,7 +61,14 @@ class PolicyTest extends Suite {
         }
     }
 
-    "||" should "only evaluate the rhs when lhs fails" in {
+    "||" should "imitate a logical OR" in {
+        ( rule.required || rule.min( 3 ) ).validate( "foo" ).isSuccess shouldBe true
+        ( rule.required || rule.min( 6 ) ).validate( "foo" ).isSuccess shouldBe true
+        ( rule.required || rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
+        ( rule.required || rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
+    }
+    
+    it should "only evaluate the rhs when lhs fails" in {
         ( rule.required || rule.blow ).validate( "foo" ).isSuccess shouldBe true
 
         intercept[IllegalStateException] {
@@ -69,7 +76,14 @@ class PolicyTest extends Suite {
         }
     }
 
-    "^" should "always evaluate the rhs" in {
+    "^" should "imitate a logical XOR" in {
+        ( rule.required || rule.min( 3 ) ).validate( "foo" ).isSuccess shouldBe false
+        ( rule.required || rule.min( 6 ) ).validate( "foo" ).isSuccess shouldBe true
+        ( rule.required || rule.max( 3 ) ).validate( "" ).isSuccess shouldBe true
+        ( rule.required || rule.min( 6 ) ).validate( "" ).isSuccess shouldBe false
+    }
+    
+    it should "always evaluate the rhs" in {
         intercept[IllegalStateException] {
             ( rule.required ^ rule.blow ).validate( "foo" )
         }

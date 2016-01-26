@@ -18,6 +18,10 @@ lazy val core = project
             Nil
     )
 
+lazy val report = project
+    .settings( Settings.common )
+    .dependsOn( core % "compile->compile;test->test" )
+
 lazy val rules = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
