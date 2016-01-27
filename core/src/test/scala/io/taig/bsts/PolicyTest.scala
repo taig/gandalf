@@ -4,8 +4,14 @@ import shapeless._
 
 class PolicyTest extends Suite {
     it should "provide an implicit conversion from a Rule" in {
-        ( rule.required: Policy[String, Rule[Witness.`"required"`.T, String, HNil] :: HNil] ) shouldBe
-            Policy( rule.required )
+        ( rule.required: Policy[String, Rule[Witness.`"required"`.T, String, HNil] :: HNil] ) shouldBe Policy( rule.required )
+    }
+
+    it should "have a useful toString representation" in {
+        Policy( rule.required ).toString shouldBe "Policy(required)"
+        ( rule.required & rule.min( 3 ) ).toString shouldBe "Policy(required & min)"
+        ( rule.required & rule.min( 3 ) && rule.max( 6 ) ).toString shouldBe "Policy((required & min) && max)"
+        ( rule.required & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe "Policy(required & (min && max))"
     }
 
     "apply" should "allow to create a Policy from a single Rule" in {

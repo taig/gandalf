@@ -1,16 +1,16 @@
 package io.taig.bsts.ops
 
-import io.taig.bsts._
 import io.taig.bsts
+import io.taig.bsts._
 import shapeless._
 
 object hlist {
     trait Printer[L <: HList] extends DepFn1[L] with Serializable { type Out = String }
 
     object Printer extends Printer0 {
-        def apply[L <: HList]( implicit printer: Printer[L] ): Printer[L] = printer
+        def apply[L <: HList]( implicit p: Printer[L] ): Printer[L] = p
 
-        implicit def hnil[C]: Printer[HNil] = new Printer[HNil] {
+        implicit def hnil: Printer[HNil] = new Printer[HNil] {
             override def apply( t: HNil ) = "HNil"
         }
 
@@ -29,6 +29,79 @@ object hlist {
             p: Printer[T]
         ): Printer[H :: T] = new Printer[H :: T] {
             override def apply( t: H :: T ): Out = s"${t.head} :: ${p( t.tail )}"
+        }
+    }
+
+    trait LogicalExpressionTreePrinter[L <: HList] extends DepFn1[L] with Serializable { type Out = String }
+
+    object LogicalExpressionTreePrinter extends LogicalExpressionTreePrinter0 {
+        def apply[L <: HList]( implicit letp: LogicalExpressionTreePrinter[L] ): LogicalExpressionTreePrinter[L] = letp
+
+        implicit def hnil: LogicalExpressionTreePrinter[HNil] = new LogicalExpressionTreePrinter[HNil] {
+            override def apply( t: HNil ): Out = ""
+        }
+
+        implicit def operationSimple[L <: Rule[_, _, _], O <: Operator.Binary, R <: Rule[_, _, _]] = {
+            new LogicalExpressionTreePrinter[( L :: HNil ) :: O :: ( R :: HNil ) :: HNil] {
+                override def apply( tree: ( L :: HNil ) :: O :: ( R :: HNil ) :: HNil ) = tree match {
+                    case ( l :: HNil ) :: o :: ( r :: HNil ) :: HNil ⇒ s"$l $o $r"
+                }
+            }
+        }
+
+        implicit def operationLeft[L <: HList, O <: Operator.Binary, R <: Rule[_, _, _]](
+            implicit
+            letp: LogicalExpressionTreePrinter[L]
+        ) = {
+            new LogicalExpressionTreePrinter[L :: O :: ( R :: HNil ) :: HNil] {
+                override def apply( tree: L :: O :: ( R :: HNil ) :: HNil ) = tree match {
+                    case l :: o :: ( r :: HNil ) :: HNil ⇒ s"(${letp( l )}) $o $r"
+                }
+            }
+        }
+
+        implicit def operationRight[L <: Rule[_, _, _], O <: Operator.Binary, R <: HList](
+            implicit
+            letp: LogicalExpressionTreePrinter[R]
+        ) = {
+            new LogicalExpressionTreePrinter[( L :: HNil ) :: O :: R :: HNil] {
+                override def apply( tree: ( L :: HNil ) :: O :: R :: HNil ) = tree match {
+                    case ( l :: HNil ) :: o :: r :: HNil ⇒ s"$l $o (${letp( r )})"
+                }
+            }
+        }
+
+        implicit def operationDeep[L <: HList, O <: Operator.Binary, R <: HList](
+            implicit
+            letpl: LogicalExpressionTreePrinter[L],
+            letpr: LogicalExpressionTreePrinter[R]
+        ): LogicalExpressionTreePrinter[L :: O :: R] = {
+            new LogicalExpressionTreePrinter[L :: O :: R] {
+                override def apply( tree: L :: O :: R ) = tree match {
+                    case l :: o :: r ⇒ s"(${letpl( l )}) $o (${letpr( r )})"
+                }
+            }
+        }
+    }
+
+    trait LogicalExpressionTreePrinter0 extends LogicalExpressionTreePrinter1 {
+        implicit def recursion[L <: HList, R <: HList](
+            implicit
+            letpl: LogicalExpressionTreePrinter[L],
+            letpr: LogicalExpressionTreePrinter[R]
+        ): LogicalExpressionTreePrinter[L :: R] = new LogicalExpressionTreePrinter[L :: R] {
+            override def apply( tree: L :: R ) = s"${letpl( tree.head )}${letpr( tree.tail )}"
+        }
+    }
+
+    trait LogicalExpressionTreePrinter1 {
+        implicit def hcons[H, T <: HNil](
+            implicit
+            letp: LogicalExpressionTreePrinter[T]
+        ): LogicalExpressionTreePrinter[H :: T] = {
+            new LogicalExpressionTreePrinter[H :: T] {
+                override def apply( tree: H :: T ): Out = s"${tree.head}${letp( tree.tail )}"
+            }
         }
     }
 
