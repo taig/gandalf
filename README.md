@@ -9,26 +9,38 @@
 
 ## Modules
 
-### Core
+````
+"io.taig" %% "better-safe-than-sorry" % "0.3.0-SNAPSHOT"
+````
+
+**Core**
 
 Lorem Ipsum
 
-`"io.taig.bsts" %% "core" % "0.3.0"`
+````
+"io.taig.bsts" %% "core" % "0.3.0-SNAPSHOT"
+````
 
-### Rules
-
-Lorem Ipsum
-
-`"io.taig.bsts" %% "rules" % "0.3.0"`
-
-### Report
+**Rules**
 
 Lorem Ipsum
 
-`"io.taig.bsts" %% "report" % "0.3.0"`
+````
+"io.taig.bsts" %% "rules" % "0.3.0-SNAPSHOT"
+````
 
-### Android
+**Report**
 
 Lorem Ipsum
 
-`"io.taig.bsts" %% "android" % "0.3.0"`
+````
+"io.taig.bsts" %% "report" % "0.3.0-SNAPSHOT"
+````
+
+**Android**
+
+Lorem Ipsum
+
+````
+"io.taig.bsts" %% "android" % "0.3.0-SNAPSHOT"
+````
