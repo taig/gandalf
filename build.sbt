@@ -13,7 +13,7 @@ lazy val core = project
     .settings(
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.2.5" ::
-            "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
+            "org.scalatest" %% "scalatest" % "3.0.0-M15" % "test" ::
             Nil
     )
 
