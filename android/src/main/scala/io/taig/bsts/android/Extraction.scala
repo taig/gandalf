@@ -4,7 +4,7 @@ import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.{ CompoundButton, RadioGroup, TextView }
 
-trait Extraction[V <: View, +T] {
+trait Extraction[-V <: View, +T] {
     def extract( view: V ): T
 
     def map[U]( f: T ⇒ U ): Extraction[V, U] = Extraction.instance( view ⇒ f( extract( view ) ) )

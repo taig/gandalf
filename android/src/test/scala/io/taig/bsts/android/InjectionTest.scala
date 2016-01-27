@@ -9,7 +9,7 @@ import io.taig.bsts.android.syntax.value._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class InjectionTest extends Suite {
-    it should "inject Boolean into CompundButton" in {
+    it should "inject Boolean into CompoundButton" in {
         val view = new Switch( context )
         view.value = true
         view.isChecked shouldBe true
