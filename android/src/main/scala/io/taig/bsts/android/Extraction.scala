@@ -2,10 +2,7 @@ package io.taig.bsts.android
 
 import android.support.design.widget.TextInputLayout
 import android.view.View
-import android.widget.{ AdapterView, CompoundButton, RadioGroup, TextView }
-import android.widget.AdapterView.INVALID_POSITION
-
-import scala.language.reflectiveCalls
+import android.widget.{ CompoundButton, RadioGroup, TextView }
 
 trait Extraction[V <: View, +T] {
     def extract( view: V ): T
@@ -20,17 +17,6 @@ object Extraction {
 
     def instance[V <: View, T]( f: V ⇒ T ): Extraction[V, T] = new Extraction[V, T] {
         override def extract( view: V ): T = f( view )
-    }
-
-    implicit val `Extraction[AdapterView, Int]`: Extraction[AdapterView[_], Int] = {
-        instance( _.getSelectedItemPosition )
-    }
-
-    implicit val `Extraction[AdapterView, Option[Int]]`: Extraction[AdapterView[_], Option[Int]] = {
-        Extraction[AdapterView[_], Int].map {
-            case INVALID_POSITION ⇒ None
-            case position         ⇒ Some( position )
-        }
     }
 
     implicit val `Extraction[CompoundButton, Boolean]`: Extraction[CompoundButton, Boolean] = instance( _.isChecked )
@@ -60,5 +46,4 @@ object Extraction {
     implicit val `Extraction[TextInputLayout, Option[String]]`: Extraction[TextInputLayout, Option[String]] = {
         Extraction[TextView, Option[String]].contramap( _.getEditText )
     }
-
 }
