@@ -1,3 +1,5 @@
 package io.taig.bsts.syntax
 
-object all extends raw
+trait all extends raw
+
+object all extends all

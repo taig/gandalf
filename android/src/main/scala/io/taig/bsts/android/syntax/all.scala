@@ -1,4 +1,5 @@
 package io.taig.bsts.android.syntax
 
-object all
-    extends value
+trait all extends value
+
+object all extends all

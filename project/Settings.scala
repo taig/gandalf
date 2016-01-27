@@ -3,6 +3,7 @@ import sbt.Keys._
 
 object Settings {
     val common = Seq(
+        exportJars := true,
         javacOptions ++= (
             "-source" :: "1.7" ::
             "-target" :: "1.7" ::
