@@ -12,6 +12,8 @@ class PolicyTest extends Suite {
         ( rule.required & rule.min( 3 ) ).toString shouldBe "Policy(required & min)"
         ( rule.required & rule.min( 3 ) && rule.max( 6 ) ).toString shouldBe "Policy((required & min) && max)"
         ( rule.required & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe "Policy(required & (min && max))"
+        ( ( rule.required || rule.min( 3 ) ) & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe
+            "Policy((required || min) & (min && max))"
     }
 
     "apply" should "allow to create a Policy from a single Rule" in {

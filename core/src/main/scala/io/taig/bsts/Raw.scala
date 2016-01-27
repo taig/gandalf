@@ -71,11 +71,4 @@ object Raw {
             case ( errors, Left( Unevaluated( _ ) ) )  ⇒ errors
         }
     }
-
-    trait test extends Poly2 {
-        implicit def default[T] = at[List[( String, List[Any] )], T] { ( l, r ) ⇒
-            println( "lp: " + r )
-            l
-        }
-    }
 }

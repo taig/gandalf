@@ -58,10 +58,10 @@ case class Policy[T, R <: HList]( rules: R )(
 object Policy {
     type C[L <: HList, O <: Operator, R <: HList] = ( L :: O :: ( R :: HNil ) ) :: HNil
 
-    def ¬[T, R <: HList]( policy: Policy[T, R] )(
-        implicit
-        letp: LogicalExpressionTreePrinter[Operator.¬.type :: R :: HNil]
-    ): Policy[T, Operator.¬.type :: R :: HNil] = Policy( Operator.¬ :: policy.rules :: HNil )
+    //    def ¬[T, R <: HList]( policy: Policy[T, R] )(
+    //        implicit
+    //        letp: LogicalExpressionTreePrinter[Operator.¬.type :: R :: HNil]
+    //    ): Policy[T, Operator.¬.type :: R :: HNil] = Policy( Operator.¬ :: policy.rules :: HNil )
 
     def apply[I <: String, T, A <: HList]( rule: Rule[I, T, A] )(
         implicit

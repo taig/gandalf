@@ -16,9 +16,28 @@ class EvaluationTest extends Suite {
             ne( zipped )
         }
 
-        val ( _, computation ) = compute( "foobar", rule.required && rule.min( 8 ) )
-        computation.toString shouldBe
-            "Computed(Computed(Computed(Success(foobar) :: HNil) :: && :: " +
-            "Right(Computed(Computed(Failure(Error(min, (foobar, 8, 6))) :: HNil) :: HNil)) :: HNil) :: HNil)"
+        val ( _, computation ) = compute( "foobar", rule.required && rule.min( 3 ) | rule.max( 6 ) )
+        val expected =
+            """
+              |Computed(
+              |    Computed(
+              |        Computed(
+              |            Computed(
+              |                Computed(Success(foobar) :: HNil) :: 
+              |                && :: 
+              |                Right(Computed(Computed(Success(foobar) :: HNil) :: HNil)) :: 
+              |                HNil
+              |            ) :: 
+              |            HNil
+              |        ) :: 
+              |        | :: 
+              |        Right(Computed(Computed(Success(foobar) :: HNil) :: HNil)) :: 
+              |        HNil
+              |    ) :: 
+              |    HNil
+              |)
+            """.stripMargin.trim.split( "\n" ).map( _.replaceFirst( "^\\s+", "" ) ).mkString( "" )
+
+        computation.toString shouldBe expected
     }
 }

@@ -8,8 +8,8 @@ sealed abstract class Operator( name: String ) {
 }
 
 object Operator {
-    sealed abstract class Unary( name: String ) extends Operator( name )
-    case object ¬ extends Unary( "¬" )
+    //    sealed abstract class Unary( name: String ) extends Operator( name )
+    //    case object ¬ extends Unary( "¬" )
 
     sealed abstract class Binary( name: String ) extends Operator( name )
     case object & extends Binary( "&" )
