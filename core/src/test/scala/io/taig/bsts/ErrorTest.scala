@@ -6,5 +6,10 @@ class ErrorTest extends Suite {
             case Success( _ )     ⇒ fail()
             case Failure( error ) ⇒ error.toString shouldBe "Error(required)"
         }
+
+        rule.max( 3 ).validate( "foobar" ) match {
+            case Success( _ )     ⇒ fail()
+            case Failure( error ) ⇒ error.toString shouldBe "Error(max, (foobar, 3, 6))"
+        }
     }
 }
