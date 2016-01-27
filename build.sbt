@@ -3,10 +3,10 @@ lazy val bsts = project.in( file( "." ) )
     .settings(
         name := "BetterSafeThanSorry",
         normalizedName := "better-safe-than-sorry",
-        publishArtifact := false,
-        testOptions in ThisBuild += Tests.Argument( "-oDF" )
+        organization := "io.taig",
+        publishArtifact := false
     )
-    .aggregate( core, rules, report )
+    .aggregate( core, rules, report, android )
 
 lazy val core = project
     .settings( Settings.common )
@@ -26,28 +26,23 @@ lazy val report = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
-//lazy val android = project.in( file( "android" ) )
-//    .settings( androidBuildAar ++ Settings.common )
-//    .settings(
-//        javacOptions ++= (
-//            "-source" :: "1.7" ::
-//            "-target" :: "1.7" ::
-//            Nil
-//        ),
-//        libraryDependencies ++= (
-//            "com.android.support" % "design" % "23.1.1" ::
-//            Nil
-//        ),
-//        organization += ".android"
-//    )
-//    .settings(
-//        minSdkVersion := "7",
-//        platformTarget := "android-23",
-//        targetSdkVersion := "23",
-//        typedResources := false
-//    )
-//    .dependsOn( core )
-//
+lazy val android = project
+    .settings( buildWith( core, rules, report ) )
+    .settings( androidBuildAar ++ Settings.common )
+    .settings(
+        libraryDependencies ++= (
+            "com.android.support" % "design" % "23.1.1" ::
+            Nil
+        ),
+        organization += ".android"
+    )
+    .settings(
+        minSdkVersion := "7",
+        platformTarget := "android-23",
+        targetSdkVersion := "23",
+        typedResources := false
+    )
+
 //lazy val androidTest = flavorOf( android, "android-test" )
 //    .settings(
 //        fork in Test := true,
