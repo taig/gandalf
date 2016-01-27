@@ -33,4 +33,9 @@ class ValidationTest extends Suite {
             case Failure( _ )     ⇒ fail()
         }
     }
+
+    it should "should have a useful toString representation" in {
+        rule.required.validate( "" ).toString shouldBe "Failure(Error(required))"
+        rule.required.validate( "foo" ).toString shouldBe "Success(foo)"
+    }
 }
