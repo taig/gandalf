@@ -1,6 +1,7 @@
-package io.taig.bsts.syntax
+package io.taig.bsts.report.syntax
 
-import io.taig.bsts._
+import io.taig.bsts.{ Computed, Error, Failure }
+import io.taig.bsts.report._
 import shapeless.HList
 
 import scala.language.implicitConversions

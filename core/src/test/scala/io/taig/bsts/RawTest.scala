@@ -1,7 +1,6 @@
 package io.taig.bsts
 
-import io.taig.bsts.syntax.all._
-import shapeless.HList
+import io.taig.bsts.syntax.raw._
 
 class RawTest extends Suite {
     it should "be available for Errors" in {

@@ -1,8 +1,9 @@
-package io.taig.bsts
+package io.taig.bsts.report
 
+import io.taig.bsts._
+import io.taig.bsts.report.syntax.report._
 import shapeless._
 import shapeless.ops.function.FnToProduct
-import io.taig.bsts.syntax.all._
 import shapeless.ops.hlist.LeftFolder
 
 trait Report[T] {

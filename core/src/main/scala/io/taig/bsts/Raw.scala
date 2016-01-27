@@ -1,6 +1,5 @@
 package io.taig.bsts
 
-import export.{ imports, exports }
 import io.taig.bsts.syntax.raw._
 import shapeless.ops.hlist.{ LeftFolder, ToTraversable }
 import shapeless.{ Poly2, Witness, HList }
@@ -11,7 +10,6 @@ trait Raw[T] {
     def raw( context: T ): Out
 }
 
-@imports[Raw]
 object Raw {
     type Aux[T, Out0] = Raw[T] { type Out = Out0 }
 
