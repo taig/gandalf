@@ -34,14 +34,14 @@ lazy val android = project
             "com.android.support" % "design" % "23.1.1" ::
             Nil
         ),
-        organization += ".android"
-    )
-    .settings(
         minSdkVersion := "7",
+        organization += ".android",
+        packageForR := organization.value + ".resources",
         platformTarget := "android-23",
         targetSdkVersion := "23",
         typedResources := false
     )
+    .dependsOn( core, rules, report )
 
 //lazy val androidTest = flavorOf( android, "android-test" )
 //    .settings(
