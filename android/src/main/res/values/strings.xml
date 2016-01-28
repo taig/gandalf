@@ -5,7 +5,6 @@
     <string name="bsts_email">Not a valid email address</string>
     <string name="bsts_exactly">Exactly %1$d characters</string>
     <string name="bsts_matches">Does not match</string>
-    <string name="bsts_matches_target">Does not match %1$s</string>
     <string name="bsts_max">%1$d characters at max</string>
     <string name="bsts_min">At least %1$d characters</string>
     <string name="bsts_phone">Not a valid phone number</string>
