@@ -1,11 +1,10 @@
 package io.taig.bsts.android
 
 import android.os.Build.VERSION_CODES.LOLLIPOP
-import android.view.{ ViewGroup, View }
 import android.widget.AdapterView.INVALID_POSITION
 import android.widget._
-import org.robolectric.annotation.Config
 import io.taig.bsts.android.syntax.value._
+import org.robolectric.annotation.Config
 
 @Config( sdk = Array( LOLLIPOP ) )
 class InjectionTest extends Suite {

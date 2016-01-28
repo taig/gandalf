@@ -37,13 +37,14 @@ object Report {
 
     implicit def `Report[Failure[Rule]]`[I <: String, T, A <: HList](
         implicit
-        r: Report.Aux[Error[I, A], String]
-    ): Report.Aux[Failure[Error[I, A], T], String] = new Report[Failure[Error[I, A], T]] {
-        override type Out = String
+        r: Report[Error[I, A]]
+    ): Report.Aux[Failure[Error[I, A], T], r.Out] = new Report[Failure[Error[I, A], T]] {
+        override type Out = r.Out
 
         override def report( failure: Failure[Error[I, A], T] ): Out = failure.value.report
     }
 
+    // TODO dynamic output type???
     implicit def `Report[Failure[Policy]]`[C <: HList, T](
         implicit
         lf: collect.F[C]

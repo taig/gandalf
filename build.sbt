@@ -29,17 +29,20 @@ lazy val android = project
     .settings( androidBuildAar ++ Settings.common )
     .settings(
         fork in Test := true,
-        libraryDependencies ++= (
+        libraryDependencies ++=
             "com.android.support" % "design" % "23.1.1" ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
-            Nil
-        ),
+            Nil,
         minSdkVersion := "7",
         organization += ".android",
         packageForR := organization.value + ".resources",
         platformTarget := "android-23",
         targetSdkVersion := "23",
-        typedResources := false,
-        libraryProject in Test := false
+        typedResources := false
     )
     .dependsOn( core % "compile->compile;test->test", rules, report )
+
+lazy val androidTest = flavorOf( android, "android-test" )
+    .settings(
+        libraryProject := false
+    )
