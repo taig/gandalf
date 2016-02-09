@@ -2,11 +2,12 @@ package io.taig.bsts.android
 
 import android.content.Context
 import android.support.annotation.StringRes
+import io.taig.bsts.rules.ops.Required
 import io.taig.bsts.{ Rule, Error }
 import io.taig.bsts.android.resources.R
 import io.taig.bsts.report.Report
 import io.taig.bsts.rules.all._
-import shapeless.HList
+import shapeless.{ Witness, HNil, HList }
 import shapeless.record._
 
 import scala.language.implicitConversions
@@ -37,5 +38,13 @@ object reports {
 
     implicit def `Report[phone]`( implicit context: Context ) = report( phone, R.string.bsts_phone )
 
-    implicit def `Report[required]`( implicit context: Context ) = report( required, R.string.bsts_required )
+    implicit def `Report[required]`[T: Required]( implicit context: Context ) = {
+        new Report[Error[Witness.`"required"`.T, HNil]] {
+            override type Out = String
+
+            override def report( error: Error[Witness.`"required"`.T, HNil] ): Out = {
+                context.getString( R.string.bsts_exactly )
+            }
+        }
+    }
 }

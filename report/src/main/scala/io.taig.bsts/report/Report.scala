@@ -7,7 +7,7 @@ import shapeless._
 import shapeless.ops.function.FnToProduct
 import shapeless.ops.hlist.LeftFolder
 
-trait Report[T] {
+trait Report[-T] {
     type Out
 
     def report( context: T ): Out
@@ -16,25 +16,29 @@ trait Report[T] {
 object Report {
     type Aux[T, Out0] = Report[T] { type Out = Out0 }
 
-    def apply[N <: String, A <: HList]( rule: Rule[N, _, A] )( message: String ): Report.Aux[Error[N, A], String] = {
-        Report( _ ⇒ message )
-    }
-
-    def apply[N <: String, A <: HList]( transformation: Transformation[N, _, _, A] )( message: String ): Report.Aux[Error[N, A], String] = {
-        Report( _ ⇒ message )
-    }
-
     def apply[I <: String, A <: HList]( f: A ⇒ String ): Report.Aux[Error[I, A], String] = new Report[Error[I, A]] {
         override type Out = String
 
         override def report( error: Error[I, A] ): String = f( error.arguments )
     }
 
-    def apply[I <: String, A <: HList, F, L, R]( rule: F )(
+    def apply[N <: String, A <: HList](
+        rule: Rule[N, _, A]
+    )(
+        message: String
+    ): Report.Aux[Error[N, A], String] = Report( _ ⇒ message )
+
+    def apply[N <: String, A <: HList](
+        transformation: Transformation[N, _, _, A]
+    )(
+        message: String
+    ): Report.Aux[Error[N, A], String] = Report( _ ⇒ message )
+
+    def apply[N <: String, A <: HList, F, L, R]( rule: F )(
         implicit
         ftp: FnToProduct.Aux[F, L ⇒ R],
-        ev1: R <:< Rule[I, _, A]
-    ): Builder[I, A] = new Builder
+        ev1: R <:< Rule[N, _, A]
+    ): Builder[N, A] = new Builder
 
     class Builder[I <: String, A <: HList] {
         def as( f: A ⇒ String ): Report.Aux[Error[I, A], String] = Report( f )
