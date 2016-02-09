@@ -1,6 +1,7 @@
 lazy val bsts = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
+        aggregate in test := false,
         name := "BetterSafeThanSorry",
         normalizedName := "better-safe-than-sorry",
         organization := "io.taig",
@@ -29,10 +30,18 @@ lazy val report = project
 lazy val android = project
     .settings( androidBuildAar ++ Settings.common )
     .settings(
-        fork in Test := true,
+        buildTypes += (
+            "robolectric",
+            Seq(
+                fork in Test := true,
+                libraryDependencies ++=
+                    "com.geteit" %% "robotest" % "0.12" % "test" ::
+                    Nil,
+                libraryProject := false
+            )
+        ),
         libraryDependencies ++=
             "com.android.support" % "design" % "23.1.1" ::
-            "com.geteit" %% "robotest" % "0.12" % "test" ::
             Nil,
         minSdkVersion := "7",
         organization += ".android",
@@ -43,7 +52,4 @@ lazy val android = project
     )
     .dependsOn( core % "compile->compile;test->test", rules, report )
 
-lazy val androidTest = flavorOf( android, "android-test" )
-    .settings(
-        libraryProject := false
-    )
+addCommandAlias( "test", ";core/test;rules/test;report/test;variant robolectric;android/test" )
