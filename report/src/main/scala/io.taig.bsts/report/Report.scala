@@ -23,7 +23,7 @@ object Report {
         override def report( error: Error[I, A] ): String = f( error.arguments )
     }
 
-    def apply[I <: String, A <: HList]( rule: Rule[I, _, A] )(message: String ): Report.Aux[Error[I, A], String] = {
+    def apply[I <: String, A <: HList]( rule: Rule[I, _, A] )( message: String ): Report.Aux[Error[I, A], String] = {
         Report( _ ⇒ message )
     }
 
@@ -69,7 +69,7 @@ object Report {
             case ( errors, _ )                ⇒ errors
         }
 
-        implicit def operator[O <: Operator.Binary] = at[List[String], O]((errors, _ ) ⇒ errors )
+        implicit def operator[O <: Operator.Binary] = at[List[String], O]( ( errors, _ ) ⇒ errors )
 
         implicit def computed[L <: HList](
             implicit

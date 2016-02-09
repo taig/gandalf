@@ -12,7 +12,7 @@ import shapeless.record._
 import scala.language.implicitConversions
 
 object reports {
-    private def report[I <: String, A <: HList](rule: Validation[I, _, A], @StringRes message: Int )(
+    private def report[I <: String, A <: HList]( rule: Validation[I, _, A], @StringRes message: Int )(
         implicit
         context: Context
     ): Report.Aux[Error[I, A], String] = Report( rule )( context.getString( message ) )
