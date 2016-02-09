@@ -2,7 +2,7 @@ package io.taig.bsts
 
 import scala.util.Left
 
-class ValidationTest extends Suite {
+class ResultTest extends Suite {
     it should "provide an isSuccess check" in {
         val v1 = rule.required.validate( "" )
         val v2 = rule.required.validate( "foo" )
@@ -34,7 +34,7 @@ class ValidationTest extends Suite {
         }
     }
 
-    it should "should have a useful toString representation" in {
+    it should "should have a toString representation" in {
         rule.required.validate( "" ).toString shouldBe "Failure(Error(required))"
         rule.required.validate( "foo" ).toString shouldBe "Success(foo)"
     }

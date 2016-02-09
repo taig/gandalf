@@ -1,23 +1,26 @@
 package io.taig.bsts
 
 import shapeless._
+import io.taig.bsts.syntax.dsl._
 
 class PolicyTest extends Suite {
-    it should "provide an implicit conversion from a Rule" in {
-        ( rule.required: Policy[String, Rule[Witness.`"required"`.T, String, HNil] :: HNil] ) shouldBe Policy( rule.required )
-    }
+    it should "have a toString representation" in {
+        Policy.Rule( rule.required :: HNil ).toString shouldBe "Policy.Rule(required)"
+        Policy.Transformation( transformation.trim :: HNil ).toString shouldBe "Policy.Transformation(trim)"
 
-    it should "have a useful toString representation" in {
-        Policy( rule.required ).toString shouldBe "Policy(required)"
-        ( rule.required & rule.min( 3 ) ).toString shouldBe "Policy(required & min)"
-        ( rule.required & rule.min( 3 ) && rule.max( 6 ) ).toString shouldBe "Policy((required & min) && max)"
-        ( rule.required & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe "Policy(required & (min && max))"
+        ( rule.required & rule.min( 3 ) ).toString shouldBe "Policy.Rule(required & min)"
+        ( rule.required & rule.min( 3 ) && rule.max( 6 ) ).toString shouldBe "Policy.Rule((required & min) && max)"
+        ( rule.required & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe "Policy.Rule(required & (min && max))"
         ( ( rule.required || rule.min( 3 ) ) & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe
-            "Policy((required || min) & (min && max))"
+            "Policy.Rule((required || min) & (min && max))"
     }
 
     "apply" should "allow to create a Policy from a single Rule" in {
-        Policy( rule.required ) shouldBe Policy( rule.required :: HNil )
+        Policy( rule.required ) shouldBe Policy.Rule( rule.required :: HNil )
+    }
+
+    it should "allow to create a Policy from a single Transformation" in {
+        Policy( transformation.trim ) shouldBe Policy.Transformation( transformation.trim :: HNil )
     }
 
     "&" should "imitate a logical AND" in {

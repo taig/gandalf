@@ -3,11 +3,11 @@ package io.taig.bsts
 import io.taig.bsts.ops.hlist.Printer
 import shapeless.HList
 
-abstract class Evaluation[H <: HList]( implicit p: Printer[H] ) {
+abstract class Evaluation[H <: HList]( name: String )( implicit p: Printer[H] ) {
     def tree: H
 
-    override def toString = s"${getClass.getSimpleName}(${p( tree )})"
+    override def toString = s"$name(${p( tree )})"
 }
 
-case class Unevaluated[H <: HList]( tree: H )( implicit p: Printer[H] ) extends Evaluation[H]
-case class Computed[H <: HList]( tree: H )( implicit p: Printer[H] ) extends Evaluation[H]
+case class Unevaluated[H <: HList]( tree: H )( implicit p: Printer[H] ) extends Evaluation[H]( "Unevaluated" )
+case class Computed[H <: HList]( tree: H )( implicit p: Printer[H] ) extends Evaluation[H]( "Computed" )

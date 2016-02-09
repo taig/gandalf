@@ -1,6 +1,6 @@
 package io.taig.bsts
 
-import io.taig.bsts.syntax.raw._
+import io.taig.bsts.syntax.all._
 
 class RawTest extends Suite {
     it should "be available for Errors" in {
@@ -12,6 +12,13 @@ class RawTest extends Suite {
 
     it should "be available for Rule Failures" in {
         rule.required.validate( "" ) match {
+            case Success( _ )         ⇒ fail()
+            case f @ Failure( error ) ⇒ f.raw shouldBe error.raw
+        }
+    }
+
+    it should "be available for Transformation Failures" in {
+        transformation.parse.transform( "asdf" ) match {
             case Success( _ )         ⇒ fail()
             case f @ Failure( error ) ⇒ f.raw shouldBe error.raw
         }

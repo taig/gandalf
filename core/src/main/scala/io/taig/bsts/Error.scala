@@ -3,11 +3,9 @@ package io.taig.bsts
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
 
-import scala.language.implicitConversions
-
-final case class Error[I <: String, A <: HList]( arguments: A )(
+final case class Error[N <: String, A <: HList]( arguments: A )(
         implicit
-        w:  Witness.Aux[I],
+        w:  Witness.Aux[N],
         tt: ToTraversable.Aux[A, List, Any]
 ) {
     override def toString = {

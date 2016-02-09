@@ -3,127 +3,73 @@ package io.taig.bsts
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
 
-abstract class Rule[I <: String, T, A <: HList]( implicit w: Witness.Aux[I] ) {
+import scala.PartialFunction.condOpt
+
+abstract class Rule[N <: String, T, A <: HList]( implicit w: Witness.Aux[N] ) extends Validation[T, T] {
     def name: String = w.value
 
-    def validate( value: T ): Validation[Error[I, A], T]
+    final def validate( value: T ): Result[Error[N, A], T] = check( value ) match {
+        case None          ⇒ Success( value )
+        case Some( error ) ⇒ Failure( error )
+    }
+
+    protected def check( value: T ): Option[Error[N, A]]
 
     override def toString = name
 }
 
 object Rule {
-    /**
-     * Create a simple Rule where the input value can be validated without prior transformation and the list of
-     * supplied error arguments is empty
-     *
-     * Example:
-     * {{{
-     * val required = Rule[String]( "required" )( _.nonEmpty )
-     * }}}
-     *
-     * @param identifier Name of the rule
-     * @tparam T Input type to be validated
-     * @return [[io.taig.bsts.Rule.Builder0]] object which provides an <code>apply</code> method to finalize rule
-     *         creation
-     */
-    def empty[T]( identifier: String ): Builder0[identifier.type, T] = new Builder0
+    def apply[T]( name: String ): Builder1[name.type, T] = new Builder1[name.type, T]()( Witness.mkWitness( name ) )
 
-    class Builder0[I <: String, T] {
-        /**
-         * Lorem Ipsum
-         *
-         * @param predicate Function to validate the input value
-         * @param w
-         * @return
-         */
-        def apply( predicate: T ⇒ Boolean )(
-            implicit
-            w:  Witness.Aux[I],
-            tt: ToTraversable.Aux[HNil, List, Any]
-        ): Rule[I, T, HNil] = new Builder1[I, T]()( predicate )( _ ⇒ HNil: HNil )
+    trait Chain1[N <: String, T] {
+        def apply[A <: HList]( args: T ⇒ A )( implicit tt: ToTraversable.Aux[A, List, Any] ): Rule[N, T, A]
     }
 
-    /**
-     * Create a simple Rule where the input value can be validated without prior transformation
-     *
-     * Example:
-     * {{{
-     * def match[T]( compare: T ) = Rule[T]( "match" )( _ == compare ) { value ⇒
-     *     "expected" ->> expected :: "actual" ->> value :: HNil )
-     * }
-     * }}}
-     *
-     * @param identifier Name of the rule
-     * @tparam T Input type to be validated
-     * @return [[io.taig.bsts.Rule.Builder1]] object which provides an <code>apply</code> method to finalize rule
-     *         creation
-     */
-    def apply[T]( identifier: String ): Builder1[identifier.type, T] = new Builder1()
+    class Builder1[N <: String, T]( implicit w: Witness.Aux[N] ) {
+        def apply( predicate: T ⇒ Boolean ): Rule[N, T, HNil] with Chain1[N, T] = {
+            new Rule[N, T, HNil] with Chain1[N, T] {
+                override def check( value: T ): Option[Error[N, HNil]] = {
+                    condOpt( predicate( value ) ) { case false ⇒ Error( HNil: HNil ) }
+                }
 
-    /**
-     * Apply method helper to avoid specifying the Arguments type explicitly
-     */
-    class Builder1[I <: String, T] {
-        /**
-         * Lorem Ipsum
-         *
-         * @param predicate Function to validate the input value
-         * @param error
-         * @param w
-         * @tparam A
-         * @return
-         */
-        def apply[A <: HList]( predicate: T ⇒ Boolean )( error: T ⇒ A )(
-            implicit
-            w:  Witness.Aux[I],
-            tt: ToTraversable.Aux[A, List, Any]
-        ): Rule[I, T, A] = new Builder2[I, T, T]()( identity )( predicate )( ( value, _ ) ⇒ error( value ) )
+                override def apply[H <: HList]( args: T ⇒ H )(
+                    implicit
+                    tt: ToTraversable.Aux[H, List, Any]
+                ): Rule[N, T, H] = new Rule[N, T, H] {
+                    override def check( value: T ): Option[Error[N, H]] = {
+                        condOpt( predicate( value ) ) { case false ⇒ Error( args( value ) ) }
+                    }
+                }
+            }
+        }
     }
 
-    /**
-     * Create a Rule where the input value needs to be transformed before validation
-     *
-     * Example:
-     * {{{
-     * def min( length: Int ) = Rule[String, Int]( "min" )( _.length )( _ <= length ) { ( value, actual ) ⇒
-     *     "value" ->> value :: "expected" ->> length :: "actual" ->> actual :: HNil
-     * }
-     * }}}
-     *
-     * @param identifier Name of the rule
-     * @tparam T Input type to be validated
-     * @tparam S Transformation type
-     * @return [[io.taig.bsts.Rule.Builder2]] object which provides an <code>apply</code> method to finalize rule
-     *         creation
-     */
-    def apply[T, S]( identifier: String ): Builder2[identifier.type, T, S] = new Builder2
+    def apply[T, U]( name: String )( transformation: T ⇒ U ) = {
+        new Builder2[name.type, T, U]( transformation )( Witness.mkWitness( name ) )
+    }
 
-    /**
-     * Apply method helper to avoid specifying the Arguments type explicitly
-     */
-    class Builder2[I <: String, T, S] {
-        /**
-         * Lorem Ipsum
-         *
-         * @param transformation Function to transform the input value to value that matters for validation (e.g.
-         *                       getting the length of a String)
-         * @param predicate      Function to validate the input value
-         * @param error
-         * @param w
-         * @tparam A
-         * @return
-         */
-        def apply[A <: HList]( transformation: T ⇒ S )( predicate: S ⇒ Boolean )( error: ( T, S ) ⇒ A )(
-            implicit
-            w:  Witness.Aux[I],
-            tt: ToTraversable.Aux[A, List, Any]
-        ): Rule[I, T, A] = new Rule[I, T, A] {
-            override def validate( value: T ): Validation[Error[I, A], T] = {
-                val computed = transformation( value )
+    trait Chain2[N <: String, T, U] {
+        def apply[A <: HList]( args: ( T, U ) ⇒ A )( implicit tt: ToTraversable.Aux[A, List, Any] ): Rule[N, T, A]
+    }
 
-                predicate( computed ) match {
-                    case true  ⇒ Success( value )
-                    case false ⇒ Failure( Error( error( value, computed ) ) )
+    class Builder2[N <: String, T, U]( transformation: T ⇒ U )( implicit w: Witness.Aux[N] ) {
+        def apply( predicate: U ⇒ Boolean ): Rule[N, T, HNil] with Chain2[N, T, U] = {
+            new Rule[N, T, HNil] with Chain2[N, T, U] {
+                override def check( value: T ): Option[Error[N, HNil]] = {
+                    condOpt( predicate( transformation( value ) ) ) { case false ⇒ Error( HNil: HNil ) }
+                }
+
+                override def apply[H <: HList]( args: ( T, U ) ⇒ H )(
+                    implicit
+                    tt: ToTraversable.Aux[H, List, Any]
+                ): Rule[N, T, H] = new Rule[N, T, H] {
+                    override def check( value: T ): Option[Error[N, H]] = {
+                        val transformed = transformation( value )
+
+                        condOpt( predicate( transformed ) ) {
+                            case false ⇒ Error( args( value, transformed ) )
+                        }
+                    }
                 }
             }
         }

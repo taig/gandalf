@@ -2,7 +2,7 @@ package io.taig.bsts.android
 
 import android.content.Context
 import android.support.annotation.StringRes
-import io.taig.bsts.{ Error, Rule }
+import io.taig.bsts.{ Error, Validation$ }
 import io.taig.bsts.android.resources.R
 import io.taig.bsts.report.Report
 import io.taig.bsts.rules.all._
@@ -12,7 +12,7 @@ import shapeless.record._
 import scala.language.implicitConversions
 
 object reports {
-    private def report[I <: String, A <: HList]( rule: Rule[I, _, A], @StringRes message: Int )(
+    private def report[I <: String, A <: HList](rule: Validation[I, _, A], @StringRes message: Int )(
         implicit
         context: Context
     ): Report.Aux[Error[I, A], String] = Report( rule )( context.getString( message ) )

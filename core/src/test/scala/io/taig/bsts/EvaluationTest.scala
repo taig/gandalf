@@ -1,38 +1,29 @@
 package io.taig.bsts
 
-import io.taig.bsts.ops.hlist.{ NestedEvaluation, NestedZip, NestedConstMapper }
+import io.taig.bsts.ops.hlist.NestedEvaluation
+import io.taig.bsts.syntax.dsl._
 import shapeless._
 
 class EvaluationTest extends Suite {
-    it should "have a useful toString representation" in {
-        def compute[T, R <: HList, NCM <: HList, NZ <: HList]( value: T, policy: Policy[T, R] )(
+    it should "have a toString representation" in {
+        def compute[T, R <: HList]( value: T, policy: Policy[T, T, R] )(
             implicit
-            ncm: NestedConstMapper.Aux[T, R, NCM],
-            nz:  NestedZip.Aux[R, NCM, NZ],
-            ne:  NestedEvaluation[NZ]
-        ) = {
-            val values = ncm( value, policy.rules )
-            val zipped = nz( policy.rules, values )
-            ne( zipped )
-        }
+            ne: NestedEvaluation[T, T, R]
+        ) = ne( value, policy.validations )
 
-        val ( _, computation ) = compute( "foobar", rule.required && rule.min( 3 ) | rule.max( 6 ) )
+        val ( _, computation ) = compute( "foobar", rule.required && rule.min( 3 ) && rule.max( 6 ) )
         val expected =
             """
               |Computed(
               |    Computed(
-              |        Computed(
-              |            Computed(
-              |                Computed(Success(foobar) :: HNil) :: 
-              |                && :: 
-              |                Right(Computed(Computed(Success(foobar) :: HNil) :: HNil)) :: 
-              |                HNil
-              |            ) :: 
-              |            HNil
-              |        ) :: 
-              |        | :: 
-              |        Right(Computed(Computed(Success(foobar) :: HNil) :: HNil)) :: 
+              |        Computed(Success(foobar) :: HNil) :: 
+              |        && :: 
+              |        Computed(Computed(Success(foobar) :: HNil) :: Computed(HNil) :: HNil) :: 
               |        HNil
+              |    ) :: 
+              |    && :: 
+              |    Computed(
+              |        Computed(Success(foobar) :: HNil) :: Computed(HNil) :: HNil
               |    ) :: 
               |    HNil
               |)

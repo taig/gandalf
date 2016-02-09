@@ -1,6 +1,8 @@
 package io.taig.bsts.report
 
 import io.taig.bsts._
+import io.taig.bsts.ops.dsl.operator$
+import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.report.syntax.report._
 import shapeless._
 import shapeless.ops.function.FnToProduct
@@ -21,7 +23,7 @@ object Report {
         override def report( error: Error[I, A] ): String = f( error.arguments )
     }
 
-    def apply[I <: String, A <: HList]( rule: Rule[I, _, A] )( message: String ): Report.Aux[Error[I, A], String] = {
+    def apply[I <: String, A <: HList]( rule: Rule[I, _, A] )(message: String ): Report.Aux[Error[I, A], String] = {
         Report( _ ⇒ message )
     }
 
@@ -62,12 +64,12 @@ object Report {
         implicit def validation[I <: String, T, A <: HList](
             implicit
             r: Report.Aux[Error[I, A], String]
-        ) = at[List[String], Validation[Error[I, A], T]] {
+        ) = at[List[String], Result[Error[I, A], T]] {
             case ( errors, Failure( error ) ) ⇒ errors :+ error.report
             case ( errors, _ )                ⇒ errors
         }
 
-        implicit def operator[O <: Operator.Binary] = at[List[String], O]( ( errors, _ ) ⇒ errors )
+        implicit def operator[O <: Operator.Binary] = at[List[String], O]((errors, _ ) ⇒ errors )
 
         implicit def computed[L <: HList](
             implicit

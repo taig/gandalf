@@ -1,4 +1,4 @@
-addSbtPlugin( "com.hanhuy.sbt" % "android-sdk-plugin" % "1.5.14" )
+addSbtPlugin( "com.hanhuy.sbt" % "android-sdk-plugin" % "1.5.16" )
 
 addSbtPlugin( "com.jsuereth" % "sbt-pgp" % "1.0.0" )
 
