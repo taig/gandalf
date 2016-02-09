@@ -34,8 +34,7 @@ lazy val android = project
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             Nil,
         minSdkVersion := "7",
-        organization += ".android",
-        packageForR := organization.value + ".resources",
+        packageForR := organization.value + ".android.resources",
         platformTarget := "android-23",
         targetSdkVersion := "23",
         test := {},
