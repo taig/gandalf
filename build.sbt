@@ -31,6 +31,7 @@ lazy val android = project
     .settings(
         libraryDependencies ++=
             "com.android.support" % "design" % "23.1.1" ::
+            "com.geteit" %% "robotest" % "0.12" % "test" ::
             Nil,
         minSdkVersion := "7",
         organization += ".android",

@@ -1,6 +1,5 @@
 package io.taig.bsts.ops.hlist
 
-import io.taig.bsts.Rule.Chain1
 import io.taig.bsts._
 import io.taig.bsts.ops.dsl.Operator
 import shapeless._
@@ -66,6 +65,10 @@ object NestedEvaluation extends NestedEvaluation0 {
                 }
         }
     }
+}
+
+trait NestedEvaluation0 {
+    type Aux[I, O, L <: HList, O0 <: HList] = NestedEvaluation[I, O, L] { type Out0 = O0 }
 
     implicit def operationR[T, L <: HList, OP <: Operator.Binary, R <: HList](
         implicit
@@ -111,11 +114,6 @@ object NestedEvaluation extends NestedEvaluation0 {
         }
     }
 
-}
-
-trait NestedEvaluation0 {
-    type Aux[I, O, L <: HList, O0 <: HList] = NestedEvaluation[I, O, L] { type Out0 = O0 }
-
     implicit def recursion[I, O, P, H <: HList, T <: HList](
         implicit
         neh: NestedEvaluation[I, O, H],
@@ -133,20 +131,6 @@ trait NestedEvaluation0 {
                 }
                 case ( None, lhs ) ⇒ ( None, Computed( lhs :: Coproduct[C]( Unevaluated( tail ) ) :: HNil ) )
             }
-        }
-    }
-}
-
-trait Yolo {
-    implicit def yolo[I, O, L <: HList](
-        implicit
-        p: Printer[L]
-    ) = new NestedEvaluation[I, O, L] {
-        override type Out0 = L
-
-        override def apply( t: I, u: L ) = {
-            println( "Yolor: " + u )
-            ( None, Computed( u ) )
         }
     }
 }

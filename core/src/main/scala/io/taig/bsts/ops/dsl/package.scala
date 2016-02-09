@@ -163,6 +163,7 @@ package object dsl {
 
         c.Expr[Validation[I, P]] {
             q"""
+            import io.taig.bsts._
             import shapeless._
             $expr
             """

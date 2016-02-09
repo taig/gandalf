@@ -5,20 +5,17 @@ sealed abstract class Operator( name: String ) {
 }
 
 object Operator {
-    sealed trait Rule
-    sealed trait Transformation
-
     sealed abstract class Binary( name: String ) extends Operator( name )
 
-    case object & extends Binary( "&" ) with Rule
-    case object && extends Binary( "&&" ) with Rule
-    case object | extends Binary( "|" ) with Rule
-    case object || extends Binary( "||" ) with Rule
-    case object ^ extends Binary( "^" ) with Rule
+    case object & extends Binary( "&" )
+    case object && extends Binary( "&&" )
+    case object | extends Binary( "|" )
+    case object || extends Binary( "||" )
+    case object ^ extends Binary( "^" )
 
-    case object ~> extends Binary( "~>" ) with Transformation
+    case object ~> extends Binary( "~>" )
 
     sealed abstract class Unary( name: String ) extends Operator( name )
 
-    case object ! extends Unary( "!" ) with Rule
+    case object ! extends Unary( "!" )
 }

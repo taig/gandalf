@@ -1,11 +1,20 @@
 package io.taig.bsts.syntax
 
 import io.taig.bsts._
-import shapeless.HList
+import io.taig.bsts.ops
+import shapeless._
 
 import scala.language.implicitConversions
 
 trait dsl {
+    implicit def `Rule -> Policy`[N <: String, T, A <: HList](
+        rule: Rule[N, T, A]
+    ): Policy.Rule[T, Rule[N, T, A] :: HNil] = Policy( rule )
+
+    implicit def `Transformation -> Policy`[N <: String, I, O, A <: HList](
+        transformation: Transformation[N, I, O, A]
+    ): Policy.Transformation[I, O, Transformation[N, I, O, A] :: HNil] = Policy( transformation )
+
     implicit def policyRuleSyntax[T, R <: HList](
         policy: Policy.Rule[T, R]
     ): ops.dsl.rule[T, Policy.Rule[T, R]] = new ops.dsl.rule( policy )

@@ -30,6 +30,8 @@ trait Suite
         val trim = Transformation[String, String]( "trim" )( string ⇒ Some( string.trim ) )
 
         val parse = Transformation[String, Int]( "parse" )( string ⇒ Try( string.toInt ).toOption )
+
+        def identity[T] = Transformation[T, T]( "identity" ) from Predef.identity
     }
 
     override def beforeAll() = {
