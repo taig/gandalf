@@ -14,8 +14,8 @@ class TransformationTest extends Suite {
         val transformation = builder( string ⇒ Try( string.toInt ).toOption )
 
         transformation shouldBe a[Transformation[_, _, _, _]]
-        transformation.transform( "5" ).isSuccess shouldBe true
-        transformation.transform( "foo" ).isSuccess shouldBe false
+        transformation.validate( "5" ).isSuccess shouldBe true
+        transformation.validate( "foo" ).isSuccess shouldBe false
     }
 
     it should "allow to create transformations with validation arguments" in {
@@ -28,18 +28,18 @@ class TransformationTest extends Suite {
         }
 
         transformation shouldBe a[Transformation[_, _, _, _]]
-        transformation.transform( "5" ).isSuccess shouldBe true
-        transformation.transform( "foo" ).isSuccess shouldBe false
+        transformation.validate( "5" ).isSuccess shouldBe true
+        transformation.validate( "foo" ).isSuccess shouldBe false
     }
 
     it should "allow to create a transformation from a function" in {
         val transformation = Transformation[String, Int]( "parse" ) from ( _.toInt )
 
         transformation shouldBe a[Transformation[_, _, _, _]]
-        transformation.transform( "5" ).isSuccess shouldBe true
+        transformation.validate( "5" ).isSuccess shouldBe true
 
         intercept[NumberFormatException] {
-            transformation.transform( "foo" ).isSuccess shouldBe false
+            transformation.validate( "foo" ).isSuccess shouldBe false
         }
     }
 }

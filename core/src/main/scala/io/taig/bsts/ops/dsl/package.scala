@@ -6,7 +6,7 @@ import scala.annotation.StaticAnnotation
 import scala.reflect.macros.whitebox
 
 package object dsl {
-    class operator[O <: Operator.Binary]( operator: O ) extends StaticAnnotation
+    class argument[O <: Operator.Binary]( operator: O ) extends StaticAnnotation
 
     def impl[A: c.WeakTypeTag, I: c.WeakTypeTag, O: c.WeakTypeTag, P: c.WeakTypeTag]( c: whitebox.Context )(
         b: c.Expr[Validation[I, O]]
@@ -22,70 +22,46 @@ package object dsl {
                 case _ if a.actualType <:< weakTypeOf[Transformation[_, I, O, _]]
                     && b.actualType <:< weakTypeOf[Rule[_, I, _]] ⇒
                     q"""
-                    new Policy.Transformation[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[P]},
-                        ( ${weakTypeOf[A]} :: HNil ) :: ${o.actualType} :: ( ${b.actualType} :: HNil ) :: HNil
-                    ](
+                    new Policy.Transformation(
                         ( $a :: HNil ) :: $o :: ( $b :: HNil ) :: HNil
                     )"""
                 // rule ~> transformation
                 case _ if a.actualType <:< weakTypeOf[Rule[_, I, _]] &&
                     b.actualType <:< weakTypeOf[Transformation[_, I, O, _]] ⇒
                     q"""
-                    new Policy.Transformation[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[P]},
-                        ( ${weakTypeOf[A]} :: HNil ) :: ${o.actualType} :: ( ${b.actualType} :: HNil ) :: HNil
-                    ](
+                    new Policy.Transformation(
                         ( $a :: HNil ) :: $o :: ( $b :: HNil ) :: HNil
                     )"""
                 // transformation ~> transformation
                 case _ if a.actualType <:< weakTypeOf[Transformation[_, I, O, _]] &&
                     b.actualType <:< weakTypeOf[Transformation[_, O, P, _]] ⇒
                     q"""
-                    new Policy.Transformation[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[P]},
-                        ( ${weakTypeOf[A]} :: HNil ) :: ${o.actualType} :: ( ${b.actualType} :: HNil ) :: HNil
-                    ](
+                    new Policy.Transformation(
                         ( $a :: HNil ) :: $o :: ( $b :: HNil ) :: HNil
                     )"""
                 // ( transformation ~> transformation ) ~> transformation
-                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _]] &&
+                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _, _]] &&
                     b.actualType <:< weakTypeOf[Transformation[_, O, P, _]] ⇒
                     q"""
-                    new Policy.Transformation[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[P]},
-                        ${weakTypeOf[A].typeArgs.last} :: ${o.actualType} :: ( ${b.actualType} :: HNil ) :: HNil
-                    ](
+                    new Policy.Transformation(
                         $a.validations :: $o :: ( $b :: HNil ) :: HNil
                     )"""
                 // transformation ~> ( transformation ~> transformation )
                 case _ if a.actualType <:< weakTypeOf[Transformation[_, I, O, _]] &&
-                    b.actualType <:< weakTypeOf[Policy.Transformation[O, P, _]] ⇒
+                    b.actualType <:< weakTypeOf[Policy.Transformation[O, P, _, _]] ⇒
                     q"""
-                    new Policy.Transformation[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[P]},
-                        ( ${weakTypeOf[A]} :: HNil ) :: ${o.actualType} :: ${b.actualType.typeArgs.last} :: HNil
-                    ](
+                    new Policy.Transformation(
                         ( $a :: HNil ) :: $o :: $b.validations :: HNil
                     )"""
                 // ( transformation ~> transformation ) ~> ( transformation ~> transformation )
-                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _]] &&
-                    b.actualType <:< weakTypeOf[Policy.Transformation[O, P, _]] ⇒
+                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _, _]] &&
+                    b.actualType <:< weakTypeOf[Policy.Transformation[O, P, _, _]] ⇒
                     q"""
-                    new Policy.Transformation[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[P]},
-                        ${weakTypeOf[A].typeArgs.last} :: ${o.actualType} :: ${b.actualType.typeArgs.last} :: HNil
-                    ](
+                    new Policy.Transformation(
                         $a.validations :: $o :: $b.validations :: HNil
                     )"""
                 // ( transformation ~> transformation ) ~> rule
-                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _]] &&
+                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _, _]] &&
                     b.actualType <:< weakTypeOf[Rule[_, O, _]] ⇒
                     q"""
                     import shapeless.ops.hlist._
@@ -98,18 +74,14 @@ package object dsl {
                     )"""
                 // transformation ~> ( rule && rule )
                 case _ if a.actualType <:< weakTypeOf[Transformation[_, I, O, _]] &&
-                    b.actualType <:< weakTypeOf[Policy.Rule[O, _]] ⇒
+                    b.actualType <:< weakTypeOf[Policy.Rule[O, _, _]] ⇒
                     q"""
-                    new Policy.Transformation[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[P]},
-                        ( ${weakTypeOf[A]} :: HNil ) :: ${o.actualType} :: ( ${b.actualType.typeArgs.last} :: HNil )
-                    ](
+                    new Policy.Transformation(
                         ( $a :: HNil ) :: $o :: ( $b.validations :: HNil )
                     )"""
                 // ( transformation ~> transformation ) ~> ( rule && rule )
-                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _]] &&
-                    b.actualType <:< weakTypeOf[Policy.Rule[O, _]] ⇒
+                case _ if a.actualType <:< weakTypeOf[Policy.Transformation[I, O, _, _]] &&
+                    b.actualType <:< weakTypeOf[Policy.Rule[O, _, _]] ⇒
                     q"""
                     import shapeless.ops.hlist._
     
@@ -125,37 +97,28 @@ package object dsl {
                 // rule && rule
                 case _ if a.actualType <:< weakTypeOf[Rule[_, I, _]] && b.actualType <:< weakTypeOf[Rule[_, I, _]] ⇒
                     q"""
-                    new Policy.Rule[
-                        ${weakTypeOf[I]},
-                        ( ${weakTypeOf[A]} :: HNil ) :: ${o.actualType} :: ( ${b.actualType} :: HNil ) :: HNil
-                    ](
+                    new Policy.Rule(
                         ( $a :: HNil ) :: $o :: ( $b :: HNil ) :: HNil
                     )"""
                 // ( rule && rule ) && rule
-                case _ if a.actualType <:< weakTypeOf[Policy.Rule[I, _]] && b.actualType <:< weakTypeOf[Rule[_, I, _]] ⇒
+                case _ if a.actualType <:< weakTypeOf[Policy.Rule[I, _, _]] &&
+                    b.actualType <:< weakTypeOf[Rule[_, I, _]] ⇒
                     q"""
-                    new Policy.Rule[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[A].typeArgs.last} :: ${o.actualType} :: ( ${b.actualType} :: HNil ) :: HNil
-                    ](
+                    new Policy.Rule(
                         $a.validations :: $o :: ( $b :: HNil ) :: HNil
                     )"""
                 // rule && ( rule && rule )
-                case _ if a.actualType <:< weakTypeOf[Rule[_, I, _]] && b.actualType <:< weakTypeOf[Policy.Rule[I, _]] ⇒
+                case _ if a.actualType <:< weakTypeOf[Rule[_, I, _]] &&
+                    b.actualType <:< weakTypeOf[Policy.Rule[I, _, _]] ⇒
                     q"""
-                    new Policy.Rule[
-                        ${weakTypeOf[I]},
-                        ( ${weakTypeOf[A]} :: HNil ) :: ${o.actualType} :: ${b.actualType.typeArgs.last} :: HNil
-                    ](
+                    new Policy.Rule(
                         ( $a :: HNil ) :: $o :: $b.validations :: HNil
                     )"""
                 // ( rule && rule ) && ( rule && rule )
-                case _ if a.actualType <:< weakTypeOf[Policy.Rule[I, _]] && b.actualType <:< weakTypeOf[Policy.Rule[I, _]] ⇒
+                case _ if a.actualType <:< weakTypeOf[Policy.Rule[I, _, _]] &&
+                    b.actualType <:< weakTypeOf[Policy.Rule[I, _, _]] ⇒
                     q"""
-                    new Policy.Rule[
-                        ${weakTypeOf[I]},
-                        ${weakTypeOf[A].typeArgs.last} :: ${o.actualType} :: ${b.actualType.typeArgs.last} :: HNil
-                    ](
+                    new Policy.Rule(
                         $a.validations :: $o :: $b.validations :: HNil
                     )"""
             }

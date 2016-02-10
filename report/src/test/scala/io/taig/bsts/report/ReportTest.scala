@@ -22,7 +22,7 @@ class ReportTest extends Suite {
             case Failure( error ) ⇒ error.report shouldBe "Pflichtfeld"
         }
 
-        transformation.parse.transform( "foo" ) match {
+        transformation.parse.validate( "foo" ) match {
             case Success( _ )     ⇒ fail()
             case Failure( error ) ⇒ error.report shouldBe "Keine gültige Zahl"
         }
@@ -36,7 +36,7 @@ class ReportTest extends Suite {
             case f @ Failure( error ) ⇒ f.report shouldBe error.report
         }
 
-        transformation.parse.transform( "foo" ) match {
+        transformation.parse.validate( "foo" ) match {
             case Success( _ )         ⇒ fail()
             case f @ Failure( error ) ⇒ f.report shouldBe error.report
         }

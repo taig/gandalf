@@ -6,9 +6,9 @@ import shapeless._
 
 class EvaluationTest extends Suite {
     it should "have a toString representation" in {
-        def compute[T, R <: HList]( value: T, policy: Policy[T, T, R] )(
+        def compute[T, V <: HList, R <: HList]( value: T, policy: Policy[T, T, V, R] )(
             implicit
-            ne: NestedEvaluation[T, T, R]
+            ne: NestedEvaluation.Aux[T, T, V, R]
         ) = ne( value, policy.validations )
 
         val ( _, computation ) = compute( "foobar", rule.required && rule.min( 3 ) && rule.max( 6 ) )

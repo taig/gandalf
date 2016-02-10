@@ -40,10 +40,4 @@ class StringTest extends Suite {
         string.phone.validate( "foobar42" ).isSuccess shouldBe false
         string.phone.validate( "foobar42example" ).isSuccess shouldBe false
     }
-
-    "required" should "verify that the validation value is not empty" in {
-        string.required.validate( "foo" ).isSuccess shouldBe true
-        string.required.validate( "" ).isSuccess shouldBe false
-        string.required.validate( " " ).isSuccess shouldBe true
-    }
 }

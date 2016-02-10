@@ -37,7 +37,7 @@ object NestedEvaluation extends NestedEvaluation0 {
             override type Out0 = Result[Error[N, A], O] :: HNil
 
             override def apply( input: I, tree: Transformation[N, I, O, A] :: HNil ) = tree match {
-                case transformation :: HNil ⇒ transformation.transform( input ) match {
+                case transformation :: HNil ⇒ transformation.validate( input ) match {
                     case s @ Success( output ) ⇒ ( Some( output ), Computed( s :: HNil ) )
                     case f @ Failure( _ )      ⇒ ( None, Computed( f :: HNil ) )
                 }

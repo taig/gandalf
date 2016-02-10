@@ -38,7 +38,7 @@ object reports {
 
     implicit def `Report[phone]`( implicit context: Context ) = report( phone, R.string.bsts_phone )
 
-    implicit def `Report[required]`[T: Required]( implicit context: Context ) = {
+    implicit def `Report[required]`( implicit context: Context ) = {
         new Report[Error[Witness.`"required"`.T, HNil]] {
             override type Out = String
 

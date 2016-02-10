@@ -2,12 +2,14 @@ package io.taig.bsts.android.ops
 
 import _root_.android.view.View
 import io.taig.bsts.android.resources.R
-import io.taig.bsts.android.{ Event, Extraction, Feedback }
+import io.taig.bsts.android.{ Extraction, Event, Feedback }
+import io.taig.bsts._
+import io.taig.bsts.android.syntax.validation._
 import io.taig.bsts.ops.hlist.NestedEvaluation
 import io.taig.bsts.report.Report
-import io.taig.bsts.report.syntax.report._
-import io.taig.bsts._
 import shapeless.HList
+
+import scala.language.experimental.macros
 
 final class validation[V <: View]( view: V ) {
     private[android] def feedback_=( feedback: Feedback[V] ) = {
@@ -40,19 +42,18 @@ final class validation[V <: View]( view: V ) {
     def obeys[I]: Builder1[I] = new Builder1[I]
 
     class Builder1[I] {
-        def apply[O, W <: HList, R <: HList]( policy: Policy[I, O, W] )(
+        def apply[O]( validation: Validation[I, O] )(
             implicit
             ev: Event[V],
             ex: Extraction[V, I],
             f:  Feedback[V],
-            ne: NestedEvaluation.Aux[I, O, W, R],
-            r:  Report.Aux[Failure[Computed[R], O], List[String]]
+            r:  Report.Aux[Failure[validation.F, O], List[String]]
         ): V = {
             ev.onAttach( view )
-            feedback = f
-            validation = () ⇒ policy.validate( ex.extract( view ) ) match {
-                case Success( _ )     ⇒ List.empty[String]
-                case f @ Failure( _ ) ⇒ f.report
+            view.feedback = f
+            view.validation = () ⇒ validation.validate( ex.extract( view ) ) match {
+                case Success( _ )         ⇒ List.empty[String]
+                case f @ Failure( error ) ⇒ r.report( f )
             }
             view
         }

@@ -13,9 +13,7 @@ trait Report[-T] {
     def report( context: T ): Out
 }
 
-object Report {
-    type Aux[T, Out0] = Report[T] { type Out = Out0 }
-
+object Report extends Report0 {
     def apply[I <: String, A <: HList]( f: A ⇒ String ): Report.Aux[Error[I, A], String] = new Report[Error[I, A]] {
         override type Out = String
 
@@ -46,11 +44,11 @@ object Report {
 
     implicit def `Report[Failure[Rule|Transformation]]`[I <: String, T, A <: HList](
         implicit
-        r: Report[Error[I, A]]
-    ): Report.Aux[Failure[Error[I, A], T], r.Out] = new Report[Failure[Error[I, A], T]] {
-        override type Out = r.Out
+        r: Report.Aux[Error[I, A], String]
+    ): Report.Aux[Failure[Error[I, A], T], String] = new Report[Failure[Error[I, A], T]] {
+        override type Out = String
 
-        override def report( failure: Failure[Error[I, A], T] ): Out = failure.value.report
+        override def report( failure: Failure[Error[I, A], T] ): String = failure.value.report[String]
     }
 
     // TODO dynamic output type???
@@ -72,7 +70,7 @@ object Report {
             implicit
             r: Report.Aux[Error[I, A], String]
         ) = at[List[String], Result[Error[I, A], T]] {
-            case ( errors, Failure( error ) ) ⇒ errors :+ error.report
+            case ( errors, Failure( error ) ) ⇒ errors :+ error.report[String]
             case ( errors, _ )                ⇒ errors
         }
 
@@ -90,5 +88,18 @@ object Report {
             case ( errors, Inl( Computed( tree ) ) ) ⇒ tree.foldLeft( errors )( this )
             case ( errors, _ )                       ⇒ errors
         }
+    }
+}
+
+trait Report0 {
+    type Aux[T, Out0] = Report[T] { type Out = Out0 }
+
+    implicit def `Report.Aux[Failure[Rule|Transformation], List[String]]`[I <: String, T, A <: HList](
+        implicit
+        r: Report.Aux[Failure[Error[I, A], T], String]
+    ): Report.Aux[Failure[Error[I, A], T], List[String]] = new Report[Failure[Error[I, A], T]] {
+        override type Out = List[String]
+
+        override def report( context: Failure[Error[I, A], T] ) = List( r.report( context ) )
     }
 }

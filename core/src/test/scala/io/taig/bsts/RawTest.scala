@@ -18,7 +18,7 @@ class RawTest extends Suite {
     }
 
     it should "be available for Transformation Failures" in {
-        transformation.parse.transform( "asdf" ) match {
+        transformation.parse.validate( "asdf" ) match {
             case Success( _ )         ⇒ fail()
             case f @ Failure( error ) ⇒ f.raw shouldBe error.raw
         }
@@ -30,9 +30,9 @@ class RawTest extends Suite {
             case f @ Failure( _ ) ⇒ f.raw shouldBe List( ( "required", Nil ) )
         }
 
-        ( rule.required & rule.min( 6 ) ).validate( "foo" ) match {
-            case Success( _ )     ⇒ fail()
-            case f @ Failure( _ ) ⇒ f.raw shouldBe List( ( "min", List( "foo", 6, 3 ) ) )
-        }
+        //        ( rule.required & rule.min( 6 ) ).validate( "foo" ) match {
+        //            case Success( _ )     ⇒ fail()
+        //            case f @ Failure( _ ) ⇒ f.raw shouldBe List( ( "min", List( "foo", 6, 3 ) ) )
+        //        }
     }
 }

@@ -4,39 +4,46 @@ import io.taig.bsts.ops.hlist.{ Printer, NestedEvaluation }
 import io.taig.bsts
 import shapeless._
 
-abstract class Policy[I, O, V <: HList]( val validations: V )(
+abstract class Policy[I, O, V <: HList, R <: HList]( val validations: V )(
         implicit
-        p: Printer[V]
+        ne: NestedEvaluation.Aux[I, O, V, R]
 ) extends Validation[I, O] {
-    def validate( value: I )(
-        implicit
-        ne: NestedEvaluation[I, O, V]
-    ): Result[Computed[ne.Out0], O] = ne( value, validations ) match {
+    override type F = Computed[R]
+
+    override def validate( input: I ) = ne( input, validations ) match {
         case ( Some( output ), _ ) ⇒ Success( output )
         case ( None, evaluation )  ⇒ Failure( evaluation )
     }
 }
 
 object Policy {
-    def apply[N <: String, T, A <: HList](
+    def apply[N <: String, T, A <: HList, R <: HList](
         rule: bsts.Rule[N, T, A]
-    ): Rule[T, bsts.Rule[N, T, A] :: HNil] = Rule( rule :: HNil )
+    )(
+        implicit
+        ne: NestedEvaluation.Aux[T, T, bsts.Rule[N, T, A] :: HNil, R]
+    ): Rule[T, bsts.Rule[N, T, A] :: HNil, R] = Rule( rule :: HNil )
 
-    case class Rule[T, R <: HList]( rules: R )(
+    case class Rule[T, V <: HList, R <: HList]( rules: V )(
             implicit
-            p: Printer[R]
-    ) extends Policy[T, T, R]( rules ) {
+            ne: NestedEvaluation.Aux[T, T, V, R],
+            p:  Printer[V]
+    ) extends Policy[T, T, V, R]( rules ) {
         override def toString = s"Policy.Rule(${p( true, rules )})"
     }
 
-    def apply[N <: String, I, O, A <: HList](
+    def apply[N <: String, I, O, A <: HList, R <: HList](
         transformation: bsts.Transformation[N, I, O, A]
-    ): Transformation[I, O, bsts.Transformation[N, I, O, A] :: HNil] = Transformation( transformation :: HNil )
+    )(
+        implicit
+        ne: NestedEvaluation.Aux[I, O, bsts.Transformation[N, I, O, A] :: HNil, R]
+    ): Transformation[I, O, bsts.Transformation[N, I, O, A] :: HNil, R] = Transformation( transformation :: HNil )
 
-    case class Transformation[I, O, T <: HList]( transformations: T )(
+    case class Transformation[I, O, V <: HList, R <: HList]( transformations: V )(
             implicit
-            p: Printer[T]
-    ) extends Policy[I, O, T]( transformations ) {
+            ne: NestedEvaluation.Aux[I, O, V, R],
+            p:  Printer[V]
+    ) extends Policy[I, O, V, R]( transformations ) {
         override def toString = s"Policy.Transformation(${p( true, transformations )})"
     }
 }

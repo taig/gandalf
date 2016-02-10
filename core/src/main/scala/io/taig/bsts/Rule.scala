@@ -6,9 +6,11 @@ import shapeless.ops.hlist.ToTraversable
 import scala.PartialFunction.condOpt
 
 abstract class Rule[N <: String, T, A <: HList]( implicit w: Witness.Aux[N] ) extends Validation[T, T] {
+    override type F = Error[N, A]
+
     def name: String = w.value
 
-    final def validate( value: T ): Result[Error[N, A], T] = check( value ) match {
+    override final def validate( value: T ) = check( value ) match {
         case None          ⇒ Success( value )
         case Some( error ) ⇒ Failure( error )
     }

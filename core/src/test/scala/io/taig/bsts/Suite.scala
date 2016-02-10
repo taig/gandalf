@@ -50,17 +50,17 @@ trait Suite
         rule.max( 3 ).validate( "foo" ).isSuccess shouldBe true
         rule.max( 3 ).validate( "foobar" ).isSuccess shouldBe false
 
-        transformation.trim.transform( "" ) match {
+        transformation.trim.validate( "" ) match {
             case Success( output ) ⇒ output shouldBe ""
             case Failure( _ )      ⇒ fail()
         }
 
-        transformation.trim.transform( "asdf" ) match {
+        transformation.trim.validate( "asdf" ) match {
             case Success( output ) ⇒ output shouldBe "asdf"
             case Failure( _ )      ⇒ fail()
         }
 
-        transformation.trim.transform( "  asdf   " ) match {
+        transformation.trim.validate( "  asdf   " ) match {
             case Success( output ) ⇒ output shouldBe "asdf"
             case Failure( _ )      ⇒ fail()
         }

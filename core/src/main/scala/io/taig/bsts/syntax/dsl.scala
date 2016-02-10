@@ -7,21 +7,13 @@ import shapeless._
 import scala.language.implicitConversions
 
 trait dsl {
-    implicit def `Rule -> Policy`[N <: String, T, A <: HList](
-        rule: Rule[N, T, A]
-    ): Policy.Rule[T, Rule[N, T, A] :: HNil] = Policy( rule )
+    implicit def policyRuleSyntax[T, V <: HList, R <: HList](
+        policy: Policy.Rule[T, V, R]
+    ): ops.dsl.rule[T, Policy.Rule[T, V, R]] = new ops.dsl.rule( policy )
 
-    implicit def `Transformation -> Policy`[N <: String, I, O, A <: HList](
-        transformation: Transformation[N, I, O, A]
-    ): Policy.Transformation[I, O, Transformation[N, I, O, A] :: HNil] = Policy( transformation )
-
-    implicit def policyRuleSyntax[T, R <: HList](
-        policy: Policy.Rule[T, R]
-    ): ops.dsl.rule[T, Policy.Rule[T, R]] = new ops.dsl.rule( policy )
-
-    implicit def policyRuleTransformationSyntax[T, R <: HList](
-        policy: Policy.Rule[T, R]
-    ): ops.dsl.transformation[T, T, Policy.Rule[T, R]] = new ops.dsl.transformation( policy )
+    implicit def policyRuleTransformationSyntax[T, V <: HList, R <: HList](
+        policy: Policy.Rule[T, V, R]
+    ): ops.dsl.transformation[T, T, Policy.Rule[T, V, R]] = new ops.dsl.transformation( policy )
 
     implicit def ruleSyntax[N <: String, T, A <: HList](
         rule: Rule[N, T, A]
@@ -31,9 +23,9 @@ trait dsl {
         rule: Rule[N, T, A]
     ): ops.dsl.transformation[T, T, Rule[N, T, A]] = new ops.dsl.transformation( rule )
 
-    implicit def policyTransformationSyntax[I, O, V <: HList](
-        policy: Policy.Transformation[I, O, V]
-    ): ops.dsl.transformation[I, O, Policy.Transformation[I, O, V]] = new ops.dsl.transformation( policy )
+    implicit def policyTransformationSyntax[I, O, V <: HList, R <: HList](
+        policy: Policy.Transformation[I, O, V, R]
+    ): ops.dsl.transformation[I, O, Policy.Transformation[I, O, V, R]] = new ops.dsl.transformation( policy )
 
     implicit def transformationSyntax[N <: String, I, O, A <: HList](
         transformation: Transformation[N, I, O, A]

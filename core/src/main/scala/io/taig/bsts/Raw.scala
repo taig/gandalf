@@ -1,11 +1,12 @@
 package io.taig.bsts
 
 import io.taig.bsts.ops.dsl.Operator
+import io.taig.bsts.ops.hlist.NestedEvaluation
 import shapeless.ops.hlist.{ LeftFolder, ToTraversable }
 import shapeless._
 import io.taig.bsts.syntax.raw._
 
-trait Raw[T] {
+trait Raw[-T] {
     type Out
 
     def raw( context: T ): Out
