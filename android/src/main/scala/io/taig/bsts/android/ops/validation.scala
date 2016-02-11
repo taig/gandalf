@@ -1,31 +1,14 @@
 package io.taig.bsts.android.ops
 
 import android.view.View
-import io.taig.bsts.android.resources.R
 import io.taig.bsts.android.{ Extraction, Event, Feedback }
 import io.taig.bsts._
-import io.taig.bsts.android.syntax.validation._
+import io.taig.bsts.android.syntax.tags._
 import io.taig.bsts.report.Report
 
 import scala.language.experimental.macros
 
 final class validation[V <: View]( view: V ) {
-    private[android] def feedback_=( feedback: Feedback[V] ) = {
-        view.setTag( R.id.bsts_feedback, feedback )
-    }
-
-    private[android] def feedback: Feedback[V] = {
-        view.getTag( R.id.bsts_feedback ).asInstanceOf[Feedback[V]]
-    }
-
-    private[android] def validation_=( validation: () ⇒ List[String] ) = {
-        view.setTag( R.id.bsts_validation, validation )
-    }
-
-    private[android] def validation: () ⇒ List[String] = {
-        view.getTag( R.id.bsts_validation ).asInstanceOf[() ⇒ List[String]]
-    }
-
     /**
      * Attach a policy to this view
      */
@@ -54,7 +37,7 @@ final class validation[V <: View]( view: V ) {
      */
     def reset()( implicit ev: Event[V] ): Unit = {
         ev.onDetach( view )
-        feedback = null
-        validation = null
+        view.feedback = null
+        view.validation = null
     }
 }
