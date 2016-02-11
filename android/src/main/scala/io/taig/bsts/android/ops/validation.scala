@@ -1,13 +1,11 @@
 package io.taig.bsts.android.ops
 
-import _root_.android.view.View
+import android.view.View
 import io.taig.bsts.android.resources.R
 import io.taig.bsts.android.{ Extraction, Event, Feedback }
 import io.taig.bsts._
 import io.taig.bsts.android.syntax.validation._
-import io.taig.bsts.ops.hlist.NestedEvaluation
 import io.taig.bsts.report.Report
-import shapeless.HList
 
 import scala.language.experimental.macros
 
@@ -18,14 +16,6 @@ final class validation[V <: View]( view: V ) {
 
     private[android] def feedback: Feedback[V] = {
         view.getTag( R.id.bsts_feedback ).asInstanceOf[Feedback[V]]
-    }
-
-    private[android] def name_=( name: String ) = {
-        view.setTag( R.id.bsts_name, name )
-    }
-
-    private[android] def name: String = {
-        view.getTag( R.id.bsts_name ).asInstanceOf[String]
     }
 
     private[android] def validation_=( validation: () ⇒ List[String] ) = {

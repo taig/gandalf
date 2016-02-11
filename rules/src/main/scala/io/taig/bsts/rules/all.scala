@@ -1,6 +1,8 @@
 package io.taig.bsts.rules
 
-object all
+trait all
     extends generic
     with numeric
     with string
+
+object all extends all

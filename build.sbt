@@ -6,7 +6,7 @@ lazy val bsts = project.in( file( "." ) )
         organization := "io.taig",
         publishArtifact := false
     )
-    .aggregate( core, rules, report, android )
+    .aggregate( core, rules, transformations, report, android )
 
 lazy val core = project
     .settings( Settings.common )
@@ -19,6 +19,10 @@ lazy val core = project
     )
 
 lazy val rules = project
+    .settings( Settings.common )
+    .dependsOn( core % "compile->compile;test->test" )
+
+lazy val transformations = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
@@ -40,4 +44,4 @@ lazy val android = project
         test := {},
         typedResources := false
     )
-    .dependsOn( core % "compile->compile;test->test", rules, report )
+    .dependsOn( core % "compile->compile;test->test", rules, transformations, report )

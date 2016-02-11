@@ -1,9 +1,18 @@
 package io.taig.bsts.android.ops
 
 import android.view.{ View, ViewGroup }
+import io.taig.bsts.android.resources.R
 import io.taig.bsts.android.syntax.validation._
 
 final class view[V <: View]( view: V ) {
+    private[android] def name_=( name: String ) = {
+        view.setTag( R.id.bsts_name, name )
+    }
+
+    private[android] def name: String = {
+        view.getTag( R.id.bsts_name ).asInstanceOf[String]
+    }
+
     /**
      * Validate this view and all of its children, and update the Ui to show or hide error messages
      *
@@ -31,6 +40,11 @@ final class view[V <: View]( view: V ) {
      * Remove error message of this view and all of its children
      */
     def clear(): Unit = rules.foreach( _.feedback.set( view, None ) )
+
+    def name( name: String ): V = {
+        view.name = name
+        view
+    }
 
     /**
      * Search for views whose names match the map keys and then inject them if possible
