@@ -1,12 +1,7 @@
 package io.taig.bsts.android.syntax
 
-import android.view.View
-import io.taig.bsts.android.ops
+import io.taig.android.viewvalue
 
-import scala.language.implicitConversions
-
-trait value {
-    implicit def valueSyntax[V <: View]( view: V ): ops.value[V] = new ops.value[V]( view )
-}
+trait value extends viewvalue.syntax.all
 
 object value extends value

@@ -1,7 +1,8 @@
 package io.taig.bsts.android.ops
 
 import android.view.View
-import io.taig.bsts.android.{ Extraction, Event, Feedback }
+import io.taig.android.viewvalue.Extraction
+import io.taig.bsts.android.{ Event, Feedback }
 import io.taig.bsts._
 import io.taig.bsts.android.syntax.tags._
 import io.taig.bsts.report.Report

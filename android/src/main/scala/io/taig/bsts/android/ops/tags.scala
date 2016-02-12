@@ -2,7 +2,7 @@ package io.taig.bsts.android.ops
 
 import android.view.View
 import io.taig.bsts.android.Feedback
-import io.taig.bsts.android.resources.R
+import io.taig.bsts.android.resource.R
 
 final private[android] class tags[V <: View]( view: V ) {
     def feedback_=( feedback: Feedback[V] ) = {

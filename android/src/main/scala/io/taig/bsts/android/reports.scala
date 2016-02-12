@@ -2,9 +2,8 @@ package io.taig.bsts.android
 
 import android.content.Context
 import android.support.annotation.StringRes
-import io.taig.bsts.rules.ops.Required
 import io.taig.bsts.{ Rule, Error }
-import io.taig.bsts.android.resources.R
+import io.taig.bsts.android.resource.R
 import io.taig.bsts.report.Report
 import io.taig.bsts.rules.all._
 import shapeless.{ Witness, HNil, HList }
@@ -43,7 +42,7 @@ object reports {
             override type Out = String
 
             override def report( error: Error[Witness.`"required"`.T, HNil] ): Out = {
-                context.getString( R.string.bsts_exactly )
+                context.getString( R.string.bsts_required )
             }
         }
     }

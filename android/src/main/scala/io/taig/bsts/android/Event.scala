@@ -2,7 +2,8 @@ package io.taig.bsts.android
 
 import android.support.design.widget.TextInputLayout
 import android.view.View
-import android.widget.{ TextView, EditText }
+import android.widget.TextView
+import io.taig.bsts.android.syntax.validation._
 
 trait Event[-V <: View] {
     def onAttach( view: V ): Unit
@@ -16,7 +17,7 @@ object Event extends Event0 {
 
         override def onDetach( view: TextView ) = view.setOnFocusChangeListener( null )
 
-        override def onFocusChange( view: View, hasFocus: Boolean ) = ??? // if ( !hasFocus ) view.validate()
+        override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate()
     }
 
     implicit val `Event[TextInputLayout]` = new Event[TextInputLayout] with View.OnFocusChangeListener {
@@ -24,7 +25,7 @@ object Event extends Event0 {
 
         override def onDetach( view: TextInputLayout ) = view.setOnFocusChangeListener( null )
 
-        override def onFocusChange( view: View, hasFocus: Boolean ) = ??? //if ( !hasFocus ) view.validate()
+        override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate()
     }
 }
 

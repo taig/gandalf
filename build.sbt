@@ -34,14 +34,12 @@ lazy val android = project
     .settings( androidBuildAar ++ Settings.common )
     .settings(
         libraryDependencies ++=
-            "com.android.support" % "design" % "23.1.1" ::
-            "com.geteit" %% "robotest" % "0.12" % "test" ::
+            "io.taig.android.viewvalue" %% "design" % "1.1.1" ::
             Nil,
         minSdkVersion := "7",
-        packageForR := organization.value + ".android.resources",
+//        packageForR := organization.value + ".android.resources",
         platformTarget := "android-23",
         targetSdkVersion := "23",
-        test := {},
         typedResources := false
     )
-    .dependsOn( core % "compile->compile;test->test", rules, transformations, report )
+    .dependsOn( core, rules, transformations, report )

@@ -1,9 +1,9 @@
-addSbtPlugin( "com.hanhuy.sbt" % "android-sdk-plugin" % "1.5.16" )
+resolvers += Resolver.sonatypeRepo( "snapshots" )
 
-addSbtPlugin( "com.jsuereth" % "sbt-pgp" % "1.0.0" )
+addSbtPlugin( "com.hanhuy.sbt" % "android-sdk-plugin" % "1.5.16" )
 
 addSbtPlugin( "io.taig.sbt" % "scalariform" % "1.6.0" )
 
-addSbtPlugin( "org.scoverage" % "sbt-scoverage" % "1.3.5" )
+addSbtPlugin( "io.taig.sbt" % "sonatype" % "1.0.0-SNAPSHOT" )
 
-addSbtPlugin( "org.xerial.sbt" % "sbt-sonatype" % "1.1" )
+addSbtPlugin( "org.scoverage" % "sbt-scoverage" % "1.3.5" )
