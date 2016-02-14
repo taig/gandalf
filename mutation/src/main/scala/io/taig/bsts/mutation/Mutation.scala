@@ -13,11 +13,11 @@ abstract class Mutation[N <: String, I, O, A <: HList](
         implicit
         w: Witness.Aux[N]
 ) extends Term[N, I, O, A] {
-    override type V = Mutation[N, I, O, A] :: HNil
+    override final type V = Mutation[N, I, O, A] :: HNil
 
-    override def validations: V = this :: HNil
+    override final type R = Validated[Error[N, A], O]
 
-    override type R = Validated[Error[N, A], O]
+    override final def validations: V = this :: HNil
 }
 
 object Mutation {

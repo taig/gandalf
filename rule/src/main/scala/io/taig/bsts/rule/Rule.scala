@@ -15,7 +15,7 @@ abstract class Rule[N <: String, T, A <: HList](
 
     override final type R = Validated[Error[N, A], T]
 
-    override def validations = this :: HNil
+    override final def validations = this :: HNil
 }
 
 object Rule {

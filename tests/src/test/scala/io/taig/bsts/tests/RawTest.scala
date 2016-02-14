@@ -3,6 +3,7 @@ package io.taig.bsts.tests
 import io.taig.bsts.data.{ NonEmptyList, Validated }
 import Validated.{ Invalid, Valid }
 import io.taig.bsts.implicits._
+import shapeless.test.illTyped
 
 class RawTest extends Suite {
     it should "be available for Errors" in {
@@ -19,5 +20,14 @@ class RawTest extends Suite {
     it should "be available for Policies" in {
         ( rule.required ~> mutation.parse ).validate( "asdf" ).raw shouldBe
             Invalid( NonEmptyList( ( "parse", List.empty[Any] ) ) )
+
+        ( transformation.trim ~> rule.required ).validate( "  " ).raw shouldBe
+            Invalid( NonEmptyList( ( "required", List.empty[Any] ) ) )
+    }
+
+    it should "not be available for Transformations" in {
+        illTyped {
+            "transformation.trim.validate( \"asdf\" ).raw"
+        }
     }
 }

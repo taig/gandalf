@@ -14,8 +14,8 @@ trait report {
     ): ops.report[Error[N, A]] = new ops.report( error )
 
     implicit def termValidatedReportSyntax[N <: String, T, A <: HList](
-        validation: Validated[Error[N, A], T]
-    ): ops.report[Validated[Error[N, A], T]] = new ops.report( validation )
+        validated: Validated[Error[N, A], T]
+    ): ops.report[Validated[Error[N, A], T]] = new ops.report( validated )
 
     implicit def policyValidatedReportSyntax[C <: HList, O](
         validated: Validated[Computed[C], O]

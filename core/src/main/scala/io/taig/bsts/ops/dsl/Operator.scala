@@ -12,10 +12,5 @@ object Operator {
     case object | extends Binary( "|" )
     case object || extends Binary( "||" )
     case object ^ extends Binary( "^" )
-
     case object ~> extends Binary( "~>" )
-
-    sealed abstract class Unary( name: String ) extends Operator( name )
-
-    case object ! extends Unary( "!" )
 }

@@ -50,7 +50,6 @@ lazy val android = project
 lazy val tests = project
     .settings( Settings.common )
     .settings(
-        coverageExcludedPackages := "io\\.taig\\.bsts\\.tests\\..*",
         libraryDependencies ++=
             "org.scalatest" %% "scalatest" % "3.0.0-M15" ::
             Nil

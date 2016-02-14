@@ -8,6 +8,7 @@ import io.taig.bsts.syntax.dsl._
 import io.taig.bsts.report.syntax.report._
 import shapeless.HNil
 import shapeless.record._
+import shapeless.test.illTyped
 
 class ReportTest extends Suite {
     object report {
@@ -35,17 +36,27 @@ class ReportTest extends Suite {
     it should "be available for Terms" in {
         import report._
 
-        rule.required.validate( "" ).report shouldBe Invalid( "Pflichtfeld" )
+        rule.required.validate( "" ).report[String] shouldBe Invalid( "Pflichtfeld" )
 
-        mutation.parse.validate( "foo" ).report shouldBe Invalid( "Keine gültige Zahl" )
+        mutation.parse.validate( "foo" ).report[String] shouldBe Invalid( "Keine gültige Zahl" )
     }
 
     it should "be available for Policies" in {
         import report._
 
-        Policy( rule.required :: HNil ).validate( "" ).report shouldBe Invalid( NonEmptyList( "Pflichtfeld" ) )
+        Policy( rule.required :: HNil ).validate( "" ).report[String] shouldBe Invalid( NonEmptyList( "Pflichtfeld" ) )
+        Policy( rule.min( 6 ) :: HNil ).validate( "" ).report[String] shouldBe Invalid( NonEmptyList( "Mindestens 6 Zeichen" ) )
 
-        ( rule.required & rule.min( 6 ) ).validate( "foo" ).report shouldBe
+        ( rule.required & rule.min( 6 ) ).validate( "foo" ).report[String] shouldBe
             Invalid( NonEmptyList( "Mindestens 6 Zeichen" ) )
+
+        ( transformation.trim ~> rule.min( 6 ) ).validate( "foo     " ).report[String] shouldBe
+            Invalid( NonEmptyList( "Mindestens 6 Zeichen" ) )
+    }
+
+    it should "not be available for Transformations" in {
+        illTyped {
+            "transformation.trim.validate( \"asdf\" ).report[String]"
+        }
     }
 }

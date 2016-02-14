@@ -52,18 +52,16 @@ object Raw {
         }
     }
 
-    object collect extends Poly2 {
+    object collect extends collect0 {
         type F[H <: HList] = LeftFolder.Aux[H, List[( String, List[Any] )], this.type, List[( String, List[Any] )]]
 
-        implicit def result[N <: String, T, A <: HList](
+        implicit def validated[N <: String, T, A <: HList](
             implicit
             r: Raw.Aux[Error[N, A], ( String, List[Any] )]
         ) = at[List[( String, List[Any] )], Validated[Error[N, A], T]] {
             case ( errors, Invalid( error ) ) ⇒ errors :+ error.raw
             case ( errors, _ )                ⇒ errors
         }
-
-        implicit def operator[O <: Operator.Binary] = at[List[( String, List[Any] )], O]( ( errors, _ ) ⇒ errors )
 
         implicit def computed[L <: HList](
             implicit
@@ -79,5 +77,9 @@ object Raw {
             case ( errors, Inl( Computed( tree ) ) ) ⇒ tree.foldLeft( errors )( this )
             case ( errors, _ )                       ⇒ errors
         }
+    }
+
+    trait collect0 extends Poly2 {
+        implicit def identity[T] = at[List[( String, List[Any] )], T]( ( errors, _ ) ⇒ errors )
     }
 }
