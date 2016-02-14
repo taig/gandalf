@@ -1,10 +1,12 @@
 package io.taig.bsts
 
+import io.taig.bsts.data.{ NonEmptyList, Validated }
+import Validated.Invalid
 import io.taig.bsts.ops.dsl.Operator
-import io.taig.bsts.ops.hlist.NestedEvaluation
-import shapeless.ops.hlist.{ LeftFolder, ToTraversable }
-import shapeless._
+import io.taig.bsts.ops.{ Computed, Unevaluated }
 import io.taig.bsts.syntax.raw._
+import shapeless._
+import shapeless.ops.hlist.{ LeftFolder, ToTraversable }
 
 trait Raw[-T] {
     type Out
@@ -25,23 +27,28 @@ object Raw {
         override def raw( error: Error[N, A] ): Out = ( w.value, error.arguments.toList )
     }
 
-    implicit def `Raw[Failure[Rule|Transformation]]`[N <: String, T, A <: HList](
+    implicit def `Raw[Term]`[N <: String, T, A <: HList](
         implicit
         r: Raw.Aux[Error[N, A], ( String, List[Any] )]
-    ): Raw.Aux[Failure[Error[N, A], T], ( String, List[Any] )] = new Raw[Failure[Error[N, A], T]] {
-        override type Out = ( String, List[Any] )
+    ): Raw.Aux[Validated[Error[N, A], T], Validated[( String, List[Any] ), T]] = new Raw[Validated[Error[N, A], T]] {
+        override type Out = Validated[( String, List[Any] ), T]
 
-        override def raw( failure: Failure[Error[N, A], T] ): Out = failure.value.raw
+        override def raw( result: Validated[Error[N, A], T] ): Out = result.leftMap( _.raw )
     }
 
-    implicit def `Raw[Failure[Policy]]`[C <: HList, T](
+    implicit def `Raw[Policy]`[C <: HList, T](
         implicit
         lf: collect.F[C]
-    ): Raw.Aux[Failure[Computed[C], T], lf.Out] = new Raw[Failure[Computed[C], T]] {
-        override type Out = lf.Out
+    ): Raw.Aux[Validated[Computed[C], T], Validated[NonEmptyList[( String, List[Any] )], T]] = {
+        new Raw[Validated[Computed[C], T]] {
+            override type Out = Validated[NonEmptyList[( String, List[Any] )], T]
 
-        override def raw( failure: Failure[Computed[C], T] ): Out = {
-            failure.value.tree.foldLeft( List.empty[( String, List[Any] )] )( collect )
+            override def raw( validated: Validated[Computed[C], T] ): Out = {
+                validated.leftMap { computation ⇒
+                    val list = computation.tree.foldLeft( List.empty[( String, List[Any] )] )( collect )
+                    NonEmptyList( list.head, list.tail )
+                }
+            }
         }
     }
 
@@ -51,8 +58,8 @@ object Raw {
         implicit def result[N <: String, T, A <: HList](
             implicit
             r: Raw.Aux[Error[N, A], ( String, List[Any] )]
-        ) = at[List[( String, List[Any] )], Result[Error[N, A], T]] {
-            case ( errors, Failure( error ) ) ⇒ errors :+ error.raw
+        ) = at[List[( String, List[Any] )], Validated[Error[N, A], T]] {
+            case ( errors, Invalid( error ) ) ⇒ errors :+ error.raw
             case ( errors, _ )                ⇒ errors
         }
 

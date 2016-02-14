@@ -1,9 +1,14 @@
 package io.taig.bsts.ops.dsl
 
-import io.taig.bsts._
+import io.taig.bsts.ops.hlist.NestedEvaluation
+import io.taig.bsts.{ Policy, Validation }
+import shapeless._
 
-import scala.language.experimental.macros
-
-final class transformation[I, O, V <: Validation[I, O]]( a: V ) {
-    @argument( Operator.~> ) def ~>[P]( b: Validation[O, P] ): Validation[I, P] = macro impl[V, I, O, P]
+final class transformation[I, O, V <: HList, R]( a: Validation.Aux[I, O, V, R] ) {
+    def ~>[P, W <: HList, S, NE <: HList]( b: Validation.Aux[O, P, W, S] )(
+        implicit
+        ne: NestedEvaluation.Aux[I, P, V :: Operator.~>.type :: W :: HNil, NE]
+    ): Policy[I, P, V :: Operator.~>.type :: W :: HNil, NE] = {
+        Policy( a.validations :: Operator.~> :: b.validations :: HNil )
+    }
 }

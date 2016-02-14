@@ -1,7 +1,10 @@
 package io.taig.bsts.ops.hlist
 
+import io.taig.bsts.data.Validated
+import Validated.{ Invalid, Valid }
 import io.taig.bsts._
 import io.taig.bsts.ops.dsl.Operator
+import io.taig.bsts.ops.{ Unevaluated, Computed }
 import shapeless._
 
 trait NestedEvaluation[I, O, -T <: HList] extends Serializable {
@@ -21,25 +24,26 @@ object NestedEvaluation extends NestedEvaluation0 {
         override def apply( input: I, tree: HNil ) = ( Some( input ), Computed( HNil ) )
     }
 
-    implicit def rule[N <: String, T, A <: HList] = new NestedEvaluation[T, T, Rule[N, T, A] :: HNil] {
-        override type Out0 = Result[Error[N, A], T] :: HNil
+    implicit def term0[N <: String, I, O, A <: HList] = {
+        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, O] :: HNil] {
+            override type Out0 = Valid[O] :: HNil
 
-        override def apply( input: T, tree: Rule[N, T, A] :: HNil ) = tree match {
-            case rule :: HNil ⇒ rule.validate( input ) match {
-                case s @ Success( output ) ⇒ ( Some( output ), Computed( s :: HNil ) )
-                case f @ Failure( _ )      ⇒ ( None, Computed( f :: HNil ) )
+            override def apply( input: I, tree: Term.Aux[N, I, O, A, O] :: HNil ) = tree match {
+                case term :: HNil ⇒
+                    val output = term.validate( input )
+                    ( Some( output ), Computed( Valid( output ) :: HNil ) )
             }
         }
     }
 
-    implicit def transformation[N <: String, I, O, A <: HList] = {
-        new NestedEvaluation[I, O, Transformation[N, I, O, A] :: HNil] {
-            override type Out0 = Result[Error[N, A], O] :: HNil
+    implicit def term1[N <: String, I, O, A <: HList] = {
+        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, Validated[Error[N, A], O]] :: HNil] {
+            override type Out0 = Validated[Error[N, A], O] :: HNil
 
-            override def apply( input: I, tree: Transformation[N, I, O, A] :: HNil ) = tree match {
-                case transformation :: HNil ⇒ transformation.validate( input ) match {
-                    case s @ Success( output ) ⇒ ( Some( output ), Computed( s :: HNil ) )
-                    case f @ Failure( _ )      ⇒ ( None, Computed( f :: HNil ) )
+            override def apply( input: I, tree: Term.Aux[N, I, O, A, Validated[Error[N, A], O]] :: HNil ) = tree match {
+                case term :: HNil ⇒ term.validate( input ) match {
+                    case v @ Valid( output ) ⇒ ( Some( output ), Computed( v :: HNil ) )
+                    case i @ Invalid( _ )    ⇒ ( None, Computed( i :: HNil ) )
                 }
             }
         }
@@ -67,20 +71,19 @@ object NestedEvaluation extends NestedEvaluation0 {
     }
 }
 
-trait NestedEvaluation0 {
-    type Aux[I, O, L <: HList, O0 <: HList] = NestedEvaluation[I, O, L] { type Out0 = O0 }
-
-    implicit def operationR[T, L <: HList, OP <: Operator.Binary, R <: HList](
+trait NestedEvaluation0 extends NestedEvaluation1 {
+    implicit def operationR[T, L <: HList, O <: Operator.Binary, R <: HList](
         implicit
         nel: NestedEvaluation[T, T, L],
         ner: NestedEvaluation[T, T, R],
-        p:   Printer[R]
-    ) = new NestedEvaluation[T, T, L :: OP :: R] {
+        p:   Printer[R],
+        ev:  O <:!< Operator.~>.type
+    ) = new NestedEvaluation[T, T, L :: O :: R] {
         type C = Computed[ner.Out0] :+: Unevaluated[R] :+: CNil
 
-        override type Out0 = Computed[nel.Out0] :: OP :: C :: HNil
+        override type Out0 = Computed[nel.Out0] :: O :: C :: HNil
 
-        override def apply( input: T, tree: L :: OP :: R ) = tree match {
+        override def apply( input: T, tree: L :: O :: R ) = tree match {
             case l :: Operator.& :: r ⇒ ( nel( input, l ), ner( input, r ) ) match {
                 case ( ( a, lhs ), ( b, rhs ) ) ⇒
                     ( a.flatMap( _ ⇒ b ), Computed( lhs :: Operator.& :: Coproduct[C]( rhs ) :: HNil ) )
@@ -113,6 +116,10 @@ trait NestedEvaluation0 {
             }
         }
     }
+}
+
+trait NestedEvaluation1 {
+    type Aux[I, O, L <: HList, O0 <: HList] = NestedEvaluation[I, O, L] { type Out0 = O0 }
 
     implicit def recursion[I, O, P, H <: HList, T <: HList](
         implicit

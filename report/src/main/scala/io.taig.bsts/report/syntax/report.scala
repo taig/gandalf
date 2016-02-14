@@ -1,7 +1,9 @@
 package io.taig.bsts.report.syntax
 
-import io.taig.bsts.{ Computed, Error, Failure }
+import io.taig.bsts.data.Validated
+import io.taig.bsts.ops.Computed
 import io.taig.bsts.report._
+import io.taig.bsts.Error
 import shapeless.HList
 
 import scala.language.implicitConversions
@@ -11,13 +13,13 @@ trait report {
         error: Error[N, A]
     ): ops.report[Error[N, A]] = new ops.report( error )
 
-    implicit def ruleFailureReportSyntax[N <: String, T, A <: HList](
-        failure: Failure[Error[N, A], T]
-    ): ops.report[Failure[Error[N, A], T]] = new ops.report[Failure[Error[N, A], T]]( failure )
+    implicit def termValidatedReportSyntax[N <: String, T, A <: HList](
+        validation: Validated[Error[N, A], T]
+    ): ops.report[Validated[Error[N, A], T]] = new ops.report( validation )
 
-    implicit def policyFailureReportSyntax[C <: HList, T](
-        failure: Failure[Computed[C], T]
-    ): ops.report[Failure[Computed[C], T]] = new ops.report[Failure[Computed[C], T]]( failure )
+    implicit def policyValidatedReportSyntax[C <: HList, O](
+        validated: Validated[Computed[C], O]
+    ): ops.report[Validated[Computed[C], O]] = new ops.report( validated )
 }
 
 object report extends report

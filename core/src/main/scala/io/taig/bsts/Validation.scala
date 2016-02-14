@@ -1,11 +1,17 @@
 package io.taig.bsts
 
-trait Validation[I, O] {
-    type F
+import shapeless.HList
 
-    def validate( input: I ): Result[F, O]
+trait Validation[I, O] {
+    type V <: HList
+
+    type R
+
+    def validations: V
+
+    def validate( input: I ): R
 }
 
 object Validation {
-    type Aux[I, O, Out0] = Validation[I, O] { type Out = Out0 }
+    type Aux[I, O, V0 <: HList, R0] = Validation[I, O] { type V = V0; type R = R0 }
 }

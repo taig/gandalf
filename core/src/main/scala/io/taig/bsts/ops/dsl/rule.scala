@@ -1,17 +1,42 @@
 package io.taig.bsts.ops.dsl
 
-import io.taig.bsts._
+import io.taig.bsts.ops.hlist.NestedEvaluation
+import io.taig.bsts.{ Policy, Validation }
+import shapeless._
 
-import scala.language.experimental.macros
+final class rule[I, O, V <: HList, R]( a: Validation.Aux[I, O, V, R] ) {
+    def &[W <: HList, S, NE <: HList]( b: Validation.Aux[O, O, W, S] )(
+        implicit
+        ne: NestedEvaluation.Aux[I, O, V :: Operator.&.type :: W :: HNil, NE]
+    ): Policy[I, O, V :: Operator.&.type :: W :: HNil, NE] = {
+        Policy( a.validations :: Operator.& :: b.validations :: HNil )
+    }
 
-final class rule[T, A <: Validation[T, T]]( a: A ) {
-    @argument( Operator.& ) def &( b: Validation[T, T] ): Validation[T, T] = macro impl[A, T, T, T]
+    def &&[W <: HList, S, NE <: HList]( b: Validation.Aux[O, O, W, S] )(
+        implicit
+        ne: NestedEvaluation.Aux[I, O, V :: Operator.&&.type :: W :: HNil, NE]
+    ): Policy[I, O, V :: Operator.&&.type :: W :: HNil, NE] = {
+        Policy( a.validations :: Operator.&& :: b.validations :: HNil )
+    }
 
-    @argument( Operator.&& ) def &&( b: Validation[T, T] ): Validation[T, T] = macro impl[A, T, T, T]
+    def |[W <: HList, S, NE <: HList]( b: Validation.Aux[O, O, W, S] )(
+        implicit
+        ne: NestedEvaluation.Aux[I, O, V :: Operator.|.type :: W :: HNil, NE]
+    ): Policy[I, O, V :: Operator.|.type :: W :: HNil, NE] = {
+        Policy( a.validations :: Operator.| :: b.validations :: HNil )
+    }
 
-    @argument( Operator.| ) def |( b: Validation[T, T] ): Validation[T, T] = macro impl[A, T, T, T]
+    def ||[W <: HList, S, NE <: HList]( b: Validation.Aux[O, O, W, S] )(
+        implicit
+        ne: NestedEvaluation.Aux[I, O, V :: Operator.||.type :: W :: HNil, NE]
+    ): Policy[I, O, V :: Operator.||.type :: W :: HNil, NE] = {
+        Policy( a.validations :: Operator.|| :: b.validations :: HNil )
+    }
 
-    @argument( Operator.|| ) def ||( b: Validation[T, T] ): Validation[T, T] = macro impl[A, T, T, T]
-
-    @argument( Operator.^ ) def ^( b: Validation[T, T] ): Validation[T, T] = macro impl[A, T, T, T]
+    def ^[W <: HList, S, NE <: HList]( b: Validation.Aux[O, O, W, S] )(
+        implicit
+        ne: NestedEvaluation.Aux[I, O, V :: Operator.^.type :: W :: HNil, NE]
+    ): Policy[I, O, V :: Operator.^.type :: W :: HNil, NE] = {
+        Policy( a.validations :: Operator.^ :: b.validations :: HNil )
+    }
 }

@@ -1,10 +1,12 @@
 package io.taig.bsts.report
 
+import io.taig.bsts.data.{ NonEmptyList, Validated }
+import Validated.Invalid
 import io.taig.bsts._
+import io.taig.bsts.ops.{ Unevaluated, Computed }
 import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.report.syntax.report._
 import shapeless._
-import shapeless.ops.function.FnToProduct
 import shapeless.ops.hlist.LeftFolder
 
 trait Report[-T] {
@@ -14,52 +16,62 @@ trait Report[-T] {
 }
 
 object Report extends Report0 {
-    def apply[I <: String, A <: HList]( f: A ⇒ String ): Report.Aux[Error[I, A], String] = new Report[Error[I, A]] {
-        override type Out = String
+    def instance[N <: String, A <: HList, O]( f: A ⇒ O ): Report.Aux[Error[N, A], O] = new Report[Error[N, A]] {
+        override type Out = O
 
-        override def report( error: Error[I, A] ): String = f( error.arguments )
+        override def report( error: Error[N, A] ): O = f( error.arguments )
     }
 
-    def apply[N <: String, A <: HList](
-        rule: Rule[N, _, A]
-    )(
-        message: String
-    ): Report.Aux[Error[N, A], String] = Report( _ ⇒ message )
+    /**
+     * Construct a Report for a Rule
+     *
+     * {{{
+     * Report( rule.required )( _ => "required" )
+     * Report( rule.min )( args => s"min ${args("expected")}" )
+     * }}}
+     */
+    def apply[N <: String, A <: HList, R]( term: Term[N, _, _, A] )( message: A ⇒ R ): Report.Aux[Error[N, A], R] = {
+        instance( message )
+    }
 
-    def apply[N <: String, A <: HList](
-        transformation: Transformation[N, _, _, A]
-    )(
-        message: String
-    ): Report.Aux[Error[N, A], String] = Report( _ ⇒ message )
+    def apply[N <: String, A <: HList, R]( term: ( _ ) ⇒ Term[N, _, _, A] )(
+        message: A ⇒ R
+    ): Report.Aux[Error[N, A], R] = instance( message )
 
-    def apply[N <: String, A <: HList, F, L, R]( rule: F )(
+    def apply[N <: String, A <: HList, R]( term: ( _, _ ) ⇒ Term[N, _, _, A] )(
+        message: A ⇒ R
+    ): Report.Aux[Error[N, A], R] = instance( message )
+
+    def apply[N <: String, A <: HList, R]( term: ( _, _, _ ) ⇒ Term[N, _, _, A] )(
+        message: A ⇒ R
+    ): Report.Aux[Error[N, A], R] = instance( message )
+
+    def apply[N <: String, A <: HList, R]( term: ( _, _, _, _ ) ⇒ Term[N, _, _, A] )(
+        message: A ⇒ R
+    ): Report.Aux[Error[N, A], R] = instance( message )
+
+    implicit def `Report[Term]`[N <: String, I, O, A <: HList, R](
         implicit
-        ftp: FnToProduct.Aux[F, L ⇒ R],
-        ev1: R <:< Rule[N, _, A]
-    ): Builder[N, A] = new Builder
+        r: Report.Aux[Error[N, A], R]
+    ): Report.Aux[Validated[Error[N, A], O], Validated[R, O]] = new Report[Validated[Error[N, A], O]] {
+        override type Out = Validated[R, O]
 
-    class Builder[I <: String, A <: HList] {
-        def as( f: A ⇒ String ): Report.Aux[Error[I, A], String] = Report( f )
+        override def report( validated: Validated[Error[N, A], O] ): Validated[R, O] = {
+            validated.leftMap( _.report )
+        }
     }
 
-    implicit def `Report[Failure[Rule|Transformation]]`[I <: String, T, A <: HList](
-        implicit
-        r: Report.Aux[Error[I, A], String]
-    ): Report.Aux[Failure[Error[I, A], T], String] = new Report[Failure[Error[I, A], T]] {
-        override type Out = String
-
-        override def report( failure: Failure[Error[I, A], T] ): String = failure.value.report[String]
-    }
-
-    // TODO dynamic output type???
-    implicit def `Report[Failure[Policy]]`[C <: HList, T](
+    implicit def `Report[Policy]`[C <: HList, T](
         implicit
         lf: collect.F[C]
-    ): Report.Aux[Failure[Computed[C], T], lf.Out] = new Report[Failure[Computed[C], T]] {
-        override type Out = lf.Out
+    ): Report.Aux[Validated[Computed[C], T], Validated[NonEmptyList[String], T]] = {
+        new Report[Validated[Computed[C], T]] {
+            override type Out = Validated[NonEmptyList[String], T]
 
-        override def report( failure: Failure[Computed[C], T] ): Out = {
-            failure.value.tree.foldLeft( List.empty[String] )( collect )
+            override def report( validated: Validated[Computed[C], T] ): Out = validated.leftMap { computation ⇒
+                val list = computation.tree.foldLeft( List.empty[String] )( collect )
+                NonEmptyList( list.head, list.tail )
+            }
         }
     }
 
@@ -69,8 +81,8 @@ object Report extends Report0 {
         implicit def result[I <: String, T, A <: HList](
             implicit
             r: Report.Aux[Error[I, A], String]
-        ) = at[List[String], Result[Error[I, A], T]] {
-            case ( errors, Failure( error ) ) ⇒ errors :+ error.report[String]
+        ) = at[List[String], Validated[Error[I, A], T]] {
+            case ( errors, Invalid( error ) ) ⇒ errors :+ error.report[String]
             case ( errors, _ )                ⇒ errors
         }
 
@@ -94,12 +106,12 @@ object Report extends Report0 {
 trait Report0 {
     type Aux[T, Out0] = Report[T] { type Out = Out0 }
 
-    implicit def `Report.Aux[Failure[Rule|Transformation], List[String]]`[I <: String, T, A <: HList](
+    implicit def `Report.Aux[Term, List[String]]`[I <: String, T, A <: HList](
         implicit
-        r: Report.Aux[Failure[Error[I, A], T], String]
-    ): Report.Aux[Failure[Error[I, A], T], List[String]] = new Report[Failure[Error[I, A], T]] {
+        r: Report.Aux[Validated[Error[I, A], T], String]
+    ): Report.Aux[Validated[Error[I, A], T], List[String]] = new Report[Validated[Error[I, A], T]] {
         override type Out = List[String]
 
-        override def report( context: Failure[Error[I, A], T] ) = List( r.report( context ) )
+        override def report( validated: Validated[Error[I, A], T] ) = List( r.report( validated ) )
     }
 }

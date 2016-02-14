@@ -2,6 +2,8 @@ package io.taig.bsts.android.ops
 
 import android.view.{ View, ViewGroup }
 import io.taig.bsts.android.syntax.tags._
+import io.taig.bsts.data.NonEmptyList
+import io.taig.bsts.data.Validated.{ Invalid, Valid }
 
 final class view[V <: View]( view: V ) {
     /**
@@ -13,10 +15,10 @@ final class view[V <: View]( view: V ) {
      */
     def validate(): Boolean = rules.map { view ⇒
         view.validation() match {
-            case Nil ⇒
+            case Valid( _ ) ⇒
                 view.feedback.set( view, None )
                 true
-            case error :: _ ⇒
+            case Invalid( NonEmptyList( error, _ ) ) ⇒
                 view.feedback.set( view, Some( error ) )
                 false
         }
@@ -25,7 +27,7 @@ final class view[V <: View]( view: V ) {
     /**
      * Validate this view and all of its children (without propagating messages to the Ui)
      */
-    def check(): Boolean = rules.forall( _.validation().isEmpty )
+    def check(): Boolean = rules.forall( _.validation().isValid )
 
     /**
      * Remove error message of this view and all of its children
