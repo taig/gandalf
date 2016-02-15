@@ -18,12 +18,12 @@ trait Report[-T] {
 }
 
 object Report extends Report0 {
-    def instance[N <: String, A <: HList, O]( f: A ⇒ O ): Report.Aux[Error[N, A], O, O] = new Report[Error[N, A]] {
+    def instance[N <: String, A <: HList, R]( f: A ⇒ R ): Report.Aux[Error[N, A], R, R] = new Report[Error[N, A]] {
         override type E = Out
 
-        override type Out = O
+        override type Out = R
 
-        override def report( error: Error[N, A] ): O = f( error.arguments )
+        override def report( error: Error[N, A] ): R = f( error.arguments )
     }
 
     /**
@@ -120,5 +120,15 @@ trait Report0 {
     implicit def `Report.Aux[Term, NonEmptyList[String]]`[N <: String, O, A <: HList, R](
         implicit
         r: Report.Aux[Validated[Error[N, A], O], R, Validated[R, O]]
-    ): Report.Aux[Validated[Error[N, A], O], R, Validated[NonEmptyList[R], O]] = ???
+    ): Report.Aux[Validated[Error[N, A], O], R, Validated[NonEmptyList[R], O]] = {
+        new Report[Validated[Error[N, A], O]] {
+            override type E = R
+
+            override type Out = Validated[NonEmptyList[R], O]
+
+            override def report( validated: Validated[Error[N, A], O] ) = {
+                r.report( validated ).leftMap( NonEmptyList( _ ) )
+            }
+        }
+    }
 }
