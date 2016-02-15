@@ -11,7 +11,13 @@ trait Event[-V <: View] {
     def onDetach( view: V ): Unit
 }
 
-object Event extends Event0 {
+object Event {
+    val Empty = new Event[View] {
+        override def onAttach( view: View ) = {}
+
+        override def onDetach( view: View ) = {}
+    }
+
     implicit val `Event[TextView]` = new Event[TextView] with View.OnFocusChangeListener {
         override def onAttach( view: TextView ) = view.setOnFocusChangeListener( this )
 
@@ -26,13 +32,5 @@ object Event extends Event0 {
         override def onDetach( view: TextInputLayout ) = view.setOnFocusChangeListener( null )
 
         override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate()
-    }
-}
-
-trait Event0 {
-    implicit val `Event[View]` = new Event[View] {
-        override def onAttach( view: View ) = {}
-
-        override def onDetach( view: View ) = {}
     }
 }

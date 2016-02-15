@@ -19,10 +19,10 @@ final class validation[V <: View]( view: V ) {
     class Builder1[I] {
         def apply[O]( validation: Validation[I, O] )(
             implicit
-            ev: Event[V],
             ex: Extraction[V, I],
             f:  Feedback[V],
-            r:  Report.Aux[validation.R, String, Validated[NonEmptyList[String], O]]
+            r:  Report.Aux[validation.R, String, Validated[NonEmptyList[String], O]],
+            ev: Event[V]                                                             = Event.Empty
         ): V = {
             ev.onAttach( view )
             view.feedback = f
@@ -34,7 +34,7 @@ final class validation[V <: View]( view: V ) {
     /**
      * Remove all validation rules from this view
      */
-    def reset()( implicit ev: Event[V] ): Unit = {
+    def reset()( implicit ev: Event[V] = Event.Empty ): Unit = {
         ev.onDetach( view )
         view.feedback = null
         view.validation = null
