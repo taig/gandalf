@@ -1,7 +1,7 @@
 package io.taig.bsts
 
-import cats.data.Validated.Invalid
-import cats.data.{ NonEmptyList, Validated }
+import cats.data.Xor._
+import cats.data.{ NonEmptyList, Xor }
 import io.taig.bsts.ops.{ Computed, Unevaluated }
 import io.taig.bsts.syntax.raw._
 import shapeless._
@@ -29,20 +29,20 @@ object Raw {
     implicit def `Raw[Term]`[N <: String, T, A <: HList](
         implicit
         r: Raw.Aux[Error[N, A], ( String, List[Any] )]
-    ): Raw.Aux[Validated[Error[N, A], T], Validated[( String, List[Any] ), T]] = new Raw[Validated[Error[N, A], T]] {
-        override type Out = Validated[( String, List[Any] ), T]
+    ): Raw.Aux[Xor[Error[N, A], T], Xor[( String, List[Any] ), T]] = new Raw[Xor[Error[N, A], T]] {
+        override type Out = Xor[( String, List[Any] ), T]
 
-        override def raw( result: Validated[Error[N, A], T] ): Out = result.leftMap( _.raw )
+        override def raw( result: Xor[Error[N, A], T] ): Out = result.leftMap( _.raw )
     }
 
     implicit def `Raw[Policy]`[C <: HList, T](
         implicit
         lf: collect.F[C]
-    ): Raw.Aux[Validated[Computed[C], T], Validated[NonEmptyList[( String, List[Any] )], T]] = {
-        new Raw[Validated[Computed[C], T]] {
-            override type Out = Validated[NonEmptyList[( String, List[Any] )], T]
+    ): Raw.Aux[Xor[Computed[C], T], Xor[NonEmptyList[( String, List[Any] )], T]] = {
+        new Raw[Xor[Computed[C], T]] {
+            override type Out = Xor[NonEmptyList[( String, List[Any] )], T]
 
-            override def raw( validated: Validated[Computed[C], T] ): Out = {
+            override def raw( validated: Xor[Computed[C], T] ): Out = {
                 validated.leftMap { computation ⇒
                     val list = computation.tree.foldLeft( List.empty[( String, List[Any] )] )( collect )
                     NonEmptyList( list.head, list.tail )
@@ -57,9 +57,9 @@ object Raw {
         implicit def validated[N <: String, T, A <: HList](
             implicit
             r: Raw.Aux[Error[N, A], ( String, List[Any] )]
-        ) = at[List[( String, List[Any] )], Validated[Error[N, A], T]] {
-            case ( errors, Invalid( error ) ) ⇒ errors :+ error.raw
-            case ( errors, _ )                ⇒ errors
+        ) = at[List[( String, List[Any] )], Xor[Error[N, A], T]] {
+            case ( errors, Left( error ) ) ⇒ errors :+ error.raw
+            case ( errors, _ )             ⇒ errors
         }
 
         implicit def computed[L <: HList](

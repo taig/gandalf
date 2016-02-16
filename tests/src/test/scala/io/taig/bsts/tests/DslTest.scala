@@ -3,8 +3,8 @@ package io.taig.bsts.tests
 import io.taig.bsts.Policy
 import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.syntax.dsl._
-import shapeless.test.illTyped
 import shapeless._
+import shapeless.test.illTyped
 
 class DslTest extends Suite {
     it should "allow to combine equally typed rules" in {

@@ -1,10 +1,10 @@
 package io.taig.bsts.ops.hlist
 
-import cats.data.Validated
-import cats.data.Validated.{ Invalid, Valid }
+import cats.data.Xor
+import cats.data.Xor._
 import io.taig.bsts._
 import io.taig.bsts.ops.dsl.Operator
-import io.taig.bsts.ops.{ Unevaluated, Computed }
+import io.taig.bsts.ops.{ Computed, Unevaluated }
 import shapeless._
 
 trait NestedEvaluation[I, O, -T <: HList] extends Serializable {
@@ -25,13 +25,13 @@ object NestedEvaluation extends NestedEvaluation0 {
     }
 
     implicit def term[N <: String, I, O, A <: HList] = {
-        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, Validated[Error[N, A], O]] :: HNil] {
-            override type Out0 = Validated[Error[N, A], O] :: HNil
+        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, Xor[Error[N, A], O]] :: HNil] {
+            override type Out0 = Xor[Error[N, A], O] :: HNil
 
-            override def apply( input: I, tree: Term.Aux[N, I, O, A, Validated[Error[N, A], O]] :: HNil ) = tree match {
+            override def apply( input: I, tree: Term.Aux[N, I, O, A, Xor[Error[N, A], O]] :: HNil ) = tree match {
                 case term :: HNil ⇒ term.validate( input ) match {
-                    case v @ Valid( output ) ⇒ ( Some( output ), Computed( v :: HNil ) )
-                    case i @ Invalid( _ )    ⇒ ( None, Computed( i :: HNil ) )
+                    case v @ Right( output ) ⇒ ( Some( output ), Computed( v :: HNil ) )
+                    case i @ Left( _ )       ⇒ ( None, Computed( i :: HNil ) )
                 }
             }
         }
@@ -39,12 +39,12 @@ object NestedEvaluation extends NestedEvaluation0 {
 
     implicit def termNoError[N <: String, I, O, A <: HList] = {
         new NestedEvaluation[I, O, Term.Aux[N, I, O, A, O] :: HNil] {
-            override type Out0 = Valid[O] :: HNil
+            override type Out0 = Right[O] :: HNil
 
             override def apply( input: I, tree: Term.Aux[N, I, O, A, O] :: HNil ) = tree match {
                 case term :: HNil ⇒
                     val output = term.validate( input )
-                    ( Some( output ), Computed( Valid( output ) :: HNil ) )
+                    ( Some( output ), Computed( Right( output ) :: HNil ) )
             }
         }
     }

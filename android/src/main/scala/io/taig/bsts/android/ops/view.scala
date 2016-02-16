@@ -1,9 +1,9 @@
 package io.taig.bsts.android.ops
 
 import android.view.{ View, ViewGroup }
+import cats.data.{ NonEmptyList, Xor, OneAnd }
+import cats.data.Xor._
 import io.taig.bsts.android.syntax.tags._
-import io.taig.bsts.data.NonEmptyList
-import io.taig.bsts.data.Validated.{ Invalid, Valid }
 
 final class view[V <: View]( view: V ) {
     /**
@@ -13,21 +13,21 @@ final class view[V <: View]( view: V ) {
      * If it finds a view it will execute the validation and update the Ui. Only if all children pass the validation,
      * this method will return <code>true</code>.
      */
-    def validate(): Boolean = rules.map { view ⇒
-        view.validation() match {
-            case Valid( _ ) ⇒
-                view.feedback.set( view, None )
-                true
-            case Invalid( NonEmptyList( error, _ ) ) ⇒
-                view.feedback.set( view, Some( error ) )
-                false
-        }
-    }.forall( _ == true )
+    def validate(): Boolean = rules.map( new view( _ ).validate[Any].isRight ).forall( _ == true )
+
+    def validate[O]: Xor[NonEmptyList[String], O] = view.validation[O]() match {
+        case right @ Right( _ ) ⇒
+            view.feedback.set( view, None )
+            right
+        case left @ Left( OneAnd( error, _ ) ) ⇒
+            view.feedback.set( view, Some( error ) )
+            left
+    }
 
     /**
      * Validate this view and all of its children (without propagating messages to the Ui)
      */
-    def check(): Boolean = rules.forall( _.validation().isValid )
+    def check(): Boolean = rules.forall( _.validation().isRight )
 
     /**
      * Remove error message of this view and all of its children

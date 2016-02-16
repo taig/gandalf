@@ -1,7 +1,7 @@
 package io.taig.bsts.mutation
 
-import cats.data.Validated
-import cats.data.Validated.{ Invalid, Valid }
+import cats.data.Xor
+import cats.data.Xor._
 import io.taig.bsts.mutation.ops.Extraction
 import io.taig.bsts.{ Error, Term }
 import shapeless._
@@ -15,7 +15,7 @@ abstract class Mutation[N <: String, I, O, A <: HList](
 ) extends Term[N, I, O, A] {
     override final type V = Mutation[N, I, O, A] :: HNil
 
-    override final type R = Validated[Error[N, A], O]
+    override final type R = Xor[Error[N, A], O]
 
     override final def validations: V = this :: HNil
 }
@@ -29,8 +29,8 @@ object Mutation {
             e: Extraction[O, F]
         ): Mutation[N, I, O, HNil] with Chain1[N, I, O] = new Mutation[N, I, O, HNil] with Chain1[N, I, O] {
             override def validate( input: I ): R = e.extract( f( input ) ) match {
-                case Some( output ) ⇒ Valid( output )
-                case None           ⇒ Invalid( Error( HNil ) )
+                case Some( output ) ⇒ Right( output )
+                case None           ⇒ Left( Error( HNil ) )
             }
 
             override def apply[A <: HList]( g: I ⇒ A )(
@@ -38,8 +38,8 @@ object Mutation {
                 tt: ToTraversable.Aux[A, List, Any]
             ): Mutation[N, I, O, A] = new Mutation[N, I, O, A] {
                 override def validate( input: I ): R = e.extract( f( input ) ) match {
-                    case Some( output ) ⇒ Valid( output )
-                    case None           ⇒ Invalid( Error( g( input ) ) )
+                    case Some( output ) ⇒ Right( output )
+                    case None           ⇒ Left( Error( g( input ) ) )
                 }
             }
         }

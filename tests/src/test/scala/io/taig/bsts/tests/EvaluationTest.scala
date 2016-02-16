@@ -17,17 +17,17 @@ class EvaluationTest extends Suite {
             """
               |Computed(
               |    Computed(
-              |        Computed(Valid(foobar) :: HNil) :: 
+              |        Computed(Right(foobar) :: HNil) :: 
               |        && :: 
               |        Computed(
-              |            Computed(Valid(foobar) :: HNil) :: 
+              |            Computed(Right(foobar) :: HNil) :: 
               |            Computed(HNil) :: 
               |            HNil
               |        ) :: 
               |    HNil) :: 
               |    && :: 
               |    Computed(
-              |        Computed(Valid(foobar) :: HNil) :: 
+              |        Computed(Right(foobar) :: HNil) :: 
               |        Computed(HNil) :: 
               |        HNil
               |    ) :: 

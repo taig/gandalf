@@ -1,7 +1,7 @@
 package io.taig.bsts.rule
 
-import cats.data.Validated
-import cats.data.Validated.{ Invalid, Valid }
+import cats.data.Xor
+import cats.data.Xor._
 import io.taig.bsts.{ Error, Term }
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
@@ -13,7 +13,7 @@ abstract class Rule[N <: String, T, A <: HList](
 ) extends Term[N, T, T, A] {
     override final type V = Rule[N, T, A] :: HNil
 
-    override final type R = Validated[Error[N, A], T]
+    override final type R = Xor[Error[N, A], T]
 
     override final def validations = this :: HNil
 }
@@ -24,8 +24,8 @@ object Rule {
     class Builder1[N <: String, T]( implicit w: Witness.Aux[N] ) {
         def apply( f: T ⇒ Boolean ): Rule[N, T, HNil] with Chain1[N, T] = new Rule[N, T, HNil] with Chain1[N, T] {
             override def validate( input: T ) = f( input ) match {
-                case true  ⇒ Valid( input )
-                case false ⇒ Invalid( Error( HNil ) )
+                case true  ⇒ Right( input )
+                case false ⇒ Left( Error( HNil ) )
             }
 
             override def apply[A <: HList]( g: T ⇒ A )(
@@ -33,8 +33,8 @@ object Rule {
                 tt: Aux[A, List, Any]
             ): Rule[N, T, A] = new Rule[N, T, A] {
                 override def validate( input: T ) = f( input ) match {
-                    case true  ⇒ Valid( input )
-                    case false ⇒ Invalid( Error( g( input ) ) )
+                    case true  ⇒ Right( input )
+                    case false ⇒ Left( Error( g( input ) ) )
                 }
             }
         }
@@ -53,8 +53,8 @@ object Rule {
         def apply( g: T ⇒ U )( f: U ⇒ Boolean ): Rule[N, T, HNil] with Chain2[N, T, U] = {
             new Rule[N, T, HNil] with Chain2[N, T, U] {
                 override def validate( input: T ) = f( g( input ) ) match {
-                    case true  ⇒ Valid( input )
-                    case false ⇒ Invalid( Error( HNil ) )
+                    case true  ⇒ Right( input )
+                    case false ⇒ Left( Error( HNil ) )
                 }
 
                 override def apply[A <: HList]( h: ( T, U ) ⇒ A )(
@@ -65,8 +65,8 @@ object Rule {
                         val transformed = g( input )
 
                         f( transformed ) match {
-                            case true  ⇒ Valid( input )
-                            case false ⇒ Invalid( Error( h( input, transformed ) ) )
+                            case true  ⇒ Right( input )
+                            case false ⇒ Left( Error( h( input, transformed ) ) )
                         }
                     }
                 }

@@ -1,9 +1,9 @@
 package io.taig.bsts.android.ops
 
 import android.view.View
+import cats.data.{ NonEmptyList, Xor }
 import io.taig.bsts.android.Feedback
 import io.taig.bsts.android.resource.R
-import io.taig.bsts.data.{ Validated, NonEmptyList }
 
 final private[android] class tags[V <: View]( view: V ) {
     def feedback_=( feedback: Feedback[V] ) = {
@@ -22,11 +22,11 @@ final private[android] class tags[V <: View]( view: V ) {
         view.getTag( R.id.bsts_name ).asInstanceOf[String]
     }
 
-    def validation_=( validation: () ⇒ Validated[NonEmptyList[String], _] ) = {
+    def validation_=[O]( validation: () ⇒ Xor[NonEmptyList[String], O] ) = {
         view.setTag( R.id.bsts_validation, validation )
     }
 
-    def validation: () ⇒ Validated[NonEmptyList[String], _] = {
-        view.getTag( R.id.bsts_validation ).asInstanceOf[() ⇒ Validated[NonEmptyList[String], _]]
+    def validation[O]: () ⇒ Xor[NonEmptyList[String], O] = {
+        view.getTag( R.id.bsts_validation ).asInstanceOf[() ⇒ Xor[NonEmptyList[String], O]]
     }
 }
