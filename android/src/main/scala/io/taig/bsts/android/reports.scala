@@ -16,7 +16,7 @@ trait reports {
     private def report[N <: String, A <: HList]( term: Term[N, _, _, A], @StringRes message: Int )(
         implicit
         context: Context
-    ): Report.Aux[Error[N, A], String, String] = Report( term )( _ ⇒ context.getString( message ) )
+    ): Report.Aux[Error[N, A], String] = Report( term )( _ ⇒ context.getString( message ) )
 
     implicit def `Report[email]`( implicit context: Context ) = report( email, R.string.bsts_email )
 

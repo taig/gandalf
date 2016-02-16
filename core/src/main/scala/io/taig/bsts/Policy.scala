@@ -8,8 +8,8 @@ import shapeless.HList
 
 case class Policy[I, O, V0 <: HList, NE <: HList]( validations: V0 )(
         implicit
-        val ne: NestedEvaluation.Aux[I, O, V0, NE],
-        p:      Printer[V0]
+        ne: NestedEvaluation.Aux[I, O, V0, NE],
+        p:  Printer[V0]
 ) extends Validation[I, O] {
     override type V = V0
 

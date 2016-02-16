@@ -21,8 +21,8 @@ final class validation[V <: View]( view: V ) {
             implicit
             ex: Extraction[V, I],
             f:  Feedback[V],
-            r:  Report.Aux[validation.R, String, Validated[NonEmptyList[String], O]],
-            ev: Event[V]                                                             = Event.Empty
+            r:  Report.Aux[validation.R, Validated[NonEmptyList[String], O]],
+            ev: Event[V]                                                     = Event.Empty
         ): V = {
             ev.onAttach( view )
             view.feedback = f

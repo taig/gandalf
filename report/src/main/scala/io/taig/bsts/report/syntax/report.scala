@@ -3,8 +3,8 @@ package io.taig.bsts.report.syntax
 import io.taig.bsts.data.Validated
 import io.taig.bsts.ops.Computed
 import io.taig.bsts.report._
-import io.taig.bsts.Error
-import shapeless.HList
+import io.taig.bsts.{ Term, Error }
+import shapeless.{ Witness, HList }
 
 import scala.language.implicitConversions
 
@@ -13,9 +13,24 @@ trait report {
         error: Error[N, A]
     ): ops.report[Error[N, A]] = new ops.report( error )
 
-    implicit def termValidatedReportSyntax[N <: String, T, A <: HList](
-        validated: Validated[Error[N, A], T]
-    ): ops.report[Validated[Error[N, A], T]] = new ops.report( validated )
+    implicit def reportableErrorReportSyntax[N <: String, A <: HList](
+        error: ReportableError[N, A]
+    ): ops.report[ReportableError[N, A]] = new ops.report( error )
+
+    implicit def reportableTermValidatedReportSyntax[N <: String, O, A <: HList](
+        validated: Validated[ReportableError[N, A], O]
+    ): ops.report[Validated[ReportableError[N, A], O]] = new ops.report( validated )
+
+    implicit def termValidatedReportSyntax[N <: String, O, A <: HList](
+        validated: Validated[Error[N, A], O]
+    ): ops.report[Validated[Error[N, A], O]] = new ops.report( validated )
+
+    implicit def termAsSyntax[N <: String, I, O, A <: HList](
+        term: Term.Aux[N, I, O, A, Validated[Error[N, A], O]]
+    )(
+        implicit
+        w: Witness.Aux[N]
+    ): ops.term[N, I, O, A] = new ops.term( term )
 
     implicit def policyValidatedReportSyntax[C <: HList, O](
         validated: Validated[Computed[C], O]
