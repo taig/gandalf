@@ -1,9 +1,9 @@
 package io.taig.bsts.android.ops
 
 import android.view.{ View, ViewGroup }
+import cats.data.OneAnd
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.android.syntax.tags._
-import io.taig.bsts.data.NonEmptyList
-import io.taig.bsts.data.Validated.{ Invalid, Valid }
 
 final class view[V <: View]( view: V ) {
     /**
@@ -18,7 +18,7 @@ final class view[V <: View]( view: V ) {
             case Valid( _ ) ⇒
                 view.feedback.set( view, None )
                 true
-            case Invalid( NonEmptyList( error, _ ) ) ⇒
+            case Invalid( OneAnd( error, _ ) ) ⇒
                 view.feedback.set( view, Some( error ) )
                 false
         }

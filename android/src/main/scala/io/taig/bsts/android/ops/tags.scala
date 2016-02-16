@@ -1,9 +1,9 @@
 package io.taig.bsts.android.ops
 
 import android.view.View
+import cats.data.{ Validated, NonEmptyList }
 import io.taig.bsts.android.Feedback
 import io.taig.bsts.android.resource.R
-import io.taig.bsts.data.{ Validated, NonEmptyList }
 
 final private[android] class tags[V <: View]( view: V ) {
     def feedback_=( feedback: Feedback[V] ) = {
