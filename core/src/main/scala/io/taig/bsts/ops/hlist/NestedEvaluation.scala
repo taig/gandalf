@@ -24,19 +24,7 @@ object NestedEvaluation extends NestedEvaluation0 {
         override def apply( input: I, tree: HNil ) = ( Some( input ), Computed( HNil ) )
     }
 
-    implicit def term0[N <: String, I, O, A <: HList] = {
-        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, O] :: HNil] {
-            override type Out0 = Valid[O] :: HNil
-
-            override def apply( input: I, tree: Term.Aux[N, I, O, A, O] :: HNil ) = tree match {
-                case term :: HNil ⇒
-                    val output = term.validate( input )
-                    ( Some( output ), Computed( Valid( output ) :: HNil ) )
-            }
-        }
-    }
-
-    implicit def term1[N <: String, I, O, A <: HList] = {
+    implicit def term[N <: String, I, O, A <: HList] = {
         new NestedEvaluation[I, O, Term.Aux[N, I, O, A, Validated[Error[N, A], O]] :: HNil] {
             override type Out0 = Validated[Error[N, A], O] :: HNil
 
@@ -45,6 +33,18 @@ object NestedEvaluation extends NestedEvaluation0 {
                     case v @ Valid( output ) ⇒ ( Some( output ), Computed( v :: HNil ) )
                     case i @ Invalid( _ )    ⇒ ( None, Computed( i :: HNil ) )
                 }
+            }
+        }
+    }
+
+    implicit def termNoError[N <: String, I, O, A <: HList] = {
+        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, O] :: HNil] {
+            override type Out0 = Valid[O] :: HNil
+
+            override def apply( input: I, tree: Term.Aux[N, I, O, A, O] :: HNil ) = tree match {
+                case term :: HNil ⇒
+                    val output = term.validate( input )
+                    ( Some( output ), Computed( Valid( output ) :: HNil ) )
             }
         }
     }

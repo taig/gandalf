@@ -1,10 +1,10 @@
 package io.taig.bsts.report
 
-import io.taig.bsts.data.{ NonEmptyList, Validated }
-import Validated.Invalid
 import io.taig.bsts._
-import io.taig.bsts.ops.{ Unevaluated, Computed }
+import io.taig.bsts.data.Validated.Valid
+import io.taig.bsts.data.{ NonEmptyList, Validated }
 import io.taig.bsts.ops.dsl.Operator
+import io.taig.bsts.ops.{ Computed, Unevaluated }
 import io.taig.bsts.report.syntax.report._
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
@@ -92,15 +92,26 @@ object Report extends Report0 {
         }
     }
 
-    object collect extends collect0 {
+    object collect extends Poly2 {
         type F[H <: HList] = LeftFolder.Aux[H, List[String], this.type, List[String]]
 
-        implicit def validated[N <: String, O, A <: HList](
+        implicit def error[N <: String, O, A <: HList](
             implicit
             r: Report.Aux[Validated[Error[N, A], O], Validated[String, O]]
         ): Case.Aux[List[String], Validated[Error[N, A], O], List[String]] = at { ( errors, validated ) ⇒
             errors ++ r.report( validated ).fold( List( _ ), _ ⇒ Nil )
         }
+
+        implicit def reportableError[N <: String, O, A <: HList](
+            implicit
+            r: Report.Aux[Validated[ReportableError[N, A], O], Validated[String, O]]
+        ): Case.Aux[List[String], Validated[ReportableError[N, A], O], List[String]] = at { ( errors, validated ) ⇒
+            errors ++ r.report( validated ).fold( List( _ ), _ ⇒ Nil )
+        }
+
+        implicit def valid[O]: Case.Aux[List[String], Valid[O], List[String]] = at { ( errors, _ ) ⇒ errors }
+
+        implicit def operator[O <: Operator]: Case.Aux[List[String], O, List[String]] = at { ( errors, _ ) ⇒ errors }
 
         implicit def computed[L <: HList](
             implicit
@@ -117,16 +128,12 @@ object Report extends Report0 {
             case ( errors, _ )                       ⇒ errors
         }
     }
-
-    trait collect0 extends Poly2 {
-        implicit def identity[T]: Case.Aux[List[String], T, List[String]] = at { ( errors, _ ) ⇒ errors }
-    }
 }
 
 trait Report0 {
     type Aux[T, Out0] = Report[T] { type Out = Out0 }
 
-    implicit def `Report.Aux[Term, NonEmptyList[String]]`[N <: String, O, A <: HList](
+    implicit def `Report.Aux[Validated[Error], NonEmptyList[String]]`[N <: String, O, A <: HList](
         implicit
         r: Report.Aux[Validated[Error[N, A], O], Validated[String, O]]
     ): Report.Aux[Validated[Error[N, A], O], Validated[NonEmptyList[String], O]] = {
@@ -134,6 +141,19 @@ trait Report0 {
             override type Out = Validated[NonEmptyList[String], O]
 
             override def report( validated: Validated[Error[N, A], O] ) = {
+                r.report( validated ).leftMap( NonEmptyList( _ ) )
+            }
+        }
+    }
+
+    implicit def `Report.Aux[Validated[ReportableError], NonEmptyList[String]]`[N <: String, O, A <: HList](
+        implicit
+        r: Report.Aux[Validated[ReportableError[N, A], O], Validated[String, O]]
+    ): Report.Aux[Validated[ReportableError[N, A], O], Validated[NonEmptyList[String], O]] = {
+        new Report[Validated[ReportableError[N, A], O]] {
+            override type Out = Validated[NonEmptyList[String], O]
+
+            override def report( validated: Validated[ReportableError[N, A], O] ) = {
                 r.report( validated ).leftMap( NonEmptyList( _ ) )
             }
         }
