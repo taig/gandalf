@@ -1,7 +1,7 @@
 package io.taig.bsts.report
 
 import io.taig.bsts._
-import io.taig.bsts.data.Validated.Valid
+import io.taig.bsts.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.data.{ NonEmptyList, Validated }
 import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.ops.{ Computed, Unevaluated }

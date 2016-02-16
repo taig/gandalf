@@ -5,7 +5,7 @@ import android.support.annotation.StringRes
 import io.taig.bsts.android.resource.R
 import io.taig.bsts.report.Report
 import io.taig.bsts.rule.all._
-import io.taig.bsts.rules.ops.Required
+import io.taig.bsts.mutation.all._
 import io.taig.bsts.{ Error, Term }
 import shapeless.HList
 import shapeless.record._
@@ -24,7 +24,7 @@ trait reports {
         context.getString( R.string.bsts_exactly ).format( arguments( "expected" ) )
     }
 
-    implicit def `Report[matches]`( implicit context: Context ) = Report( matches _ ) { _ ⇒
+    implicit def `Report[matches]`[T]( implicit context: Context ) = Report( matches[T] _ ) { _ ⇒
         context.getString( R.string.bsts_matches )
     }
 
@@ -38,7 +38,11 @@ trait reports {
 
     implicit def `Report[phone]`( implicit context: Context ) = report( phone, R.string.bsts_phone )
 
-    implicit def `Report[required]`( implicit context: Context ) = Report( required( _: Required[_] ) ) { _ ⇒
+    implicit def `Report[required]`( implicit context: Context ) = Report( required ) { _ ⇒
+        context.getString( R.string.bsts_required )
+    }
+
+    implicit def `Report[isDefined]`( implicit context: Context ) = Report( isDefined ) { _ ⇒
         context.getString( R.string.bsts_required )
     }
 }

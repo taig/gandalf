@@ -27,6 +27,8 @@ trait string {
 
         Rule[String]( "phone" )( pattern.matcher( _ ).matches() ){ "value" ->> _ :: HNil }
     }
+
+    val required = Rule[String]( "required" )( _.nonEmpty )
 }
 
 object string extends string

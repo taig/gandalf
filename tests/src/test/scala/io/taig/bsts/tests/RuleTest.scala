@@ -67,13 +67,8 @@ class RuleTest extends Suite {
     }
 
     "required" should "verify that a String is not empty" in {
-        generic.required[String].validate( "foo" ).isValid shouldBe true
-        generic.required[String].validate( "" ).isValid shouldBe false
-    }
-
-    it should "verify that an Option is not empty" in {
-        generic.required[Option[String]].validate( Some( "foo" ) ).isValid shouldBe true
-        generic.required[Option[String]].validate( None ).isValid shouldBe false
+        string.required.validate( "foo" ).isValid shouldBe true
+        string.required.validate( "" ).isValid shouldBe false
     }
 
     "eq" should "verify that the validation value equals the expectation" in {
