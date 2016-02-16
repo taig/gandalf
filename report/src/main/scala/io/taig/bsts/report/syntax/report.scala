@@ -1,10 +1,10 @@
 package io.taig.bsts.report.syntax
 
-import cats.data.Xor
+import cats.data.Validated
 import io.taig.bsts.ops.Computed
 import io.taig.bsts.report._
-import io.taig.bsts.{ Error, Term }
-import shapeless.{ HList, Witness }
+import io.taig.bsts.{ Term, Error }
+import shapeless.{ Witness, HList }
 
 import scala.language.implicitConversions
 
@@ -17,24 +17,24 @@ trait report {
         error: ReportableError[N, A]
     ): ops.report[ReportableError[N, A]] = new ops.report( error )
 
-    implicit def reportableTermXorReportSyntax[N <: String, O, A <: HList](
-        validated: Xor[ReportableError[N, A], O]
-    ): ops.report[Xor[ReportableError[N, A], O]] = new ops.report( validated )
+    implicit def reportableTermValidatedReportSyntax[N <: String, O, A <: HList](
+        validated: Validated[ReportableError[N, A], O]
+    ): ops.report[Validated[ReportableError[N, A], O]] = new ops.report( validated )
 
-    implicit def termXorReportSyntax[N <: String, O, A <: HList](
-        validated: Xor[Error[N, A], O]
-    ): ops.report[Xor[Error[N, A], O]] = new ops.report( validated )
+    implicit def termValidatedReportSyntax[N <: String, O, A <: HList](
+        validated: Validated[Error[N, A], O]
+    ): ops.report[Validated[Error[N, A], O]] = new ops.report( validated )
 
     implicit def termAsSyntax[N <: String, I, O, A <: HList](
-        term: Term.Aux[N, I, O, A, Xor[Error[N, A], O]]
+        term: Term.Aux[N, I, O, A, Validated[Error[N, A], O]]
     )(
         implicit
         w: Witness.Aux[N]
     ): ops.term[N, I, O, A] = new ops.term( term )
 
-    implicit def policyXorReportSyntax[C <: HList, O](
-        validated: Xor[Computed[C], O]
-    ): ops.report[Xor[Computed[C], O]] = new ops.report( validated )
+    implicit def policyValidatedReportSyntax[C <: HList, O](
+        validated: Validated[Computed[C], O]
+    ): ops.report[Validated[Computed[C], O]] = new ops.report( validated )
 }
 
 object report extends report

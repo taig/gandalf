@@ -3,9 +3,9 @@ package io.taig.bsts.android
 import android.content.Context
 import android.support.annotation.StringRes
 import io.taig.bsts.android.resource.R
-import io.taig.bsts.mutation.all._
 import io.taig.bsts.report.Report
 import io.taig.bsts.rule.all._
+import io.taig.bsts.mutation.all._
 import io.taig.bsts.{ Error, Term }
 import shapeless.HList
 import shapeless.record._

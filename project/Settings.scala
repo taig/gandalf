@@ -1,6 +1,6 @@
-import io.taig.sbt.sonatype.Plugin.autoImport._
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
+import io.taig.sbt.sonatype.Plugin.autoImport._
 
 object Settings {
     val common = Seq(

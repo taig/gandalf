@@ -1,7 +1,7 @@
 package io.taig.bsts.report
 
-import cats.data.Xor._
-import cats.data.{ NonEmptyList, Xor }
+import cats.data.Validated.Valid
+import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts._
 import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.ops.{ Computed, Unevaluated }
@@ -58,34 +58,34 @@ object Report extends Report0 {
         }
     }
 
-    implicit def `Report[Xor[ReportableError]]`[N <: String, O, A <: HList](
+    implicit def `Report[Validated[ReportableError]]`[N <: String, O, A <: HList](
         implicit
         r: Aux[ReportableError[N, A], String]
-    ): Aux[Xor[ReportableError[N, A], O], Xor[String, O]] = {
-        new Report[Xor[ReportableError[N, A], O]] {
-            override type Out = Xor[String, O]
+    ): Aux[Validated[ReportableError[N, A], O], Validated[String, O]] = {
+        new Report[Validated[ReportableError[N, A], O]] {
+            override type Out = Validated[String, O]
 
-            override def report( validated: Xor[ReportableError[N, A], O] ) = validated.leftMap( _.report )
+            override def report( validated: Validated[ReportableError[N, A], O] ) = validated.leftMap( _.report )
         }
     }
 
-    implicit def `Report[Xor[Error]]`[N <: String, I, O, A <: HList](
+    implicit def `Report[Validated[Error]]`[N <: String, I, O, A <: HList](
         implicit
         r: Aux[Error[N, A], String]
-    ): Aux[Xor[Error[N, A], O], Xor[String, O]] = new Report[Xor[Error[N, A], O]] {
-        override type Out = Xor[String, O]
+    ): Aux[Validated[Error[N, A], O], Validated[String, O]] = new Report[Validated[Error[N, A], O]] {
+        override type Out = Validated[String, O]
 
-        override def report( validated: Xor[Error[N, A], O] ) = validated.leftMap( _.report )
+        override def report( validated: Validated[Error[N, A], O] ) = validated.leftMap( _.report )
     }
 
-    implicit def `Report[Xor[Computed]]`[C <: HList, O](
+    implicit def `Report[Validated[Computed]]`[C <: HList, O](
         implicit
         lf: collect.F[C]
-    ): Aux[Xor[Computed[C], O], Xor[NonEmptyList[String], O]] = {
-        new Report[Xor[Computed[C], O]] {
-            override type Out = Xor[NonEmptyList[String], O]
+    ): Aux[Validated[Computed[C], O], Validated[NonEmptyList[String], O]] = {
+        new Report[Validated[Computed[C], O]] {
+            override type Out = Validated[NonEmptyList[String], O]
 
-            override def report( validated: Xor[Computed[C], O] ): Out = validated.leftMap { computation ⇒
+            override def report( validated: Validated[Computed[C], O] ): Out = validated.leftMap { computation ⇒
                 val list = computation.tree.foldLeft( List.empty[String] )( collect )
                 NonEmptyList( list.head, list.tail )
             }
@@ -97,19 +97,19 @@ object Report extends Report0 {
 
         implicit def error[N <: String, O, A <: HList](
             implicit
-            r: Report.Aux[Xor[Error[N, A], O], Xor[String, O]]
-        ): Case.Aux[List[String], Xor[Error[N, A], O], List[String]] = at { ( errors, validated ) ⇒
+            r: Report.Aux[Validated[Error[N, A], O], Validated[String, O]]
+        ): Case.Aux[List[String], Validated[Error[N, A], O], List[String]] = at { ( errors, validated ) ⇒
             errors ++ r.report( validated ).fold( List( _ ), _ ⇒ Nil )
         }
 
         implicit def reportableError[N <: String, O, A <: HList](
             implicit
-            r: Report.Aux[Xor[ReportableError[N, A], O], Xor[String, O]]
-        ): Case.Aux[List[String], Xor[ReportableError[N, A], O], List[String]] = at { ( errors, validated ) ⇒
+            r: Report.Aux[Validated[ReportableError[N, A], O], Validated[String, O]]
+        ): Case.Aux[List[String], Validated[ReportableError[N, A], O], List[String]] = at { ( errors, validated ) ⇒
             errors ++ r.report( validated ).fold( List( _ ), _ ⇒ Nil )
         }
 
-        implicit def valid[O]: Case.Aux[List[String], Right[O], List[String]] = at { ( errors, _ ) ⇒ errors }
+        implicit def valid[O]: Case.Aux[List[String], Valid[O], List[String]] = at { ( errors, _ ) ⇒ errors }
 
         implicit def operator[O <: Operator]: Case.Aux[List[String], O, List[String]] = at { ( errors, _ ) ⇒ errors }
 
@@ -133,27 +133,27 @@ object Report extends Report0 {
 trait Report0 {
     type Aux[T, Out0] = Report[T] { type Out = Out0 }
 
-    implicit def `Report.Aux[Xor[Error], NonEmptyList[String]]`[N <: String, O, A <: HList](
+    implicit def `Report.Aux[Validated[Error], NonEmptyList[String]]`[N <: String, O, A <: HList](
         implicit
-        r: Report.Aux[Xor[Error[N, A], O], Xor[String, O]]
-    ): Report.Aux[Xor[Error[N, A], O], Xor[NonEmptyList[String], O]] = {
-        new Report[Xor[Error[N, A], O]] {
-            override type Out = Xor[NonEmptyList[String], O]
+        r: Report.Aux[Validated[Error[N, A], O], Validated[String, O]]
+    ): Report.Aux[Validated[Error[N, A], O], Validated[NonEmptyList[String], O]] = {
+        new Report[Validated[Error[N, A], O]] {
+            override type Out = Validated[NonEmptyList[String], O]
 
-            override def report( validated: Xor[Error[N, A], O] ) = {
+            override def report( validated: Validated[Error[N, A], O] ) = {
                 r.report( validated ).leftMap( NonEmptyList( _ ) )
             }
         }
     }
 
-    implicit def `Report.Aux[Xor[ReportableError], NonEmptyList[String]]`[N <: String, O, A <: HList](
+    implicit def `Report.Aux[Validated[ReportableError], NonEmptyList[String]]`[N <: String, O, A <: HList](
         implicit
-        r: Report.Aux[Xor[ReportableError[N, A], O], Xor[String, O]]
-    ): Report.Aux[Xor[ReportableError[N, A], O], Xor[NonEmptyList[String], O]] = {
-        new Report[Xor[ReportableError[N, A], O]] {
-            override type Out = Xor[NonEmptyList[String], O]
+        r: Report.Aux[Validated[ReportableError[N, A], O], Validated[String, O]]
+    ): Report.Aux[Validated[ReportableError[N, A], O], Validated[NonEmptyList[String], O]] = {
+        new Report[Validated[ReportableError[N, A], O]] {
+            override type Out = Validated[NonEmptyList[String], O]
 
-            override def report( validated: Xor[ReportableError[N, A], O] ) = {
+            override def report( validated: Validated[ReportableError[N, A], O] ) = {
                 r.report( validated ).leftMap( NonEmptyList( _ ) )
             }
         }

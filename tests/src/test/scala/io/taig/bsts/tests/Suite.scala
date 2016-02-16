@@ -1,6 +1,6 @@
 package io.taig.bsts.tests
 
-import cats.data.Xor._
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.mutation.Mutation
 import io.taig.bsts.rule.Rule
 import io.taig.bsts.transformation.Transformation
@@ -41,26 +41,26 @@ trait Suite
     }
 
     override def beforeAll() = {
-        rule.required.validate( "foo" ).isRight shouldBe true
-        rule.required.validate( "" ).isRight shouldBe false
+        rule.required.validate( "foo" ).isValid shouldBe true
+        rule.required.validate( "" ).isValid shouldBe false
 
         intercept[IllegalStateException] {
             rule.blow.validate( "" )
         }
 
-        rule.min( 3 ).validate( "foo" ).isRight shouldBe true
-        rule.min( 3 ).validate( "foobar" ).isRight shouldBe true
-        rule.min( 3 ).validate( "" ).isRight shouldBe false
+        rule.min( 3 ).validate( "foo" ).isValid shouldBe true
+        rule.min( 3 ).validate( "foobar" ).isValid shouldBe true
+        rule.min( 3 ).validate( "" ).isValid shouldBe false
 
-        rule.max( 3 ).validate( "" ).isRight shouldBe true
-        rule.max( 3 ).validate( "foo" ).isRight shouldBe true
-        rule.max( 3 ).validate( "foobar" ).isRight shouldBe false
+        rule.max( 3 ).validate( "" ).isValid shouldBe true
+        rule.max( 3 ).validate( "foo" ).isValid shouldBe true
+        rule.max( 3 ).validate( "foobar" ).isValid shouldBe false
 
         transformation.trim.validate( "" ) shouldBe ""
         transformation.trim.validate( "asdf" ) shouldBe "asdf"
         transformation.trim.validate( "  asdf   " ) shouldBe "asdf"
 
-        mutation.parse.validate( "5" ) shouldBe Right( 5 )
-        mutation.parse.validate( "" ).leftMap( _.toString ) shouldBe Left( "Error(parse)" )
+        mutation.parse.validate( "5" ) shouldBe Valid( 5 )
+        mutation.parse.validate( "" ).leftMap( _.toString ) shouldBe Invalid( "Error(parse)" )
     }
 }

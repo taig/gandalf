@@ -1,6 +1,6 @@
 package io.taig.bsts.mutation.ops
 
-import scala.language.{ higherKinds, reflectiveCalls }
+import scala.language.{ reflectiveCalls, higherKinds }
 import scala.util.Try
 
 trait Extraction[T, F[_]] {
