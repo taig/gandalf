@@ -1,7 +1,7 @@
 package io.taig.bsts
 
-import io.taig.bsts.data.Validated
-import Validated.{ Invalid, Valid }
+import cats.data.Validated
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.ops.Computed
 import io.taig.bsts.ops.hlist.{ Printer, NestedEvaluation }
 import shapeless.HList

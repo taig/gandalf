@@ -1,7 +1,7 @@
 package io.taig.bsts.rule
 
-import io.taig.bsts.data.Validated
-import io.taig.bsts.data.Validated.{ Invalid, Valid }
+import cats.data.Validated
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.{ Error, Term }
 import shapeless._
 import shapeless.ops.hlist.ToTraversable

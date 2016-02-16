@@ -1,12 +1,12 @@
 package io.taig.bsts.report.ops
 
+import cats.data.Validated
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.Term
-import io.taig.bsts.data.Validated
-import io.taig.bsts.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.ops.Computed
 import io.taig.bsts.ops.hlist.NestedEvaluation
 import io.taig.bsts.report.ReportableError
-import shapeless.{ HNil, ::, HList }
+import shapeless.{ ::, HList, HNil }
 
 trait nestedEvaluation {
     implicit def termReportableError[N <: String, I, O, A <: HList] = {

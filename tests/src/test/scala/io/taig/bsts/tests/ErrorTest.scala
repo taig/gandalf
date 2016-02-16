@@ -1,7 +1,7 @@
 package io.taig.bsts.tests
 
-import io.taig.bsts.data.Validated
-import Validated.{ Invalid, Valid }
+import cats.data.Validated
+import cats.data.Validated.{ Invalid, Valid }
 
 class ErrorTest extends Suite {
     it should "have a toString representation" in {

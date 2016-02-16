@@ -1,6 +1,6 @@
 package io.taig.bsts.tests
 
-import io.taig.bsts.data.Validated.Valid
+import cats.data.Validated.Valid
 import io.taig.bsts.mutation._
 
 class MutationTest extends Suite {

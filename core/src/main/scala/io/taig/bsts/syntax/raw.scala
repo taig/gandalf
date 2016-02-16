@@ -1,6 +1,6 @@
 package io.taig.bsts.syntax
 
-import io.taig.bsts.data.{ NonEmptyList, Validated }
+import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts.ops.Computed
 import io.taig.bsts._
 import shapeless.HList

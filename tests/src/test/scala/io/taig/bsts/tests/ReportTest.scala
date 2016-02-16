@@ -1,8 +1,8 @@
 package io.taig.bsts.tests
 
 import io.taig.bsts._
-import io.taig.bsts.data.NonEmptyList
-import io.taig.bsts.data.Validated.{ Valid, Invalid }
+import cats.data.NonEmptyList
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.report.{ ReportableTerm, Report }
 import io.taig.bsts.syntax.dsl._
 import io.taig.bsts.report.syntax.report._

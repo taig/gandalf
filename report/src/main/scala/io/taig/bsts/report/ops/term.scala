@@ -1,6 +1,6 @@
 package io.taig.bsts.report.ops
 
-import io.taig.bsts.data.Validated
+import cats.data.Validated
 import io.taig.bsts.report.{ Report, ReportableTerm }
 import io.taig.bsts.{ Error, Term }
 import shapeless.{ HList, Witness }

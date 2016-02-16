@@ -1,7 +1,7 @@
 package io.taig.bsts.tests
 
-import io.taig.bsts.data.{ NonEmptyList, Validated }
-import Validated.{ Invalid, Valid }
+import cats.data.NonEmptyList
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.implicits._
 import shapeless.test.illTyped
 

@@ -1,6 +1,6 @@
 package io.taig.bsts.report.syntax
 
-import io.taig.bsts.data.Validated
+import cats.data.Validated
 import io.taig.bsts.ops.Computed
 import io.taig.bsts.report._
 import io.taig.bsts.{ Term, Error }

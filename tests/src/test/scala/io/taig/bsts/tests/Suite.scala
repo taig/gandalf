@@ -1,6 +1,6 @@
 package io.taig.bsts.tests
 
-import io.taig.bsts.data.Validated.{ Invalid, Valid }
+import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.mutation.Mutation
 import io.taig.bsts.rule.Rule
 import io.taig.bsts.transformation.Transformation

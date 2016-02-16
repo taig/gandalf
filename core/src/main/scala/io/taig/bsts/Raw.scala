@@ -1,8 +1,7 @@
 package io.taig.bsts
 
-import io.taig.bsts.data.{ NonEmptyList, Validated }
-import Validated.Invalid
-import io.taig.bsts.ops.dsl.Operator
+import cats.data.Validated.Invalid
+import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts.ops.{ Computed, Unevaluated }
 import io.taig.bsts.syntax.raw._
 import shapeless._
