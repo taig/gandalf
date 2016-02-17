@@ -42,7 +42,7 @@ trait reports {
         context.getString( R.string.bsts_required )
     }
 
-    implicit def `Report[isDefined]`( implicit context: Context ) = Report( isDefined ) { _ ⇒
+    implicit def `Report[isDefined]`[T]( implicit context: Context ) = Report( isDefined[T] ) { _ ⇒
         context.getString( R.string.bsts_required )
     }
 }
