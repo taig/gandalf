@@ -3,7 +3,7 @@ package io.taig.bsts
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
 
-case class Error[+N <: String, +A <: HList]( arguments: A )(
+case class Error[N <: String, A <: HList]( arguments: A )(
         implicit
         w:  Witness.Aux[N],
         tt: ToTraversable.Aux[A, List, Any]
