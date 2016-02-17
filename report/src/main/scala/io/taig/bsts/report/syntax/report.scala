@@ -1,10 +1,9 @@
 package io.taig.bsts.report.syntax
 
 import cats.data.Validated
-import io.taig.bsts.ops.Computed
 import io.taig.bsts.report._
-import io.taig.bsts.{ Term, Error }
-import shapeless.{ Witness, HList }
+import io.taig.bsts.{ Error, Term }
+import shapeless.{ HList, Witness }
 
 import scala.language.implicitConversions
 
@@ -33,8 +32,8 @@ trait report {
     ): ops.term[N, I, O, A] = new ops.term( term )
 
     implicit def policyValidatedReportSyntax[C <: HList, O](
-        validated: Validated[Computed[C], O]
-    ): ops.report[Validated[Computed[C], O]] = new ops.report( validated )
+        validated: Validated[C, O]
+    ): ops.report[Validated[C, O]] = new ops.report( validated )
 }
 
 object report extends report

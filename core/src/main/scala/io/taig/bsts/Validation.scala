@@ -13,5 +13,7 @@ trait Validation[I, O] {
 }
 
 object Validation {
-    type Aux[I, O, V0 <: HList, R0] = Validation[I, O] { type V = V0; type R = R0 }
+    type Aux0[I, O, V0 <: HList] = Validation[I, O] { type V = V0 }
+
+    type Aux[I, O, V0 <: HList, R0] = Validation.Aux0[I, O, V0] { type R = R0 }
 }

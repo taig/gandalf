@@ -1,8 +1,8 @@
 package io.taig.bsts
 
-import cats.data.Validated.Invalid
+import cats.data.Validated.{ Valid, Invalid }
 import cats.data.{ NonEmptyList, Validated }
-import io.taig.bsts.ops.{ Computed, Unevaluated }
+import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.syntax.raw._
 import shapeless._
 import shapeless.ops.hlist.{ LeftFolder, ToTraversable }
@@ -29,16 +29,16 @@ object Raw {
     implicit def `Raw[Policy]`[C <: HList, T](
         implicit
         lf: collect.F[C]
-    ) = new Raw[Validated[Computed[C], T], Validated[NonEmptyList[( String, List[Any] )], T]] {
-        override def raw( validated: Validated[Computed[C], T] ) = {
+    ) = new Raw[Validated[C, T], Validated[NonEmptyList[( String, List[Any] )], T]] {
+        override def raw( validated: Validated[C, T] ) = {
             validated.leftMap { computation ⇒
-                val list = computation.tree.foldLeft( List.empty[( String, List[Any] )] )( collect )
+                val list = computation.foldLeft( List.empty[( String, List[Any] )] )( collect )
                 NonEmptyList( list.head, list.tail )
             }
         }
     }
 
-    object collect extends collect0 {
+    object collect extends Poly2 {
         type F[H <: HList] = LeftFolder.Aux[H, List[( String, List[Any] )], this.type, List[( String, List[Any] )]]
 
         implicit def validated[N <: String, O, A <: HList](
@@ -49,23 +49,23 @@ object Raw {
             case ( errors, _ )                ⇒ errors
         }
 
-        implicit def computed[L <: HList](
+        implicit def valid[O] = at[List[( String, List[Any] )], Valid[O]] { ( errors, _ ) ⇒ errors }
+
+        implicit def operator[O <: Operator] = at[List[( String, List[Any] )], O] { ( errors, _ ) ⇒ errors }
+
+        implicit def recursion[L <: HList](
             implicit
             lf: F[L]
-        ) = at[List[( String, List[Any] )], Computed[L]] {
-            case ( errors, Computed( tree ) ) ⇒ tree.foldLeft( errors )( this )
+        ) = at[List[( String, List[Any] )], L] {
+            case ( errors, tree ) ⇒ tree.foldLeft( errors )( this )
         }
 
         implicit def coproduct[U <: HList, C <: HList](
             implicit
             lf: F[C]
-        ) = at[List[( String, List[Any] )], Computed[C] :+: Unevaluated[U] :+: CNil] {
-            case ( errors, Inl( Computed( tree ) ) ) ⇒ tree.foldLeft( errors )( this )
-            case ( errors, _ )                       ⇒ errors
+        ) = at[List[( String, List[Any] )], C :+: U :+: CNil] {
+            case ( errors, Inl( tree ) ) ⇒ tree.foldLeft( errors )( this )
+            case ( errors, _ )           ⇒ errors
         }
-    }
-
-    trait collect0 extends Poly2 {
-        implicit def identity[T] = at[List[( String, List[Any] )], T]( ( errors, _ ) ⇒ errors )
     }
 }

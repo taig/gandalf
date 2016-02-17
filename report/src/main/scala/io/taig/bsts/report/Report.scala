@@ -4,7 +4,6 @@ import cats.data.Validated.Valid
 import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts._
 import io.taig.bsts.ops.dsl.Operator
-import io.taig.bsts.ops.{ Computed, Unevaluated }
 import io.taig.bsts.report.syntax.report._
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
@@ -81,12 +80,12 @@ object Report extends Report0 {
     implicit def `Report[Validated[Computed]]`[C <: HList, O](
         implicit
         lf: collect.F[C]
-    ): Aux[Validated[Computed[C], O], Validated[NonEmptyList[String], O]] = {
-        new Report[Validated[Computed[C], O]] {
+    ): Aux[Validated[C, O], Validated[NonEmptyList[String], O]] = {
+        new Report[Validated[C, O]] {
             override type Out = Validated[NonEmptyList[String], O]
 
-            override def report( validated: Validated[Computed[C], O] ): Out = validated.leftMap { computation ⇒
-                val list = computation.tree.foldLeft( List.empty[String] )( collect )
+            override def report( validated: Validated[C, O] ): Out = validated.leftMap { computation ⇒
+                val list = computation.foldLeft( List.empty[String] )( collect )
                 NonEmptyList( list.head, list.tail )
             }
         }
@@ -113,19 +112,19 @@ object Report extends Report0 {
 
         implicit def operator[O <: Operator]: Case.Aux[List[String], O, List[String]] = at { ( errors, _ ) ⇒ errors }
 
-        implicit def computed[L <: HList](
+        implicit def recursion[L <: HList](
             implicit
             lf: F[L]
-        ): Case.Aux[List[String], Computed[L], List[String]] = at {
-            case ( errors, Computed( tree ) ) ⇒ tree.foldLeft( errors )( this )
+        ): Case.Aux[List[String], L, List[String]] = at {
+            case ( errors, tree ) ⇒ tree.foldLeft( errors )( this )
         }
 
         implicit def coproduct[U <: HList, C <: HList](
             implicit
             lf: F[C]
-        ): Case.Aux[List[String], Computed[C] :+: Unevaluated[U] :+: CNil, List[String]] = at {
-            case ( errors, Inl( Computed( tree ) ) ) ⇒ tree.foldLeft( errors )( this )
-            case ( errors, _ )                       ⇒ errors
+        ): Case.Aux[List[String], C :+: U :+: CNil, List[String]] = at {
+            case ( errors, Inl( tree ) ) ⇒ tree.foldLeft( errors )( this )
+            case ( errors, _ )           ⇒ errors
         }
     }
 }

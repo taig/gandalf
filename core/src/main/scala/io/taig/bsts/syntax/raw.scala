@@ -1,7 +1,6 @@
 package io.taig.bsts.syntax
 
 import cats.data.{ NonEmptyList, Validated }
-import io.taig.bsts.ops.Computed
 import io.taig.bsts._
 import shapeless.HList
 
@@ -17,8 +16,8 @@ trait raw {
     ): ops.raw[Validated[Error[N, A], T], Validated[( String, List[Any] ), T]] = new ops.raw( validated )
 
     implicit def policyValidatedRawSyntax[C <: HList, O](
-        validated: Validated[Computed[C], O]
-    ): ops.raw[Validated[Computed[C], O], Validated[NonEmptyList[( String, List[Any] )], O]] = new ops.raw( validated )
+        validated: Validated[C, O]
+    ): ops.raw[Validated[C, O], Validated[NonEmptyList[( String, List[Any] )], O]] = new ops.raw( validated )
 }
 
 object raw extends raw
