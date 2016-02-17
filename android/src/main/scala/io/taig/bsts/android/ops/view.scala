@@ -1,7 +1,7 @@
 package io.taig.bsts.android.ops
 
 import android.view.{ View, ViewGroup }
-import cats.data.OneAnd
+import cats.data.{ NonEmptyList, Validated, OneAnd }
 import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.android.syntax.tags._
 
@@ -13,16 +13,25 @@ final class view[V <: View]( view: V ) {
      * If it finds a view it will execute the validation and update the Ui. Only if all children pass the validation,
      * this method will return <code>true</code>.
      */
-    def validate(): Boolean = rules.map { view ⇒
-        view.validation() match {
-            case Valid( _ ) ⇒
-                view.feedback.set( view, None )
-                true
-            case Invalid( OneAnd( error, _ ) ) ⇒
-                view.feedback.set( view, Some( error ) )
-                false
-        }
-    }.forall( _ == true )
+    def validateAll: Validated[NonEmptyList[String], List[Any]] = {
+        import cats.syntax.cartesian._
+        import cats.std.all._
+
+        rules
+            .map( new view( _ ).validate[Any] )
+            .foldLeft[Validated[NonEmptyList[String], List[Any]]]( Valid( Nil ) ) { ( a, b ) ⇒
+                ( a |@| b ) map { _ :+ _ }
+            }
+    }
+
+    def validate[O]: Validated[NonEmptyList[String], O] = view.validation[O]() match {
+        case valid @ Valid( _ ) ⇒
+            view.feedback.set( view, None )
+            valid
+        case invalid @ Invalid( OneAnd( error, _ ) ) ⇒
+            view.feedback.set( view, Some( error ) )
+            invalid
+    }
 
     /**
      * Validate this view and all of its children (without propagating messages to the Ui)

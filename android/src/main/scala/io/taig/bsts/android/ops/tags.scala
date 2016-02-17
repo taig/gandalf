@@ -22,11 +22,11 @@ final private[android] class tags[V <: View]( view: V ) {
         view.getTag( R.id.bsts_name ).asInstanceOf[String]
     }
 
-    def validation_=( validation: () ⇒ Validated[NonEmptyList[String], _] ) = {
+    def validation_=[O]( validation: () ⇒ Validated[NonEmptyList[String], O] ) = {
         view.setTag( R.id.bsts_validation, validation )
     }
 
-    def validation: () ⇒ Validated[NonEmptyList[String], _] = {
-        view.getTag( R.id.bsts_validation ).asInstanceOf[() ⇒ Validated[NonEmptyList[String], _]]
+    def validation[O]: () ⇒ Validated[NonEmptyList[String], O] = {
+        view.getTag( R.id.bsts_validation ).asInstanceOf[() ⇒ Validated[NonEmptyList[String], O]]
     }
 }

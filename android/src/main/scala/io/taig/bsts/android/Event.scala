@@ -23,7 +23,7 @@ object Event {
 
         override def onDetach( view: TextView ) = view.setOnFocusChangeListener( null )
 
-        override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate()
+        override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate[Any]
     }
 
     implicit val `Event[TextInputLayout]` = new Event[TextInputLayout] with View.OnFocusChangeListener {
@@ -31,6 +31,6 @@ object Event {
 
         override def onDetach( view: TextInputLayout ) = view.setOnFocusChangeListener( null )
 
-        override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate()
+        override def onFocusChange( view: View, hasFocus: Boolean ) = if ( !hasFocus ) view.validate[Any]
     }
 }
