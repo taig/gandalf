@@ -11,9 +11,9 @@ trait raw {
         error: Error[N, A]
     ): ops.raw[Error[N, A], ( String, List[Any] )] = new ops.raw( error )
 
-    implicit def termValidatedRawSyntax[N <: String, T, A <: HList](
-        validated: Validated[Error[N, A], T]
-    ): ops.raw[Validated[Error[N, A], T], Validated[( String, List[Any] ), T]] = new ops.raw( validated )
+    implicit def termValidatedRawSyntax[N <: String, O, A <: HList](
+        validated: Validated[Error[N, A], O]
+    ): ops.raw[Validated[Error[N, A], O], Validated[( String, List[Any] ), O]] = new ops.raw( validated )
 
     implicit def policyValidatedRawSyntax[C <: HList, O](
         validated: Validated[C, O]

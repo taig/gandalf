@@ -5,17 +5,6 @@ import io.taig.bsts.syntax.dsl._
 import shapeless._
 
 class PolicyTest extends Suite {
-    ignore should "have a toString representation" in {
-        Policy( rule.required :: HNil ).toString shouldBe "Policy(required)"
-        Policy( transformation.trim :: HNil ).toString shouldBe "Policy(trim)"
-
-        ( rule.required & rule.min( 3 ) ).toString shouldBe "Policy(required & min)"
-        ( rule.required & rule.min( 3 ) && rule.max( 6 ) ).toString shouldBe "Policy((required & min) && max)"
-        ( rule.required & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe "Policy(required & (min && max))"
-        ( ( rule.required || rule.min( 3 ) ) & ( rule.min( 3 ) && rule.max( 6 ) ) ).toString shouldBe
-            "Policy((required || min) & (min && max))"
-    }
-
     "&" should "imitate a logical AND" in {
         ( rule.required & rule.min( 3 ) ).validate( "foo" ).isValid shouldBe true
         ( rule.required & rule.min( 6 ) ).validate( "foo" ).isValid shouldBe false
