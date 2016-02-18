@@ -36,7 +36,7 @@ object NestedEvaluation extends NestedEvaluation0 {
         }
     }
 
-    implicit def termNoError[N <: String, I, O, A <: HList] = {
+    implicit def term0[N <: String, I, O, A <: HList] = {
         new NestedEvaluation[I, O, Term.Aux[N, I, O, A, O] :: HNil] {
             override type Out0 = Valid[O] :: HNil
 
@@ -51,8 +51,7 @@ object NestedEvaluation extends NestedEvaluation0 {
     implicit def operationT[I, O, P, L <: HList, R <: HList](
         implicit
         nel: NestedEvaluation[I, O, L],
-        ner: NestedEvaluation[O, P, R],
-        p:   Printer[R]
+        ner: NestedEvaluation[O, P, R]
     ) = new NestedEvaluation[I, P, L :: Operator.~>.type :: R] {
         type C = ner.Out0 :+: R :+: CNil
 
@@ -74,7 +73,6 @@ trait NestedEvaluation0 extends NestedEvaluation1 {
         implicit
         nel: NestedEvaluation[T, T, L],
         ner: NestedEvaluation[T, T, R],
-        p:   Printer[R],
         ev:  O <:!< Operator.~>.type
     ) = new NestedEvaluation[T, T, L :: O :: R] {
         type C = ner.Out0 :+: R :+: CNil
@@ -122,8 +120,7 @@ trait NestedEvaluation1 {
     implicit def recursion[I, O, P, H <: HList, T <: HList](
         implicit
         neh: NestedEvaluation[I, O, H],
-        net: NestedEvaluation[O, P, T],
-        p:   Printer[T]
+        net: NestedEvaluation[O, P, T]
     ) = new NestedEvaluation[I, P, H :: T] {
         type C = net.Out0 :+: T :+: CNil
 

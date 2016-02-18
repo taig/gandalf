@@ -2,13 +2,12 @@ package io.taig.bsts
 
 import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.ops.hlist.{ Printer, NestedEvaluation }
+import io.taig.bsts.ops.hlist.NestedEvaluation
 import shapeless.HList
 
 case class Policy[I, O, V0 <: HList, NE <: HList]( validations: V0 )(
         implicit
-        ne: NestedEvaluation.Aux[I, O, V0, NE],
-        p:  Printer[V0]
+        ne: NestedEvaluation.Aux[I, O, V0, NE]
 ) extends Validation[I, O] {
     override type V = V0
 
@@ -19,5 +18,5 @@ case class Policy[I, O, V0 <: HList, NE <: HList]( validations: V0 )(
         case ( None, evaluation )  ⇒ Invalid( evaluation )
     }
 
-    override def toString = s"Policy(${p( true, validations )})"
+    override def toString = s"Policy($validations)"
 }

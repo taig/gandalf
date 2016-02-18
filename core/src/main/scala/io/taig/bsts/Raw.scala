@@ -1,6 +1,6 @@
 package io.taig.bsts
 
-import cats.data.Validated.{ Valid, Invalid }
+import cats.data.Validated.Valid
 import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.syntax.raw._
@@ -12,21 +12,21 @@ trait Raw[-I, +O] {
 }
 
 object Raw {
-    implicit def `Raw[Error]`[N <: String, A <: HList](
+    implicit def rawError[N <: String, A <: HList](
         implicit
         tt: ToTraversable.Aux[A, List, Any]
     ) = new Raw[Error[N, A], ( String, List[Any] )] {
         override def raw( error: Error[N, A] ) = ( error.name, error.arguments.toList )
     }
 
-    implicit def `Raw[Term]`[N <: String, O, A <: HList](
+    implicit def rawTerm[N <: String, O, A <: HList](
         implicit
         r: Raw[Error[N, A], ( String, List[Any] )]
     ) = new Raw[Validated[Error[N, A], O], Validated[( String, List[Any] ), O]] {
         override def raw( result: Validated[Error[N, A], O] ) = result.leftMap( _.raw )
     }
 
-    implicit def `Raw[Policy]`[C <: HList, T](
+    implicit def rawPolicy[C <: HList, T](
         implicit
         lf: collect.F[C]
     ) = new Raw[Validated[C, T], Validated[NonEmptyList[( String, List[Any] )], T]] {
@@ -41,12 +41,11 @@ object Raw {
     object collect extends Poly2 {
         type F[H <: HList] = LeftFolder.Aux[H, List[( String, List[Any] )], this.type, List[( String, List[Any] )]]
 
-        implicit def validated[N <: String, O, A <: HList](
+        implicit def term[N <: String, O, A <: HList](
             implicit
-            r: Raw[Error[N, A], ( String, List[Any] )]
-        ) = at[List[( String, List[Any] )], Validated[Error[N, A], O]] {
-            case ( errors, Invalid( error ) ) ⇒ errors :+ error.raw
-            case ( errors, _ )                ⇒ errors
+            r: Raw[Validated[Error[N, A], O], Validated[( String, List[Any] ), O]]
+        ) = at[List[( String, List[Any] )], Validated[Error[N, A], O]] { ( errors, validated ) ⇒
+            validated.raw.leftMap( errors :+ _ ).swap.getOrElse( errors )
         }
 
         implicit def valid[O] = at[List[( String, List[Any] )], Valid[O]] { ( errors, _ ) ⇒ errors }
