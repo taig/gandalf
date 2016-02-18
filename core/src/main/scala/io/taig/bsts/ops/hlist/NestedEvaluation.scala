@@ -1,8 +1,5 @@
 package io.taig.bsts.ops.hlist
 
-import cats.data.Validated
-import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts._
 import io.taig.bsts.ops.dsl.Operator
 import shapeless._
 
@@ -23,32 +20,7 @@ object NestedEvaluation extends NestedEvaluation0 {
         override def apply( input: I, tree: HNil ) = ( Some( input ), HNil )
     }
 
-    implicit def term[N <: String, I, O, A <: HList] = {
-        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, Validated[Error[N, A], O]] :: HNil] {
-            override type Out0 = Validated[Error[N, A], O] :: HNil
-
-            override def apply( input: I, tree: Term.Aux[N, I, O, A, Validated[Error[N, A], O]] :: HNil ) = tree match {
-                case term :: HNil ⇒ term.validate( input ) match {
-                    case v @ Valid( output ) ⇒ ( Some( output ), v :: HNil )
-                    case i @ Invalid( _ )    ⇒ ( None, i :: HNil )
-                }
-            }
-        }
-    }
-
-    implicit def term0[N <: String, I, O, A <: HList] = {
-        new NestedEvaluation[I, O, Term.Aux[N, I, O, A, O] :: HNil] {
-            override type Out0 = Valid[O] :: HNil
-
-            override def apply( input: I, tree: Term.Aux[N, I, O, A, O] :: HNil ) = tree match {
-                case term :: HNil ⇒
-                    val output = term.validate( input )
-                    ( Some( output ), Valid( output ) :: HNil )
-            }
-        }
-    }
-
-    implicit def operationT[I, O, P, L <: HList, R <: HList](
+    implicit def transformation[I, O, P, L <: HList, R <: HList](
         implicit
         nel: NestedEvaluation[I, O, L],
         ner: NestedEvaluation[O, P, R]
@@ -69,11 +41,10 @@ object NestedEvaluation extends NestedEvaluation0 {
 }
 
 trait NestedEvaluation0 extends NestedEvaluation1 {
-    implicit def operationR[T, L <: HList, O <: Operator.Binary, R <: HList](
+    implicit def term[T, L <: HList, O <: Operator.Binary, R <: HList](
         implicit
         nel: NestedEvaluation[T, T, L],
-        ner: NestedEvaluation[T, T, R],
-        ev:  O <:!< Operator.~>.type
+        ner: NestedEvaluation[T, T, R]
     ) = new NestedEvaluation[T, T, L :: O :: R] {
         type C = ner.Out0 :+: R :+: CNil
 
