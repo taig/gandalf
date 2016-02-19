@@ -2,10 +2,12 @@ package io.taig.bsts.tests
 
 import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.mutation.Mutation
+import io.taig.bsts.report.Report
 import io.taig.bsts.rule.Rule
 import io.taig.bsts.transformation.Transformation
 import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
 import shapeless._
+import shapeless.record._
 import shapeless.syntax.singleton._
 
 import scala.util.Try
@@ -38,6 +40,16 @@ trait Suite
 
     object mutation {
         val parse = Mutation[String, Int]( "parse" )( s ⇒ Try( s.toInt ) )
+    }
+
+    object report {
+        implicit val required = Report( rule.required )( _ ⇒ "Pflichtfeld" )
+
+        implicit val min = Report( rule.min _ )( args ⇒ s"Mindestens ${args( "expected" )} Zeichen" )
+
+        implicit val max = Report( rule.max _ )( args ⇒ s"Maximal ${args( "expected" )} Zeichen" )
+
+        implicit val parse = Report( mutation.parse )( _ ⇒ "Keine gültige Zahl" )
     }
 
     override def beforeAll() = {

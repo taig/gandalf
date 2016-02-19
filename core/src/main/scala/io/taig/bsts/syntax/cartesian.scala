@@ -10,9 +10,9 @@ import scala.language.implicitConversions
 trait cartesian
         extends cats.syntax.CartesianSyntax
         with cats.std.ListInstances {
-    implicit def termRawValidatedToPolicyRawValidated[O](
-        validated: Validated[( String, List[Any] ), O]
-    ): Validated[NonEmptyList[( String, List[Any] )], O] = validated.leftMap( NonEmptyList( _ ) )
+    implicit def rawValidatedToPolicyRawValidated[E, O]( validated: Validated[E, O] ): Validated[NonEmptyList[E], O] = {
+        validated.leftMap( NonEmptyList( _ ) )
+    }
 
     implicit def termValidatedToPolicyRawValidated[N <: String, O, A <: HList]( validated: Validated[Error[N, A], O] )(
         implicit
@@ -21,21 +21,17 @@ trait cartesian
 
     implicit def termRawValidatedCartesianSyntax[O](
         validated: Validated[( String, List[Any] ), O]
-    ): ops.cartesian[O] = new ops.cartesian( validated )
+    ): ops.cartesian[( String, List[Any] ), O] = new ops.cartesian( validated )
 
     implicit def termValidatedCartesianSyntax[N <: String, O, A <: HList]( validated: Validated[Error[N, A], O] )(
         implicit
         r: Raw[Validated[Error[N, A], O], Validated[( String, List[Any] ), O]]
-    ): ops.cartesian[O] = new ops.cartesian( validated.raw )
-
-    implicit def policyRawValidatedCartesianSyntax[O](
-        validated: Validated[NonEmptyList[( String, List[Any] )], O]
-    ): ops.cartesian[O] = new ops.cartesian( validated )
+    ): ops.cartesian[( String, List[Any] ), O] = new ops.cartesian( validated.raw )
 
     implicit def policyValidatedCartesianSyntax[C <: HList, O]( validated: Validated[C, O] )(
         implicit
         r: Raw[Validated[C, O], Validated[NonEmptyList[( String, List[Any] )], O]]
-    ): ops.cartesian[O] = new ops.cartesian( validated.raw )
+    ): ops.cartesian[( String, List[Any] ), O] = new ops.cartesian( validated.raw )
 }
 
 object cartesian extends cartesian

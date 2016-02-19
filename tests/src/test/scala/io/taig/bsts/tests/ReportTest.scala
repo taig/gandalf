@@ -1,24 +1,15 @@
 package io.taig.bsts.tests
 
-import io.taig.bsts._
 import cats.data.NonEmptyList
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.report.{ ReportableTerm, Report }
-import io.taig.bsts.syntax.dsl._
+import io.taig.bsts._
+import io.taig.bsts.report.ReportableTerm
 import io.taig.bsts.report.syntax.report._
+import io.taig.bsts.syntax.dsl._
 import shapeless.HNil
-import shapeless.record._
 import shapeless.test.illTyped
 
 class ReportTest extends Suite {
-    object report {
-        implicit val required = Report( rule.required )( _ ⇒ "Pflichtfeld" )
-
-        implicit val min = Report( rule.min _ )( args ⇒ s"Mindestens ${args( "expected" )} Zeichen" )
-
-        implicit val parse = Report( mutation.parse )( _ ⇒ "Keine gültige Zahl" )
-    }
-
     it should "be available for Errors" in {
         import report._
 

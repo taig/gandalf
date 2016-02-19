@@ -1,5 +1,7 @@
 package io.taig.bsts.report.syntax
 
-trait all extends report
+trait all
+    extends cartesian
+    with report
 
 object all extends all

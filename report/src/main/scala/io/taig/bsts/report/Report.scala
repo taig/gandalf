@@ -8,10 +8,10 @@ import io.taig.bsts.report.syntax.report._
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
 
-trait Report[-T] {
+trait Report[-I] {
     type Out
 
-    def report( context: T ): Out
+    def report( input: I ): Out
 }
 
 object Report extends Report0 {
@@ -130,7 +130,7 @@ object Report extends Report0 {
 }
 
 trait Report0 {
-    type Aux[T, Out0] = Report[T] { type Out = Out0 }
+    type Aux[I, O] = Report[I] { type Out = O }
 
     implicit def `Report.Aux[Validated[Error], NonEmptyList[String]]`[N <: String, O, A <: HList](
         implicit
