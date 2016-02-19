@@ -1,4 +1,4 @@
-package io.taig.bsts.rule
+package io.taig.bsts.predef
 
 import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }

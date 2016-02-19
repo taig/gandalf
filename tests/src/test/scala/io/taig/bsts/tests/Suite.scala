@@ -1,10 +1,8 @@
 package io.taig.bsts.tests
 
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.mutation.Mutation
 import io.taig.bsts.report.Report
-import io.taig.bsts.rule.Rule
-import io.taig.bsts.transformation.Transformation
+import io.taig.bsts.predef._
 import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
 import shapeless._
 import shapeless.record._

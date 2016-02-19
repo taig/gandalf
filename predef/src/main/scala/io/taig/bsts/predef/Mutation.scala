@@ -1,8 +1,8 @@
-package io.taig.bsts.mutation
+package io.taig.bsts.predef
 
 import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.mutation.ops.Extraction
+import io.taig.bsts.predef.ops.Extraction
 import io.taig.bsts.{ Error, Term }
 import shapeless._
 import shapeless.ops.hlist.ToTraversable

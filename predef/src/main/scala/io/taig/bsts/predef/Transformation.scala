@@ -1,4 +1,4 @@
-package io.taig.bsts.transformation
+package io.taig.bsts.predef
 
 import cats.data.Validated.Valid
 import io.taig.bsts.Term

@@ -1,7 +1,7 @@
 package io.taig.bsts.tests
 
 import cats.data.Validated.Valid
-import io.taig.bsts.mutation._
+import io.taig.bsts.predef._
 
 class MutationTest extends Suite {
     "isDefined" should "verify that an Option is not empty" in {

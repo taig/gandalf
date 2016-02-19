@@ -1,4 +1,4 @@
-package io.taig.bsts.mutation.ops
+package io.taig.bsts.predef.ops
 
 import scala.language.higherKinds
 import scala.util.Try

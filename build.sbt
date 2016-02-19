@@ -8,7 +8,7 @@ lazy val bsts = project.in( file( "." ) )
         publishArtifact := false,
         test <<= test in tests in Test
     )
-    .aggregate( core, rule, transformation, mutation, report, android )
+    .aggregate( core, predef, report, android )
 
 lazy val core = project
     .settings( Settings.common )
@@ -20,15 +20,7 @@ lazy val core = project
             Nil
     )
 
-lazy val rule = project
-    .settings( Settings.common )
-    .dependsOn( core )
-
-lazy val transformation = project
-    .settings( Settings.common )
-    .dependsOn( core )
-
-lazy val mutation = project
+lazy val predef = project
     .settings( Settings.common )
     .dependsOn( core )
 
@@ -47,7 +39,7 @@ lazy val android = project
         targetSdkVersion := "23",
         typedResources := false
     )
-    .dependsOn( core, rule, transformation, mutation, report )
+    .dependsOn( core, predef, report )
 
 lazy val tests = project
     .settings( Settings.common )
@@ -56,4 +48,4 @@ lazy val tests = project
             "org.scalatest" %% "scalatest" % "3.0.0-M15" ::
             Nil
     )
-    .dependsOn( core, rule, transformation, mutation, report )
+    .dependsOn( core, predef, report )

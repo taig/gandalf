@@ -1,6 +1,6 @@
 package io.taig.bsts.tests
 
-import io.taig.bsts.transformation.{ string, Transformation }
+import io.taig.bsts.predef._
 
 class TransformationTest extends Suite {
     "apply" should "allow to create a transformation from a Function" in {
