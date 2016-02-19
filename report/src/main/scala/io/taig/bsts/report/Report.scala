@@ -14,7 +14,9 @@ trait Report[-I] {
     def report( input: I ): Out
 }
 
-object Report extends Report0 {
+object Report {
+    type Aux[I, O] = Report[I] { type Out = O }
+
     def instance[N <: String, A <: HList]( f: A ⇒ String ): Report.Aux[Error[N, A], String] = new Report[Error[N, A]] {
         override type Out = String
 
@@ -49,15 +51,15 @@ object Report extends Report0 {
         message: A ⇒ String
     ): Report.Aux[Error[N, A], String] = instance( message )
 
-    implicit def `Report[ReportableError]`[N <: String, A <: HList]: Aux[ReportableError[N, A], String] = {
+    implicit def reportReportableError[N <: String, A <: HList]: Aux[ReportableError[N, A], String] = {
         new Report[ReportableError[N, A]] {
             override type Out = String
 
-            override def report( error: ReportableError[N, A] ): Out = error.report
+            override def report( error: ReportableError[N, A] ): Out = error.delegateReport
         }
     }
 
-    implicit def `Report[Validated[ReportableError]]`[N <: String, O, A <: HList](
+    implicit def reportValidatedReportableError[N <: String, O, A <: HList](
         implicit
         r: Aux[ReportableError[N, A], String]
     ): Aux[Validated[ReportableError[N, A], O], Validated[String, O]] = {
@@ -68,7 +70,7 @@ object Report extends Report0 {
         }
     }
 
-    implicit def `Report[Validated[Error]]`[N <: String, I, O, A <: HList](
+    implicit def reportTermValidated[N <: String, I, O, A <: HList](
         implicit
         r: Aux[Error[N, A], String]
     ): Aux[Validated[Error[N, A], O], Validated[String, O]] = new Report[Validated[Error[N, A], O]] {
@@ -77,7 +79,7 @@ object Report extends Report0 {
         override def report( validated: Validated[Error[N, A], O] ) = validated.leftMap( _.report )
     }
 
-    implicit def `Report[Validated[Computed]]`[C <: HList, O](
+    implicit def reportPolicyValidated[C <: HList, O](
         implicit
         lf: collect.F[C]
     ): Aux[Validated[C, O], Validated[NonEmptyList[String], O]] = {
@@ -125,36 +127,6 @@ object Report extends Report0 {
         ): Case.Aux[List[String], C :+: U :+: CNil, List[String]] = at {
             case ( errors, Inl( tree ) ) ⇒ tree.foldLeft( errors )( this )
             case ( errors, _ )           ⇒ errors
-        }
-    }
-}
-
-trait Report0 {
-    type Aux[I, O] = Report[I] { type Out = O }
-
-    implicit def `Report.Aux[Validated[Error], NonEmptyList[String]]`[N <: String, O, A <: HList](
-        implicit
-        r: Report.Aux[Validated[Error[N, A], O], Validated[String, O]]
-    ): Report.Aux[Validated[Error[N, A], O], Validated[NonEmptyList[String], O]] = {
-        new Report[Validated[Error[N, A], O]] {
-            override type Out = Validated[NonEmptyList[String], O]
-
-            override def report( validated: Validated[Error[N, A], O] ) = {
-                r.report( validated ).leftMap( NonEmptyList( _ ) )
-            }
-        }
-    }
-
-    implicit def `Report.Aux[Validated[ReportableError], NonEmptyList[String]]`[N <: String, O, A <: HList](
-        implicit
-        r: Report.Aux[Validated[ReportableError[N, A], O], Validated[String, O]]
-    ): Report.Aux[Validated[ReportableError[N, A], O], Validated[NonEmptyList[String], O]] = {
-        new Report[Validated[ReportableError[N, A], O]] {
-            override type Out = Validated[NonEmptyList[String], O]
-
-            override def report( validated: Validated[ReportableError[N, A], O] ) = {
-                r.report( validated ).leftMap( NonEmptyList( _ ) )
-            }
         }
     }
 }

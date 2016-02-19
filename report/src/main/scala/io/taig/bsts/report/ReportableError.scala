@@ -10,7 +10,7 @@ case class ReportableError[N <: String, A <: HList](
         error: Error[N, A],
         r:     Report.Aux[Error[N, A], String]
 ) {
-    def report = r.report( error )
+    def delegateReport = r.report( error )
 
     override def toString = error.toString
 }
