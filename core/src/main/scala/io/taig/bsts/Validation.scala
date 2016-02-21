@@ -1,25 +1,23 @@
 package io.taig.bsts
 
+import cats.data.Validated
 import shapeless.HList
 
 trait Validation[I, O] {
     type V <: HList
 
-    /**
-     * Result of the computation
-     */
-    type R
+    type E
 
     /**
      * Contained (nested) Validations, may only include itself (see Term)
      */
     def validations: V
 
-    def validate( input: I ): R
+    def validate( input: I ): Validated[E, O]
 }
 
 object Validation {
     type Aux0[I, O, V0 <: HList] = Validation[I, O] { type V = V0 }
 
-    type Aux[I, O, V0 <: HList, R0] = Validation.Aux0[I, O, V0] { type R = R0 }
+    type Aux[I, O, V0 <: HList, E0] = Validation.Aux0[I, O, V0] { type E = E0 }
 }

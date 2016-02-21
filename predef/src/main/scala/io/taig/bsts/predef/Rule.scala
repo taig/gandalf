@@ -1,6 +1,5 @@
 package io.taig.bsts.predef
 
-import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.{ Error, Term }
 import shapeless._
@@ -13,7 +12,7 @@ abstract class Rule[N <: String, T, A <: HList](
 ) extends Term[N, T, T, A] {
     override final type V = Rule[N, T, A] :: HNil
 
-    override final type R = Validated[Error[N, A], T]
+    override final type E = Error[N, A]
 
     override final def validations = this :: HNil
 }

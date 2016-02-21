@@ -1,42 +1,19 @@
 package io.taig.bsts.android.ops
 
 import android.view.View
-import cats.data.{ NonEmptyList, Validated }
-import io.taig.android.viewvalue.Extraction
-import io.taig.bsts._
-import io.taig.bsts.android.syntax.tags._
-import io.taig.bsts.android.{ Event, Feedback }
-import io.taig.bsts.report.Report
+import cats.data.Validated
+import io.taig.android.viewvalue.{ Attribute, Extraction, Injection }
+import io.taig.android.viewvalue.syntax.value._
+import io.taig.bsts.Validation
+import shapeless.HList
 
-import scala.language.experimental.macros
-
-final class validation[V <: View]( view: V ) {
-    /**
-     * Attach a policy to this view
-     */
-    def obeys[I]: Builder1[I] = new Builder1[I]
-
-    class Builder1[I] {
-        def apply[O]( validation: Validation[I, O] )(
-            implicit
-            ex: Extraction[V, I],
-            f:  Feedback[V],
-            r:  Report.Aux[validation.R, Validated[NonEmptyList[String], O]],
-            ev: Event[V]                                                     = Event.Empty
-        ): V = {
-            ev.onAttach( view )
-            view.feedback = f
-            view.validation = () ⇒ r.report( validation.validate( ex.extract( view ) ) )
-            view
-        }
-    }
-
-    /**
-     * Remove all validation rules from this view
-     */
-    def reset()( implicit ev: Event[V] = Event.Empty ): Unit = {
-        ev.onDetach( view )
-        view.feedback = null
-        view.validation = null
+final class validation[I, O, V <: HList, E]( validation: Validation.Aux[I, O, V, E] ) {
+    def validate[V <: View]( view: V )(
+        implicit
+        v: Extraction[Attribute.Value, V, I],
+        e: Injection[Attribute.Error, V, Option[String]]
+    ): Validated[E, O] = {
+        val value = view.value[I]
+        validation.validate( value )
     }
 }

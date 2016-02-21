@@ -11,9 +11,11 @@ abstract class Transformation[N <: String, I, O](
 ) extends Term[N, I, O, HNil] {
     override final type V = Transformation[N, I, O] :: HNil
 
-    override final type R = O
+    override final type E = Nothing
 
     override final def validations: V = this :: HNil
+
+    override def validate( input: I ): Valid[O]
 }
 
 object Transformation {
@@ -21,7 +23,7 @@ object Transformation {
         implicit
         w: Witness.Aux[name.type]
     ): Transformation[name.type, I, O] = new Transformation[name.type, I, O] {
-        override def validate( input: I ) = f( input )
+        override def validate( input: I ) = Valid( f( input ) )
     }
 
     implicit def nestedEvaluationTransformation[N <: String, I, O, A <: HList] = {
@@ -30,7 +32,7 @@ object Transformation {
 
             override def apply( input: I, tree: Transformation[N, I, O] :: HNil ) = tree match {
                 case transformation :: HNil ⇒
-                    val output = transformation.validate( input )
+                    val output = transformation.validate( input ).a
                     ( Some( output ), Valid( output ) :: HNil )
             }
         }

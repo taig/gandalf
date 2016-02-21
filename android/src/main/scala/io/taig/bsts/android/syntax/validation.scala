@@ -1,14 +1,15 @@
 package io.taig.bsts.android.syntax
 
-import android.view.View
+import io.taig.bsts.Validation
 import io.taig.bsts.android.ops
+import shapeless.HList
 
 import scala.language.implicitConversions
 
 trait validation {
-    implicit def validationSyntax[V <: View]( view: V ): ops.validation[V] = new ops.validation[V]( view )
-
-    implicit def viewSyntax[V <: View]( view: V ): ops.view[V] = new ops.view[V]( view )
+    implicit def validationSyntax[I, O, V <: HList, E](
+        validation: Validation.Aux[I, O, V, E]
+    ): ops.validation[I, O, V, E] = new ops.validation( validation )
 }
 
 object validation extends validation

@@ -25,7 +25,7 @@ trait report {
     ): ops.report[Validated[Error[N, A], O]] = new ops.report( validated )
 
     implicit def termAsSyntax[N <: String, I, O, A <: HList](
-        term: Term.Aux[N, I, O, A, Validated[Error[N, A], O]]
+        term: Term.Aux[N, I, O, A, Error[N, A]]
     )(
         implicit
         w: Witness.Aux[N]

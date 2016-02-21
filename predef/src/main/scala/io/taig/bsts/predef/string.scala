@@ -31,11 +31,7 @@ trait string {
         Rule[String]( "phone" )( pattern.matcher( _ ).matches() ){ "value" ->> _ :: HNil }
     }
 
-    val removeWhitespace = Transformation[String, String]( "removeWhitespace" )( _.replaceAll( "\\s", "" ) )
-
     val required = Rule[String]( "required" )( _.nonEmpty )
-
-    val trim = Transformation[String, String]( "trim" )( _.trim )
 }
 
 object string extends string

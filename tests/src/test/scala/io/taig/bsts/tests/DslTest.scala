@@ -8,9 +8,8 @@ import shapeless._
 
 class DslTest extends Suite {
     it should "allow to combine equally typed rules" in {
-        rule.required && rule.required shouldBe Policy(
-            ( rule.required :: HNil ) :: Operator.&& :: ( rule.required :: HNil ) :: HNil
-        )
+        rule.required && rule.required shouldBe
+            Policy( ( rule.required :: HNil ) :: Operator.&& :: ( rule.required :: HNil ) :: HNil )
     }
 
     it should "permit to combine differently typed rules" in {

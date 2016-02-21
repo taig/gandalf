@@ -1,8 +1,7 @@
 package io.taig.bsts.android.syntax
 
 trait all
-    extends feedback
+    extends value
     with validation
-    with value
 
 object all extends all

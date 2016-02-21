@@ -12,6 +12,7 @@ object Settings {
         ),
         githubProject := "bettersafethansorry",
         organization := "io.taig.bsts",
+        resolvers += Resolver.sonatypeRepo( "snapshots" ),
         scalacOptions ++=
             "-deprecation" ::
             "-feature" ::

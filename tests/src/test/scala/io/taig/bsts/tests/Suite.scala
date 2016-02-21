@@ -1,6 +1,7 @@
 package io.taig.bsts.tests
 
 import cats.data.Validated.{ Invalid, Valid }
+import io.taig.bsts.Validation
 import io.taig.bsts.report.Report
 import io.taig.bsts.predef._
 import org.scalatest.{ BeforeAndAfterAll, FlatSpec, Matchers }
@@ -65,10 +66,6 @@ trait Suite
         rule.max( 3 ).validate( "" ).isValid shouldBe true
         rule.max( 3 ).validate( "foo" ).isValid shouldBe true
         rule.max( 3 ).validate( "foobar" ).isValid shouldBe false
-
-        transformation.trim.validate( "" ) shouldBe ""
-        transformation.trim.validate( "asdf" ) shouldBe "asdf"
-        transformation.trim.validate( "  asdf   " ) shouldBe "asdf"
 
         mutation.parse.validate( "5" ) shouldBe Valid( 5 )
         mutation.parse.validate( "" ).leftMap( _.toString ) shouldBe Invalid( "Error(parse)" )

@@ -32,7 +32,7 @@ lazy val android = project
     .settings( androidBuildAar ++ Settings.common )
     .settings(
         libraryDependencies ++=
-            "io.taig.android.viewvalue" %% "design" % "1.1.1" ::
+            "io.taig.android.viewvalue" %% "design" % "1.2.0-SNAPSHOT" ::
             Nil,
         minSdkVersion := "7",
         platformTarget := "android-23",
