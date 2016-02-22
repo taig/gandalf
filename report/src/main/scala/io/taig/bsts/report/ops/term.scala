@@ -4,7 +4,7 @@ import io.taig.bsts.report.{ Report, ReportableTerm }
 import io.taig.bsts.{ Error, Term }
 import shapeless.{ HList, Witness }
 
-final class term[N <: String, I, O, A <: HList]( term: Term.Aux[N, I, O, A, Error[N, A]] )(
+class term[N <: String, I, O, A <: HList]( term: Term.Aux[N, I, O, A, Error[N, A]] )(
         implicit
         w: Witness.Aux[N]
 ) {

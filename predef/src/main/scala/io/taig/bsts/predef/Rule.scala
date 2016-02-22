@@ -10,11 +10,11 @@ abstract class Rule[N <: String, T, A <: HList](
         implicit
         w: Witness.Aux[N]
 ) extends Term[N, T, T, A] {
-    override final type V = Rule[N, T, A] :: HNil
+    override type V = Rule[N, T, A] :: HNil
 
-    override final type E = Error[N, A]
+    override type E = Error[N, A]
 
-    override final def validations = this :: HNil
+    override def validations = this :: HNil
 }
 
 object Rule {

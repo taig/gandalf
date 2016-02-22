@@ -9,11 +9,11 @@ abstract class Transformation[N <: String, I, O](
         implicit
         w: Witness.Aux[N]
 ) extends Term[N, I, O, HNil] {
-    override final type V = Transformation[N, I, O] :: HNil
+    override type V = Transformation[N, I, O] :: HNil
 
-    override final type E = Nothing
+    override type E = Nothing
 
-    override final def validations: V = this :: HNil
+    override def validations: V = this :: HNil
 
     override def validate( input: I ): Valid[O]
 }

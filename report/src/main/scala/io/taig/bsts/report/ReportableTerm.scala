@@ -3,7 +3,7 @@ package io.taig.bsts.report
 import io.taig.bsts.{ Error, Term }
 import shapeless._
 
-final case class ReportableTerm[N <: String, I, O, A <: HList](
+case class ReportableTerm[N <: String, I, O, A <: HList](
         term:   Term.Aux[N, I, O, A, Error[N, A]],
         report: Report.Aux[Error[N, A], String]
 )(
