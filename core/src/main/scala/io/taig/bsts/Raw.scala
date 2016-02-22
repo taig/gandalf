@@ -5,36 +5,24 @@ import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts.ops.dsl.Operator
 import io.taig.bsts.syntax.raw._
 import shapeless._
-import shapeless.ops.hlist.{ LeftFolder, ToTraversable }
+import shapeless.ops.hlist.LeftFolder
 
-trait Raw[-I, +O] {
-    def raw( context: I ): O
+trait Raw[-T] {
+    def raw( value: T ): NonEmptyList[( String, List[Any] )]
 }
 
 object Raw {
-    implicit def rawError[N <: String, A <: HList](
-        implicit
-        tt: ToTraversable.Aux[A, List, Any]
-    ) = new Raw[Error[N, A], ( String, List[Any] )] {
-        override def raw( error: Error[N, A] ) = ( error.name, error.arguments.toList )
+    implicit def rawError[N <: String, A <: HList] = new Raw[Error[N, A]] {
+        override def raw( error: Error[N, A] ) = NonEmptyList( ( error.name, error.arguments.runtimeList ) )
     }
 
-    implicit def rawTerm[N <: String, O, A <: HList](
-        implicit
-        r: Raw[Error[N, A], ( String, List[Any] )]
-    ) = new Raw[Validated[Error[N, A], O], Validated[( String, List[Any] ), O]] {
-        override def raw( result: Validated[Error[N, A], O] ) = result.leftMap( _.raw )
-    }
-
-    implicit def rawPolicy[C <: HList, T](
+    implicit def rawComputation[C <: HList](
         implicit
         lf: collect.F[C]
-    ) = new Raw[Validated[C, T], Validated[NonEmptyList[( String, List[Any] )], T]] {
-        override def raw( validated: Validated[C, T] ) = {
-            validated.leftMap { computation ⇒
-                val list = computation.foldLeft( List.empty[( String, List[Any] )] )( collect )
-                NonEmptyList( list.head, list.tail )
-            }
+    ) = new Raw[C] {
+        override def raw( computation: C ) = {
+            val list = computation.foldLeft( List.empty[( String, List[Any] )] )( collect )
+            NonEmptyList( list.head, list.tail )
         }
     }
 
@@ -43,9 +31,10 @@ object Raw {
 
         implicit def term[N <: String, O, A <: HList](
             implicit
-            r: Raw[Validated[Error[N, A], O], Validated[( String, List[Any] ), O]]
+            r: Raw[Error[N, A]]
         ) = at[List[( String, List[Any] )], Validated[Error[N, A], O]] { ( errors, validated ) ⇒
-            validated.raw.leftMap( errors :+ _ ).swap.getOrElse( errors )
+            import cats.std.list._
+            errors ++ validated.leftMap( _.raw.unwrap ).swap.getOrElse( Nil )
         }
 
         implicit def valid[O] = at[List[( String, List[Any] )], Valid[O]] { ( errors, _ ) ⇒ errors }
