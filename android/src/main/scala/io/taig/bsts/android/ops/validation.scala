@@ -11,7 +11,7 @@ import io.taig.bsts.report.Report
 import shapeless.HList
 
 class validation[I, O, V <: HList, E]( validation: Validation.Aux[I, O, V, E] ) {
-    def validate[V <: View]( view: V )(
+    def validateView[V <: View]( view: V )(
         implicit
         v: Extraction.Value[V, I],
         e: Injection.Error[V, Option[CharSequence]],
