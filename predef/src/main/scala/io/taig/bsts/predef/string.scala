@@ -1,7 +1,7 @@
 package io.taig.bsts.predef
 
 import io.taig.bsts.ops.Parser
-import io.taig.bsts.{ Mutation, Rule }
+import io.taig.bsts._
 import shapeless._
 import shapeless.syntax.singleton._
 
@@ -24,6 +24,8 @@ trait string {
         "value" ->> value :: "expected" ->> length :: "actual" ->> actual :: HNil
     }
 
+    val removeWhitespace = Transformation[String, String]( "removeWhitespace" )( _.replaceAll( "\\s", "" ) )
+
     def parse[T: Parser] = Mutation[String, T]( "parse" )( implicitly[Parser[T]].parse )
 
     val phone = {
@@ -33,6 +35,8 @@ trait string {
     }
 
     val required = Rule[String]( "required" )( _.nonEmpty )
+
+    val trim = Transformation[String, String]( "trim" )( _.trim )
 }
 
 object string extends string
