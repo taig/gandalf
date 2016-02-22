@@ -14,9 +14,7 @@ trait Report[-I] {
     def report( input: I ): Out
 }
 
-object Report {
-    type Aux[I, O] = Report[I] { type Out = O }
-
+object Report extends Report0 {
     def instance[N <: String, A <: HList]( f: A ⇒ String ): Report.Aux[Error[N, A], String] = new Report[Error[N, A]] {
         override type Out = String
 
@@ -128,5 +126,18 @@ object Report {
             case ( errors, Inl( tree ) ) ⇒ tree.foldLeft( errors )( this )
             case ( errors, _ )           ⇒ errors
         }
+    }
+}
+
+trait Report0 {
+    type Aux[I, O] = Report[I] { type Out = O }
+
+    implicit def reportToNonEmptyListReport[A, B, O](
+        implicit
+        r: Aux[Validated[A, O], Validated[B, O]]
+    ) = new Report[Validated[A, O]] {
+        override type Out = Validated[NonEmptyList[B], O]
+
+        override def report( input: Validated[A, O] ) = r.report( input ).leftMap( NonEmptyList( _ ) )
     }
 }

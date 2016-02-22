@@ -17,31 +17,31 @@ trait reports {
         context: Context
     ): Report.Aux[Error[N, A], String] = Report( term )( _ ⇒ context.getString( message ) )
 
-    implicit def `Report[email]`( implicit context: Context ) = report( email, R.string.bsts_email )
+    implicit def reportEmail( implicit context: Context ) = report( email, R.string.bsts_email )
 
-    implicit def `Report[exactly]`( implicit context: Context ) = Report( exactly _ ) { arguments ⇒
+    implicit def reportExactly( implicit context: Context ) = Report( exactly _ ) { arguments ⇒
         context.getString( R.string.bsts_exactly ).format( arguments( "expected" ) )
     }
 
-    implicit def `Report[matches]`[T]( implicit context: Context ) = Report( matches[T] _ ) { _ ⇒
+    implicit def reportMatches[T]( implicit context: Context ) = Report( matches[T] _ ) { _ ⇒
         context.getString( R.string.bsts_matches )
     }
 
-    implicit def `Report[max]`( implicit context: Context ) = Report( max _ ) { arguments ⇒
+    implicit def reportMax( implicit context: Context ) = Report( max _ ) { arguments ⇒
         context.getString( R.string.bsts_max ).format( arguments( "expected" ) )
     }
 
-    implicit def `Report[min]`( implicit context: Context ) = Report( min _ ) { arguments ⇒
+    implicit def reportMin( implicit context: Context ) = Report( min _ ) { arguments ⇒
         context.getString( R.string.bsts_min ).format( arguments( "expected" ) )
     }
 
-    implicit def `Report[phone]`( implicit context: Context ) = report( phone, R.string.bsts_phone )
+    implicit def reportPhone( implicit context: Context ) = report( phone, R.string.bsts_phone )
 
-    implicit def `Report[required]`( implicit context: Context ) = Report( required ) { _ ⇒
+    implicit def reportRequired( implicit context: Context ) = Report( required ) { _ ⇒
         context.getString( R.string.bsts_required )
     }
 
-    implicit def `Report[isDefined]`[T]( implicit context: Context ) = Report( isDefined[T] ) { _ ⇒
+    implicit def reportIsDefined( implicit context: Context ) = Report( isDefined ) { _ ⇒
         context.getString( R.string.bsts_required )
     }
 }

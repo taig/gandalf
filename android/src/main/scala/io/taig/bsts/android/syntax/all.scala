@@ -1,7 +1,6 @@
 package io.taig.bsts.android.syntax
 
 trait all
-    extends value
-    with validation
+    extends validation
 
 object all extends all
