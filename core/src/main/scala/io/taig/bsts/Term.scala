@@ -2,7 +2,7 @@ package io.taig.bsts
 
 import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.ops.hlist.NestedEvaluation
+import io.taig.bsts.ops.NestedEvaluation
 import shapeless._
 
 abstract class Term[N <: String, I, O, A <: HList]( implicit w: Witness.Aux[N] ) extends Validation[I, O] {

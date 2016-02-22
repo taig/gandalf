@@ -1,5 +1,6 @@
 package io.taig.bsts.predef
 
+import io.taig.bsts.Rule
 import shapeless._
 import shapeless.syntax.singleton._
 

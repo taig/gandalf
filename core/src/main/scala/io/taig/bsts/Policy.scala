@@ -1,7 +1,7 @@
 package io.taig.bsts
 
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.ops.hlist.NestedEvaluation
+import io.taig.bsts.ops.NestedEvaluation
 import shapeless.HList
 
 case class Policy[I, O, V0 <: HList, NE <: HList]( validations: V0 )(

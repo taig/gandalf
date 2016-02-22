@@ -3,8 +3,8 @@ package io.taig.bsts.report
 import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.Term.Aux
+import io.taig.bsts.ops.NestedEvaluation
 import io.taig.bsts.{ Error, Term }
-import io.taig.bsts.ops.hlist.NestedEvaluation
 import shapeless.{ ::, HList, HNil }
 
 case class ReportableError[N <: String, A <: HList](

@@ -1,7 +1,6 @@
-package io.taig.bsts.predef
+package io.taig.bsts
 
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.{ Error, Term }
 import shapeless._
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.hlist.ToTraversable.Aux

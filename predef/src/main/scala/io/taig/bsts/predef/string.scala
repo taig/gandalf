@@ -1,6 +1,7 @@
 package io.taig.bsts.predef
 
-import io.taig.bsts.predef.ops.Parser
+import io.taig.bsts.ops.Parser
+import io.taig.bsts.{ Mutation, Rule }
 import shapeless._
 import shapeless.syntax.singleton._
 

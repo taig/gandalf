@@ -1,8 +1,7 @@
-package io.taig.bsts.predef
+package io.taig.bsts
 
 import cats.data.Validated.Valid
-import io.taig.bsts.Term
-import io.taig.bsts.ops.hlist.NestedEvaluation
+import io.taig.bsts.ops.NestedEvaluation
 import shapeless._
 
 abstract class Transformation[N <: String, I, O](
@@ -11,7 +10,7 @@ abstract class Transformation[N <: String, I, O](
 ) extends Term[N, I, O, HNil] {
     override type V = Transformation[N, I, O] :: HNil
 
-    override type E = Nothing
+    override type E = Unit
 
     override def validations: V = this :: HNil
 

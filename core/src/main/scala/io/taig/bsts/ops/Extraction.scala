@@ -1,6 +1,6 @@
-package io.taig.bsts.predef.ops
+package io.taig.bsts.ops
 
-import scala.language.{ reflectiveCalls, higherKinds }
+import scala.language.{ higherKinds, reflectiveCalls }
 import scala.util.Try
 
 trait Extraction[T, F[_]] {

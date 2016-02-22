@@ -1,4 +1,4 @@
-package io.taig.bsts.ops.hlist
+package io.taig.bsts.ops
 
 import io.taig.bsts.ops.dsl.Operator
 import shapeless._
