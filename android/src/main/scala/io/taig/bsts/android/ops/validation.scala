@@ -15,13 +15,15 @@ class validation[I, O, V <: HList, E]( validation: Validation.Aux[I, O, V, E] ) 
         implicit
         v: Extraction.Value[V, I],
         e: Injection.Error[V, Option[CharSequence]],
-        r: Report.Aux[Validated[E, O], Validated[NonEmptyList[String], O]]
-    ): Validated[NonEmptyList[String], O] = r.report( validation.validate( view.value[I] ) ) match {
-        case valid @ Valid( _ ) ⇒
-            view.error = None
-            valid
-        case invalid @ Invalid( OneAnd( error, _ ) ) ⇒
-            view.error = Some( error )
-            invalid
+        r: Report[E, String]
+    ): Validated[NonEmptyList[String], O] = {
+        validation.validate( view.value[I] ).leftMap( r.report ) match {
+            case valid @ Valid( _ ) ⇒
+                view.error = None
+                valid
+            case invalid @ Invalid( OneAnd( error, _ ) ) ⇒
+                view.error = Some( error )
+                invalid
+        }
     }
 }

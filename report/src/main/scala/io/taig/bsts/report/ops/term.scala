@@ -8,7 +8,7 @@ class term[N <: String, I, O, A <: HList]( term: Term.Aux[N, I, O, A, Error[N, A
         implicit
         w: Witness.Aux[N]
 ) {
-    def as( message: A ⇒ String ): ReportableTerm[N, I, O, A] = ReportableTerm( term, Report.instance( message ) )
+    def as[P]( message: A ⇒ P ): ReportableTerm[N, I, O, A, P] = ReportableTerm( term, Report.instance( message ) )
 
-    def as( message: String ): ReportableTerm[N, I, O, A] = as( _ ⇒ message )
+    def as0[P]( message: P ): ReportableTerm[N, I, O, A, P] = as( _ ⇒ message )
 }

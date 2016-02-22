@@ -32,26 +32,32 @@ object Raw {
         implicit def term[N <: String, O, A <: HList](
             implicit
             r: Raw[Error[N, A]]
-        ) = at[List[( String, List[Any] )], Validated[Error[N, A], O]] { ( errors, validated ) ⇒
-            import cats.std.list._
-            errors ++ validated.leftMap( _.raw.unwrap ).swap.getOrElse( Nil )
+        ): Case.Aux[List[( String, List[Any] )], Validated[Error[N, A], O], List[( String, List[Any] )]] = {
+            at { ( errors, validated ) ⇒
+                import cats.std.list._
+                errors ++ validated.leftMap( _.raw.unwrap ).swap.getOrElse( Nil )
+            }
         }
 
-        implicit def valid[O] = at[List[( String, List[Any] )], Valid[O]] { ( errors, _ ) ⇒ errors }
+        implicit def valid[O]: Case.Aux[List[( String, List[Any] )], Valid[O], List[( String, List[Any] )]] = {
+            at { ( errors, _ ) ⇒ errors }
+        }
 
-        implicit def operator[O <: Operator] = at[List[( String, List[Any] )], O] { ( errors, _ ) ⇒ errors }
+        implicit def operator[O <: Operator]: Case.Aux[List[( String, List[Any] )], O, List[( String, List[Any] )]] = {
+            at { ( errors, _ ) ⇒ errors }
+        }
 
         implicit def recursion[L <: HList](
             implicit
             lf: F[L]
-        ) = at[List[( String, List[Any] )], L] {
+        ): Case.Aux[List[( String, List[Any] )], L, List[( String, List[Any] )]] = at {
             case ( errors, tree ) ⇒ tree.foldLeft( errors )( this )
         }
 
         implicit def coproduct[U <: HList, C <: HList](
             implicit
             lf: F[C]
-        ) = at[List[( String, List[Any] )], C :+: U :+: CNil] {
+        ): Case.Aux[List[( String, List[Any] )], C :+: U :+: CNil, List[( String, List[Any] )]] = at {
             case ( errors, Inl( tree ) ) ⇒ tree.foldLeft( errors )( this )
             case ( errors, _ )           ⇒ errors
         }
