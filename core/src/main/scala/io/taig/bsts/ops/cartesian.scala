@@ -4,6 +4,6 @@ import cats.data.{ Validated, NonEmptyList }
 import cats.std.list._
 import cats.syntax.cartesian._
 
-class cartesian[E, O]( r1: Validated[NonEmptyList[E], O] ) {
-    def |@|[P]( r2: Validated[NonEmptyList[E], P] ) = r1 |@| r2
+class cartesian[A]( r1: Validated[NonEmptyList[( String, List[Any] )], A] ) {
+    def |@|[B]( r2: Validated[NonEmptyList[( String, List[Any] )], B] ) = r1 |@| r2
 }

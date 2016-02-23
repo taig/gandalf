@@ -59,8 +59,4 @@ class ReportTest extends Suite {
             case Invalid( error ) ⇒ error.report shouldBe NonEmptyList( "yolo" )
         }
     }
-
-    it should "be possible to report a Validated[ReportableError]" in {
-        rule.required.as0( "yolo" ).validate( "" ).report shouldBe Invalid( NonEmptyList( "yolo" ) )
-    }
 }

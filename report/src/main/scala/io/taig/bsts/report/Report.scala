@@ -47,12 +47,6 @@ object Report {
         message: A ⇒ O
     ): Report[Error[N, A], O] = instance( message )
 
-    implicit def reportReportableError[N <: String, A <: HList, O]: Report[ReportableError[N, A, O], O] = {
-        new Report[ReportableError[N, A, O], O] {
-            override def report( error: ReportableError[N, A, O] ) = error.delegateReport
-        }
-    }
-
     implicit def reportComputation[C <: HList, O](
         implicit
         lf: collect.F[C, O]

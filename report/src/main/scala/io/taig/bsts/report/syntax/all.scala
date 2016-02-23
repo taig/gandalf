@@ -1,8 +1,7 @@
 package io.taig.bsts.report.syntax
 
 trait all
-    extends cartesian
-    with report
+    extends report
     with term
 
 object all extends all

@@ -2,9 +2,8 @@ package io.taig.bsts.tests
 
 import cats.data.NonEmptyList
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.bsts.Raw
 import io.taig.bsts.implicits._
-import shapeless.test.illTyped
+import io.taig.bsts.report.syntax.term._
 
 class RawTest extends Suite {
     it should "be available for Errors" in {
@@ -24,5 +23,9 @@ class RawTest extends Suite {
 
         ( transformation.trim ~> rule.required ).validate( "  " ).raw shouldBe
             Invalid( NonEmptyList( ( "required", Nil ) ) )
+    }
+
+    it should "be available for ReportableErrors" in {
+        rule.required.as0( "yolo" ).validate( "" ).raw
     }
 }
