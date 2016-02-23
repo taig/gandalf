@@ -1,6 +1,6 @@
 package io.taig.bsts.report
 
-import cats.data.Validated.Valid
+import cats.data.Validated.{ Invalid, Valid }
 import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts._
 import io.taig.bsts.ops.dsl.Operator
@@ -68,7 +68,7 @@ object Report {
             errors ++ validated.leftMap( _.report.unwrap ).swap.getOrElse( Nil )
         }
 
-        implicit def reportableError[N <: String, A <: HList, O]: Case.Aux[List[O], Validated[ReportableError[N, A, O], O], List[O]] = {
+        implicit def reportableError[N <: String, O, A <: HList, P]: Case.Aux[List[P], Validated[ReportableError[N, A, P], O], List[P]] = {
             at { ( errors, validated ) ⇒
                 import cats.std.list._
                 errors ++ validated.leftMap( _.report.unwrap ).swap.getOrElse( Nil )
