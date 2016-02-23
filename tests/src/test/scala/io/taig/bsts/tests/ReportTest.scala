@@ -53,6 +53,16 @@ class ReportTest extends Suite {
         rule.required.as0( "yolo" ) shouldBe a[ReportableTerm[_, _, _, _, _]]
     }
 
+    it should "be possible to attach reports to Terms in Policies" in {
+        import report._
+
+        Policy( rule.required.as0( "yolo" ) :: HNil ).validate( "" ).report[String] shouldBe
+            Invalid( NonEmptyList( "yolo" ) )
+
+        ( rule.required & rule.required.as0( "yolo" ) ).validate( "" ).report[String] shouldBe
+            Invalid( NonEmptyList( "Pflichtfeld", "yolo" ) )
+    }
+
     it should "be possible to report a ReportableError" in {
         rule.required.as0( "yolo" ).validate( "" ) match {
             case Valid( _ )       ⇒ fail()

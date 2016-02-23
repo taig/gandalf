@@ -2,8 +2,6 @@ package io.taig.bsts
 
 import cats.data.Validated.{ Invalid, Valid }
 import shapeless._
-import shapeless.ops.hlist.ToTraversable
-import shapeless.ops.hlist.ToTraversable.Aux
 
 abstract class Rule[N <: String, T, A <: HList](
         implicit
@@ -26,10 +24,7 @@ object Rule {
                 case false ⇒ Invalid( Error( HNil ) )
             }
 
-            override def apply[A <: HList]( g: T ⇒ A )(
-                implicit
-                tt: Aux[A, List, Any]
-            ): Rule[N, T, A] = new Rule[N, T, A] {
+            override def apply[A <: HList]( g: T ⇒ A ): Rule[N, T, A] = new Rule[N, T, A] {
                 override def validate( input: T ) = f( input ) match {
                     case true  ⇒ Valid( input )
                     case false ⇒ Invalid( Error( g( input ) ) )
@@ -39,10 +34,7 @@ object Rule {
     }
 
     trait Chain1[N <: String, T] {
-        def apply[A <: HList]( f: T ⇒ A )(
-            implicit
-            tt: ToTraversable.Aux[A, List, Any]
-        ): Rule[N, T, A]
+        def apply[A <: HList]( f: T ⇒ A ): Rule[N, T, A]
     }
 
     def apply[T, U]( name: String ): Builder2[name.type, T, U] = new Builder2()( Witness.mkWitness( name ) )
@@ -55,10 +47,7 @@ object Rule {
                     case false ⇒ Invalid( Error( HNil ) )
                 }
 
-                override def apply[A <: HList]( h: ( T, U ) ⇒ A )(
-                    implicit
-                    tt: ToTraversable.Aux[A, List, Any]
-                ): Rule[N, T, A] = new Rule[N, T, A] {
+                override def apply[A <: HList]( h: ( T, U ) ⇒ A ): Rule[N, T, A] = new Rule[N, T, A] {
                     override def validate( input: T ) = {
                         val transformed = g( input )
 
@@ -73,9 +62,6 @@ object Rule {
     }
 
     trait Chain2[N <: String, T, U] {
-        def apply[A <: HList]( f: ( T, U ) ⇒ A )(
-            implicit
-            tt: ToTraversable.Aux[A, List, Any]
-        ): Rule[N, T, A]
+        def apply[A <: HList]( f: ( T, U ) ⇒ A ): Rule[N, T, A]
     }
 }

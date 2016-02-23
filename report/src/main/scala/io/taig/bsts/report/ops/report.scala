@@ -10,7 +10,7 @@ class reportError[N <: String, A <: HList]( error: Error[N, A] ) {
 }
 
 class reportReportableError[N <: String, A <: HList, O]( error: ReportableError[N, A, O] ) {
-    def report: NonEmptyList[O] = error.delegateReport
+    def report: NonEmptyList[O] = error.r.report( error.e )
 }
 
 class reportValidated[E, A]( validated: Validated[E, A] ) {

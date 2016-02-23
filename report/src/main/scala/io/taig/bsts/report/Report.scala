@@ -68,12 +68,11 @@ object Report {
             errors ++ validated.leftMap( _.report.unwrap ).swap.getOrElse( Nil )
         }
 
-        implicit def reportableError[N <: String, A <: HList, O](
-            implicit
-            r: Report[ReportableError[N, A, O], O]
-        ): Case.Aux[List[O], Validated[ReportableError[N, A, O], O], List[O]] = at { ( errors, validated ) ⇒
-            import cats.std.list._
-            errors ++ validated.leftMap( _.report.unwrap ).swap.getOrElse( Nil )
+        implicit def reportableError[N <: String, A <: HList, O]: Case.Aux[List[O], Validated[ReportableError[N, A, O], O], List[O]] = {
+            at { ( errors, validated ) ⇒
+                import cats.std.list._
+                errors ++ validated.leftMap( _.report.unwrap ).swap.getOrElse( Nil )
+            }
         }
 
         implicit def valid[O, P]: Case.Aux[List[P], Valid[O], List[P]] = at { ( errors, _ ) ⇒ errors }

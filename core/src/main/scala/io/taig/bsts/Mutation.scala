@@ -3,7 +3,6 @@ package io.taig.bsts
 import cats.data.Validated.{ Invalid, Valid }
 import io.taig.bsts.ops.Extraction
 import shapeless._
-import shapeless.ops.hlist.ToTraversable
 
 import scala.language.higherKinds
 
@@ -31,10 +30,7 @@ object Mutation {
                 case None           ⇒ Invalid( Error( HNil: HNil ) )
             }
 
-            override def apply[A <: HList]( g: I ⇒ A )(
-                implicit
-                tt: ToTraversable.Aux[A, List, Any]
-            ): Mutation[N, I, O, A] = new Mutation[N, I, O, A] {
+            override def apply[A <: HList]( g: I ⇒ A ): Mutation[N, I, O, A] = new Mutation[N, I, O, A] {
                 override def validate( input: I ) = e.extract( f( input ) ) match {
                     case Some( output ) ⇒ Valid( output )
                     case None           ⇒ Invalid( Error( g( input ) ) )
@@ -44,9 +40,6 @@ object Mutation {
     }
 
     trait Chain1[N <: String, I, O] {
-        def apply[A <: HList]( f: I ⇒ A )(
-            implicit
-            tt: ToTraversable.Aux[A, List, Any]
-        ): Mutation[N, I, O, A]
+        def apply[A <: HList]( f: I ⇒ A ): Mutation[N, I, O, A]
     }
 }

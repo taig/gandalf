@@ -3,7 +3,6 @@ package io.taig.bsts
 import cats.data.Validated.Valid
 import cats.data.{ NonEmptyList, Validated }
 import io.taig.bsts.ops.dsl.Operator
-import io.taig.bsts.syntax.raw._
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
 
@@ -29,13 +28,13 @@ object Raw {
     object collect extends Poly2 {
         type F[H <: HList] = LeftFolder.Aux[H, List[( String, List[Any] )], this.type, List[( String, List[Any] )]]
 
-        implicit def term[N <: String, O, A <: HList](
+        implicit def validated[E, A](
             implicit
-            r: Raw[Error[N, A]]
-        ): Case.Aux[List[( String, List[Any] )], Validated[Error[N, A], O], List[( String, List[Any] )]] = {
+            r: Raw[E]
+        ): Case.Aux[List[( String, List[Any] )], Validated[E, A], List[( String, List[Any] )]] = {
             at { ( errors, validated ) ⇒
                 import cats.std.list._
-                errors ++ validated.leftMap( _.raw.unwrap ).swap.getOrElse( Nil )
+                errors ++ validated.leftMap( e ⇒ r.raw( e ).unwrap ).swap.getOrElse( Nil )
             }
         }
 

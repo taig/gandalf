@@ -27,5 +27,6 @@ class RawTest extends Suite {
 
     it should "be available for ReportableErrors" in {
         rule.required.as0( "yolo" ).validate( "" ).raw
+        ( rule.required && rule.required.as0( "yolo" ) ).validate( "" ).raw
     }
 }
