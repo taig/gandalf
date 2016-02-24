@@ -1,6 +1,7 @@
 package io.taig.bsts.android
 
 import io.taig.bsts
+import io.taig.android.viewvalue
 
 trait implicits
     extends bsts.implicits

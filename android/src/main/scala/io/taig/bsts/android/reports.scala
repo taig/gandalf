@@ -1,7 +1,6 @@
 package io.taig.bsts.android
 
 import android.content.Context
-import android.support.annotation.StringRes
 import io.taig.bsts.android.resource.R
 import io.taig.bsts.report.Report
 import io.taig.bsts.predef.all._
@@ -12,7 +11,7 @@ import shapeless.record._
 import scala.language.implicitConversions
 
 trait reports {
-    private def report[N <: String, A <: HList]( term: Term[N, _, _, A], @StringRes message: Int )(
+    private def report[N <: String, A <: HList]( term: Term[N, _, _, A], message: Int )(
         implicit
         context: Context
     ): Report[Error[N, A], String] = Report( term )( _ ⇒ context.getString( message ) )

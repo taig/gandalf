@@ -14,7 +14,7 @@ lazy val core = project
     .settings( Settings.common )
     .settings(
         libraryDependencies ++=
-            "com.chuusai" %% "shapeless" % "2.3.0-RC3" ::
+            "com.chuusai" %% "shapeless" % "2.3.0-RC4" ::
             "org.typelevel" %% "cats-core" % "0.4.1" ::
             "org.typelevel" %% "cats-macros" % "0.4.1" ::
             Nil
@@ -32,9 +32,9 @@ lazy val android = project
     .settings( androidBuildAar ++ Settings.common )
     .settings(
         libraryDependencies ++=
-            "io.taig.android.viewvalue" %% "design" % "1.2.0-SNAPSHOT" ::
+            "io.taig.android.viewvalue" %% "core" % "1.2.0" ::
             Nil,
-        minSdkVersion := "7",
+        minSdkVersion := "1",
         platformTarget := "android-23",
         targetSdkVersion := "23",
         typedResources := false
