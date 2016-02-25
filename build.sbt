@@ -2,8 +2,7 @@ lazy val bsts = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
         aggregate in test := false,
-        name := "BetterSafeThanSorry",
-        normalizedName := "better-safe-than-sorry",
+        name := "Gandalf",
         organization := "io.taig",
         publishArtifact := false,
         test <<= test in tests in Test

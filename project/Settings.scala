@@ -10,8 +10,8 @@ object Settings {
             "-target" :: "1.7" ::
             Nil
         ),
-        githubProject := "bettersafethansorry",
-        organization := "io.taig.bsts",
+        githubProject := "gandalf",
+        organization := "io.taig.gandalf",
         resolvers += Resolver.sonatypeRepo( "snapshots" ),
         scalacOptions ++=
             "-deprecation" ::
