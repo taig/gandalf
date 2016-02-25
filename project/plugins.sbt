@@ -1,6 +1,4 @@
-resolvers += Resolver.sonatypeRepo( "snapshots" )
-
-addSbtPlugin( "com.hanhuy.sbt" % "android-sdk-plugin" % "1.5.17" )
+addSbtPlugin( "com.hanhuy.sbt" % "android-sdk-plugin" % "1.5.18" )
 
 addSbtPlugin( "io.taig.sbt" % "scalariform" % "1.6.0" )
 
