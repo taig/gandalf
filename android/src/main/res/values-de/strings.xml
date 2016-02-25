@@ -2,13 +2,12 @@
 
 <resources>
 
-    <string name="bsts_email">Keine gültige E-Mail-Adresse</string>
-    <string name="bsts_exactly">Genau %1$d Zeichen</string>
-    <string name="bsts_matches">Stimmt nicht überein</string>
-    <string name="bsts_matches_target">Stimmt nicht mit %1$s überein</string>
-    <string name="bsts_max">Maximal %1$d Zeichen</string>
-    <string name="bsts_min">Mindestens %1$d Zeichen</string>
-    <string name="bsts_phone">Keine gültige Telefonnummer</string>
-    <string name="bsts_required">Pflichtfeld</string>
+    <string name="gandalf_email">Keine gültige E-Mail-Adresse</string>
+    <string name="gandalf_exactly">Genau %1$d Zeichen</string>
+    <string name="gandalf_matches">Stimmt nicht überein</string>
+    <string name="gandalf_max">Maximal %1$d Zeichen</string>
+    <string name="gandalf_min">Mindestens %1$d Zeichen</string>
+    <string name="gandalf_phone">Keine gültige Telefonnummer</string>
+    <string name="gandalf_required">Pflichtfeld</string>
 
 </resources>

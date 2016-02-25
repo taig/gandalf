@@ -1,66 +1,50 @@
-lazy val common = Seq(
-    name := "BetterSafeThanSorry",
-    normalizedName := "better-safe-than-sorry",
-    organization := "io.taig",
-    scalacOptions ++= (
-        "-deprecation" ::
-        "-feature" ::
-        Nil
-    ),
-    scalaVersion := "2.11.7",
-    version := "0.2.0"
-)
-
-lazy val bsts = project.in( file( "." ) )
-    .settings( common )
+lazy val gandalf = project.in( file( "." ) )
+    .settings( Settings.common )
     .settings(
-        publishArtifact := false
+        aggregate in test := false,
+        name := "Gandalf",
+        organization := "io.taig",
+        publishArtifact := false,
+        test <<= test in tests in Test
     )
-    .aggregate( core, android )
+    .aggregate( core, predef, report, android )
 
-lazy val core = project.in( file( "core" ) )
-    .settings( common )
+lazy val core = project
+    .settings( Settings.common )
     .settings(
-        exportJars := true,
-        libraryDependencies ++= (
-            "com.chuusai" %% "shapeless" % "2.2.5" ::
-            "org.scalatest" %% "scalatest" % "3.0.0-M7" % "test" ::
-            "org.scalacheck" %% "scalacheck" % "1.12.5" % "test" ::
+        libraryDependencies ++=
+            "com.chuusai" %% "shapeless" % "2.3.0" ::
+            "org.typelevel" %% "cats-core" % "0.4.1" ::
+            "org.typelevel" %% "cats-macros" % "0.4.1" ::
             Nil
-        )
     )
 
-lazy val android = project.in( file( "android" ) )
-    .settings( androidBuildAar ++ common )
+lazy val predef = project
+    .settings( Settings.common )
+    .dependsOn( core )
+
+lazy val report = project
+    .settings( Settings.common )
+    .dependsOn( core )
+
+lazy val android = project
+    .settings( androidBuildAar ++ Settings.common )
     .settings(
-        javacOptions ++= (
-            "-source" :: "1.7" ::
-            "-target" :: "1.7" ::
-            Nil
-        ),
-        libraryDependencies ++= (
-            "com.android.support" % "design" % "23.1.1" ::
-            Nil
-        ),
-        organization += ".android"
-    )
-    .settings(
-        minSdkVersion := "7",
+        libraryDependencies ++=
+            "io.taig.android.viewvalue" %% "core" % "1.2.0" ::
+            Nil,
+        minSdkVersion := "1",
         platformTarget := "android-23",
         targetSdkVersion := "23",
         typedResources := false
     )
-    .dependsOn( core )
+    .dependsOn( core, predef, report )
 
-lazy val androidTest = flavorOf( android, "android-test" )
+lazy val tests = project
+    .settings( Settings.common )
     .settings(
-        fork in Test := true,
-        libraryDependencies ++= (
-            "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
-            "com.geteit" %% "robotest" % "0.12" % "test" ::
+        libraryDependencies ++=
+            "org.scalatest" %% "scalatest" % "3.0.0-M15" ::
             Nil
-        ),
-        libraryProject in Android := false
     )
-
-test in android <<= test in Test in androidTest
+    .dependsOn( core, predef, report )
