@@ -2,12 +2,12 @@
 
 <resources>
 
-    <string name="bsts_email">Not a valid email address</string>
-    <string name="bsts_exactly">Exactly %1$d characters</string>
-    <string name="bsts_matches">Does not match</string>
-    <string name="bsts_max">%1$d characters at max</string>
-    <string name="bsts_min">At least %1$d characters</string>
-    <string name="bsts_phone">Not a valid phone number</string>
-    <string name="bsts_required">Required</string>
+    <string name="gandalf_email">Not a valid email address</string>
+    <string name="gandalf_exactly">Exactly %1$d characters</string>
+    <string name="gandalf_matches">Does not match</string>
+    <string name="gandalf_max">%1$d characters at max</string>
+    <string name="gandalf_min">At least %1$d characters</string>
+    <string name="gandalf_phone">Not a valid phone number</string>
+    <string name="gandalf_required">Required</string>
 
 </resources>

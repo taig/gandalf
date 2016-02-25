@@ -1,4 +1,4 @@
-lazy val bsts = project.in( file( "." ) )
+lazy val gandalf = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
         aggregate in test := false,
