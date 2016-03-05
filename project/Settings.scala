@@ -11,7 +11,7 @@ object Settings {
             Nil
         ),
         githubProject := "gandalf",
-        organization := "io.taig.gandalf",
+        organization := "io.taig",
         resolvers += Resolver.sonatypeRepo( "snapshots" ),
         scalacOptions ++=
             "-deprecation" ::

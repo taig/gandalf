@@ -6,6 +6,13 @@ import io.taig.gandalf.ops.dsl.Operator
 import shapeless._
 import shapeless.ops.hlist.LeftFolder
 
+/**
+ * Typeclass that provides an untyped error output for failed validations
+ *
+ * The output format is always a `NonEmptyList[( String, List[Any] )]`
+ *
+ * @tparam T Error type to represent
+ */
 trait Raw[-T] {
     def raw( value: T ): NonEmptyList[( String, List[Any] )]
 }
