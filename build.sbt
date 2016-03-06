@@ -4,7 +4,9 @@ lazy val gandalf = project.in( file( "." ) )
         aggregate in test := false,
         name := "Gandalf",
         organization := "io.taig",
+        publish := (),
         publishArtifact := false,
+        publishLocal := (),
         test <<= test in tests in Test
     )
     .aggregate( core, predef, report, android )
