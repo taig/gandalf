@@ -17,7 +17,7 @@ object Settings {
             "-deprecation" ::
             "-feature" ::
             Nil,
-        scalaVersion := "2.11.7",
+        scalaVersion := "2.11.8",
         testOptions in ThisBuild += Tests.Argument( "-oDF" )
     )
 }
