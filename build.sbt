@@ -25,7 +25,7 @@ lazy val core = project
 lazy val predef = project
     .settings( Settings.common )
     .settings(
-        name := "gandalf-prefed"
+        name := "gandalf-predef"
     )
     .dependsOn( core )
 
