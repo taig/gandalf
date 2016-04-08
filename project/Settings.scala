@@ -3,7 +3,7 @@ import sbt.Keys._
 import io.taig.sbt.sonatype.Plugin.autoImport._
 
 object Settings {
-    val common = Seq(
+    val common = Def.settings(
         exportJars := true,
         javacOptions ++= (
             "-source" :: "1.7" ::
