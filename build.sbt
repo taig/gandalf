@@ -40,7 +40,7 @@ lazy val android = project
     .settings( androidBuildAar ++ Settings.common )
     .settings(
         libraryDependencies ++=
-            "io.taig.android" %% "viewvalue-core" % "1.2.1" ::
+            "io.taig.android" %% "viewvalue-core" % "1.2.3" ::
             Nil,
         minSdkVersion := "1",
         name := "gandalf-android",
