@@ -16,6 +16,4 @@ case class Policy[I, O, V0 <: HList, NE <: HList]( validations: V0 )(
         case ( Some( output ), _ ) ⇒ Valid( output )
         case ( None, evaluation )  ⇒ Invalid( evaluation )
     }
-
-    override def toString = s"Policy($validations)"
 }

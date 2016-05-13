@@ -18,22 +18,15 @@ lazy val core = project
             "com.chuusai" %% "shapeless" % "2.3.0" ::
             "org.typelevel" %% "cats-core" % "0.5.0" ::
             "org.typelevel" %% "cats-macros" % "0.5.0" ::
-            Nil,
-        name := "gandalf-core"
+            Nil
     )
 
 lazy val predef = project
     .settings( Settings.common )
-    .settings(
-        name := "gandalf-predef"
-    )
     .dependsOn( core )
 
 lazy val report = project
     .settings( Settings.common )
-    .settings(
-        name := "gandalf-report"
-    )
     .dependsOn( core )
 
 lazy val android = project
@@ -43,7 +36,6 @@ lazy val android = project
             "io.taig.android" %% "viewvalue-core" % "1.2.4" ::
             Nil,
         minSdkVersion := "1",
-        name := "gandalf-android",
         platformTarget := "android-23",
         targetSdkVersion := "23",
         typedResources := false

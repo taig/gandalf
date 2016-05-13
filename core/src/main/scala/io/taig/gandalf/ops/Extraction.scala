@@ -1,5 +1,7 @@
 package io.taig.gandalf.ops
 
+import cats.data.Xor
+
 import scala.language.{ higherKinds, reflectiveCalls }
 import scala.util.Try
 
@@ -12,11 +14,15 @@ object Extraction {
         override def extract( value: F[T] ): Option[T] = f( value )
     }
 
-    implicit def `Extract[Either]`[L, R]: Extraction[R, ( { type λ[β] = Either[L, β] } )#λ] = {
+    implicit def extractionEither[L, R]: Extraction[R, ( { type λ[β] = Either[L, β] } )#λ] = {
         instance[R, ( { type λ[β] = Either[L, β] } )#λ]( _.right.toOption )
     }
 
-    implicit def `Extract[Option]`[T]: Extraction[T, Option] = instance( identity )
+    implicit def extractionOption[T]: Extraction[T, Option] = instance( identity )
 
-    implicit def `Extract[Try]`[T]: Extraction[T, Try] = instance( _.toOption )
+    implicit def extractionTry[T]: Extraction[T, Try] = instance( _.toOption )
+
+    implicit def extractionXor[L, R]: Extraction[R, ( { type λ[β] = Xor[L, β] } )#λ] = {
+        instance[R, ( { type λ[β] = Xor[L, β] } )#λ]( _.toOption )
+    }
 }
