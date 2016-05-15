@@ -9,7 +9,7 @@ lazy val gandalf = project.in( file( "." ) )
         publishLocal := (),
         test <<= test in tests in Test
     )
-    .aggregate( core, predef, report, android )
+    .aggregate( core, predef, report, typelevel, android )
 
 lazy val core = project
     .settings( Settings.common )
@@ -28,6 +28,14 @@ lazy val predef = project
 lazy val report = project
     .settings( Settings.common )
     .dependsOn( core )
+
+lazy val typelevel = project
+    .settings( Settings.common )
+    .dependsOn( core )
+
+lazy val playground = project
+    .settings( Settings.common )
+    .dependsOn( typelevel )
 
 lazy val android = project
     .settings( androidBuildAar ++ Settings.common )
