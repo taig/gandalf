@@ -2,24 +2,30 @@ package io.taig.gandalf.playground
 
 import io.taig.gandalf.typelevel.Macro._
 import io.taig.gandalf.typelevel._
+import shapeless.Witness
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions
 
 object Playground extends App {
-    implicit def convert[L, R <: Validation.In[L]]( obeys: Obeys[L, R] ): R#Output = obeys.value
+    implicit def implicitLifting[I <: V#Input, V <: Validation]( value: I )( implicit e: Evaluation[V] ): I Obey V = macro lift_impl[I, V]
 
-    case class User( name: String Obeys Apply[Trim, Required] )
+    def lift[V <: Validation] = new LiftHelper[V]
 
-    def lift[V <: Validation]( value: V#Input )(
-        implicit
-        e: Evaluation[V]
-    ): V#Input Obeys V = macro lift_impl[V]
+    class LiftHelper[V <: Validation] {
+        def apply[I <: V#Input]( value: I )( implicit e: Evaluation[V] ): I Obey V = macro lift_impl[I, V]
+    }
 
-    val l0 = lift[Apply[Trim, Required]]( "          asdf   " )
-    //    val l1 = lift[Required]( "" )
-    //    val l2 = lift[Apply[Trim, Required]]( "   " )
+    val x1 = lift[Required]( "hello" )
+    val x2 = lift[Apply[IsDefined[String], Apply[Trim, Apply[ToLowerCase, And[Required, Matches[Witness.`"hello"`.T]]]]]](
+        Option( "Hello      " )
+    )
 
-    println( l0 )
+    case class User(
+        @obeys[Apply[ToLowerCase, Required]]name: String
+    )
 
+    User( "" )
+
+    println( u.name )
 }

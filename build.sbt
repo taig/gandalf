@@ -31,10 +31,16 @@ lazy val report = project
 
 lazy val typelevel = project
     .settings( Settings.common )
+    .settings(
+        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
+    )
     .dependsOn( core )
 
 lazy val playground = project
     .settings( Settings.common )
+    .settings(
+        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
+    )
     .dependsOn( typelevel )
 
 lazy val android = project
