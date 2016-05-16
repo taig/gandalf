@@ -2,6 +2,7 @@ package io.taig.gandalf.typelevel
 
 import cats.data.Validated._
 
+//@annotation.Rule[String]
 trait Required extends Rule {
     override type Input = String
 }
@@ -14,4 +15,6 @@ object Required {
             invalidNel( "required" )
         }
     }
+
+    implicit val error = Error.instance[Required]( "required" )
 }

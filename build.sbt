@@ -32,9 +32,13 @@ lazy val report = project
 lazy val typelevel = project
     .settings( Settings.common )
     .settings(
-        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
+        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ),
+        libraryDependencies ++=
+            "com.chuusai" %% "shapeless" % "2.3.0" ::
+            "org.typelevel" %% "cats-core" % "0.5.0" ::
+            "org.typelevel" %% "cats-macros" % "0.5.0" ::
+            Nil
     )
-    .dependsOn( core )
 
 lazy val playground = project
     .settings( Settings.common )
