@@ -13,4 +13,6 @@ object IsDefined {
         case Some( value ) ⇒ valid( value )
         case None          ⇒ invalidNel( "isDefined" )
     }
+
+    implicit val error = Error.instance[IsDefined[_]]( "isDefined" )
 }

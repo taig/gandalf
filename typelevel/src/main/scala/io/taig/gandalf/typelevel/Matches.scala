@@ -14,4 +14,6 @@ object Matches {
             case false ⇒ invalidNel( "matches" )
         }
     }
+
+    implicit val error = Error.instance[Matches[_]]( "matches" )
 }

@@ -12,21 +12,22 @@ object Macro {
     )(
         value: c.Expr[I]
     )(
-        e: c.Expr[Evaluation[V]]
+        ev: c.Expr[Evaluation[V]],
+        er: c.Expr[Error[V]]
     )(
         implicit
         i: c.WeakTypeTag[I],
         v: c.WeakTypeTag[V]
-    ): c.Expr[I Obey V] = {
+    ): c.Expr[I Obeys V] = {
         import c.universe._
 
-        val validation = reify( e.splice.validate( value.splice ) )
+        val validation = reify( ev.splice.validate( value.splice )( er.splice ) )
         val expression = c.Expr[ValidatedNel[String, V#Output]]( c.untypecheck( validation.tree ) )
 
         c.eval( expression ) match {
             case Valid( value ) ⇒
-                c.Expr[I Obey V](
-                    q"""io.taig.gandalf.typelevel.Obey[$i, $v](
+                c.Expr[I Obeys V](
+                    q"""io.taig.gandalf.typelevel.Obeys[$i, $v](
                         $expression.getOrElse {
                             throw new IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
@@ -52,7 +53,7 @@ object Macro {
 
         val annotation = c.prefix
         val q"new obeys[$validation]" = annotation.tree
-        def newType( lhs: Tree ) = tq"io.taig.gandalf.typelevel.Obey[$lhs,$validation]"
+        def newType( lhs: Tree ) = tq"io.taig.gandalf.typelevel.Obeys[$lhs,$validation]"
 
         val valDef = trees
             .collectFirst { case valDef: ValDef ⇒ valDef }
@@ -95,4 +96,6 @@ object Macro {
 
         c.Expr( result )
     }
+
+    def rule_impl[I]( c: whitebox.Context )( annottees: c.Expr[Any]* ): c.Expr[Any] = annottees.head
 }

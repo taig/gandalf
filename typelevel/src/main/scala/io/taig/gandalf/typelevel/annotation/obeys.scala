@@ -1,13 +1,10 @@
-package io.taig.gandalf.typelevel
+package io.taig.gandalf.typelevel.annotation
 
-import io.taig.gandalf.typelevel.Macro.obeys_impl
+import io.taig.gandalf.typelevel.Macro._
+import io.taig.gandalf.typelevel.Validation
 
 import scala.annotation.{ StaticAnnotation, compileTimeOnly }
 import scala.language.experimental.macros
-
-case class Obey[L, R <: Validation]( value: R#Output ) extends AnyVal with Serializable {
-    override def toString = value.toString
-}
 
 @compileTimeOnly( "Must be used with macro paradise" )
 class obeys[V <: Validation] extends StaticAnnotation {
