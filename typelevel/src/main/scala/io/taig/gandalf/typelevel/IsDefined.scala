@@ -9,10 +9,7 @@ trait IsDefined[T] extends Mutation {
 }
 
 object IsDefined {
-    implicit def evaluation[T] = Evaluation.instance[IsDefined[T]] {
-        case Some( value ) ⇒ valid( value )
-        case None          ⇒ invalidNel( "isDefined" )
-    }
-
     implicit val error = Error.instance[IsDefined[_]]( "isDefined" )
+
+    implicit def evaluation[T] = Evaluation.mutation[IsDefined[T]]( identity )
 }

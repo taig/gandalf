@@ -10,9 +10,9 @@ import scala.language.implicitConversions
 
 object Playground extends App {
     val x1 = lift[And[Required, Required]]( "" )
-    //    val x2 = lift[Apply[IsDefined[String], Apply[Trim, Apply[ToLowerCase, And[Required, Matches[Witness.`"hello"`.T]]]]]](
-    //        Option( "Hello      " )
-    //    )
+    val x2 = lift[Apply[IsDefined[String], Apply[Trim, Required]]](
+        Option( "      " )
+    )
 
     println( x1 )
 
