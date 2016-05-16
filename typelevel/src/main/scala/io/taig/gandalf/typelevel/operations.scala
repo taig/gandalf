@@ -15,18 +15,16 @@ object And {
         lev: Evaluation[L],
         ler: Error[L],
         rev: Evaluation[R],
-        rer: Error[R]
+        rer: Error[R],
+        e:   Error[L And R]
     ) = {
         Evaluation.instance[L And R] { input ⇒
-            lev.validate( input ).andThen( input ⇒ rev.validate( input ) )
+            ( lev.validate( input ) andThen rev.validate )
+                .leftMap( e.error.map( List( _ ) ).getOrElse( _ ) )
         }
     }
 
-    implicit def andError[L <: Rule, R <: Rule.Aux[L#Output]](
-        implicit
-        l: Error[L],
-        r: Error[R]
-    ) = Error.instance[L And R]( l.error + " " + r.error )
+    implicit val error = Error.none[_ And _]
 }
 
 class Apply[L <: Mutation, R <: Validation.In[L#Output]] extends Mutation {
@@ -36,21 +34,19 @@ class Apply[L <: Mutation, R <: Validation.In[L#Output]] extends Mutation {
 }
 
 object Apply {
-    implicit def applyEvaluation[L <: Mutation, R <: Validation.In[L#Output]](
+    implicit def evaluation[L <: Mutation: Evaluation, R <: Validation.In[L#Output]](
         implicit
         lev: Evaluation[L],
         ler: Error[L],
         rev: Evaluation[R],
-        rer: Error[R]
+        rer: Error[R],
+        e:   Error[L Apply R]
     ) = {
         Evaluation.instance[L Apply R] { input ⇒
-            lev.validate( input ).andThen( input ⇒ rev.validate( input ) )
+            ( lev.validate( input ) andThen rev.validate )
+                .leftMap( e.error.map( List( _ ) ).getOrElse( _ ) )
         }
     }
 
-    implicit def applyError[L <: Mutation, R <: Validation.In[L#Output]](
-        implicit
-        l: Error[L],
-        r: Error[R]
-    ) = Error.instance[L Apply R]( l.error + " " + r.error )
+    implicit val error = Error.none[_ Apply _]
 }

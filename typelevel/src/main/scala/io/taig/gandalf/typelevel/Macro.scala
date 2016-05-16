@@ -1,7 +1,7 @@
 package io.taig.gandalf.typelevel
 
 import cats.data.Validated.{ Invalid, Valid }
-import cats.data.ValidatedNel
+import cats.data.{ Validated, ValidatedNel }
 import cats.implicits._
 
 import scala.reflect.macros._
@@ -21,8 +21,8 @@ object Macro {
     ): c.Expr[I Obeys V] = {
         import c.universe._
 
-        val validation = reify( ev.splice.validate( value.splice )( er.splice ) )
-        val expression = c.Expr[ValidatedNel[String, V#Output]]( c.untypecheck( validation.tree ) )
+        val validation = reify( ev.splice.validate( value.splice ) )
+        val expression = c.Expr[Validated[List[String], V#Output]]( c.untypecheck( validation.tree ) )
 
         c.eval( expression ) match {
             case Valid( value ) ⇒
@@ -36,11 +36,11 @@ object Macro {
                     )"""
                 )
             case Invalid( errors ) ⇒
-                val messages = errors.toList.mkString( "\n - ", "\n - ", "" )
+                val messages = errors.mkString( "\n - ", "\n - ", "" )
 
                 c.abort(
                     c.enclosingPosition,
-                    s"Can not lift value '${c.eval( value )}' into ${v.tpe}:$messages"
+                    s"Can not lift value '${show( value.tree )}' into ${v.tpe}:$messages"
                 )
         }
     }
