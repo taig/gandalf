@@ -1,7 +1,7 @@
 package io.taig.gandalf.typelevel
 
 import cats.data.Validated.{ Invalid, Valid }
-import cats.data.{ Validated, ValidatedNel }
+import cats.data.Validated
 import cats.implicits._
 
 import scala.reflect.macros._
@@ -95,6 +95,24 @@ object Macro {
         }
 
         c.Expr( result )
+    }
+
+    def obeys_fancy_impl( c: whitebox.Context )( annottees: c.Expr[Any]* ): c.Expr[Any] = {
+        import c.universe._
+
+        val q"new obeysFancy( $validation )" = c.prefix.tree
+        val tree = c.typecheck {
+            q"""
+            import io.taig.gandalf.typelevel.syntax.all._
+            $validation
+            """
+        }
+
+        println( tree.tpe )
+
+        reify {
+            null
+        }
     }
 
     def rule_impl[I]( c: whitebox.Context )( annottees: c.Expr[Any]* ): c.Expr[Any] = annottees.head

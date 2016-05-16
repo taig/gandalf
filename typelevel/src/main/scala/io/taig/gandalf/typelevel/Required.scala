@@ -9,4 +9,6 @@ object Required {
     implicit val error = Error.instance[Required]( "required" )
 
     implicit val evaluation = Evaluation.rule[Required]( _.nonEmpty )
+
+    val required: Evaluation[Required] = evaluation
 }
