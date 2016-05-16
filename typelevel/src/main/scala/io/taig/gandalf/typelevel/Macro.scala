@@ -7,18 +7,17 @@ import cats.implicits._
 import scala.reflect.macros._
 
 object Macro {
-    private val classLoader = getClass.getClassLoader
-
-    def lift_impl[V <: Validation](
+    def lift_impl[I <: V#Input, V <: Validation](
         c: whitebox.Context
     )(
-        value: c.Expr[V#Input]
+        value: c.Expr[I]
     )(
         e: c.Expr[Evaluation[V]]
     )(
         implicit
+        i: c.WeakTypeTag[I],
         v: c.WeakTypeTag[V]
-    ): c.Expr[V#Input Obeys V] = {
+    ): c.Expr[I Obey V] = {
         import c.universe._
 
         val validation = reify( e.splice.validate( value.splice ) )
@@ -26,8 +25,14 @@ object Macro {
 
         c.eval( expression ) match {
             case Valid( value ) ⇒
-                c.Expr[V#Input Obeys V](
-                    q"io.taig.gandalf.typelevel.Obeys[$v#Input, $v]( ${Literal( Constant( value ) )} )"
+                c.Expr[I Obey V](
+                    q"""io.taig.gandalf.typelevel.Obey[$i, $v](
+                        $expression.getOrElse {
+                            throw new IllegalStateException(
+                                "Runtime-validation failed. What the heck are you doing?!"
+                            )
+                        }
+                    )"""
                 )
             case Invalid( errors ) ⇒
                 val messages = errors.toList.mkString( "\n - ", "\n - ", "" )
@@ -37,5 +42,57 @@ object Macro {
                     s"Can not lift value '${c.eval( value )}' into ${v.tpe}:$messages"
                 )
         }
+    }
+
+    def obeys_impl( c: whitebox.Context )( annottees: c.Expr[Any]* ): c.Expr[Any] = {
+        import c.universe._
+        import termNames.CONSTRUCTOR
+
+        val trees = annottees.map( _.tree )
+
+        val annotation = c.prefix
+        val q"new obeys[$validation]" = annotation.tree
+        def newType( lhs: Tree ) = tq"io.taig.gandalf.typelevel.Obey[$lhs,$validation]"
+
+        val valDef = trees
+            .collectFirst { case valDef: ValDef ⇒ valDef }
+            .getOrElse {
+                c.abort(
+                    c.enclosingPosition,
+                    "@obeys can only be applied to val fields"
+                )
+            }
+
+        val classDef = trees
+            .collectFirst { case classDef: ClassDef ⇒ classDef }
+            .getOrElse {
+                c.abort(
+                    c.enclosingPosition,
+                    "@obeys can only be used for case class fields"
+                )
+            }
+
+        val result = classDef match {
+            case classDef @ ClassDef( mods, name, tparams, Template( parents, self, body ) ) ⇒
+                val newBody = body.map {
+                    case target @ ValDef( mods, name, tpt, rhs ) if valDef equalsStructure target ⇒
+                        ValDef( mods, name, newType( tpt ), rhs )
+                    case constructor @ DefDef( mods, CONSTRUCTOR, tparams, vparamss, tpt, rhs ) ⇒
+                        val newVparamss = vparamss.map { vparams ⇒
+                            vparams.map {
+                                case target @ ValDef( mods, name, tpt, rhs ) if valDef.name == target.name ⇒
+                                    ValDef( mods, name, newType( tpt ), rhs )
+                                case default ⇒ default
+                            }
+                        }
+
+                        DefDef( mods, CONSTRUCTOR, tparams, newVparamss, tpt, rhs )
+                    case default ⇒ default
+                }
+
+                ClassDef( mods, name, tparams, Template( parents, self, newBody ) )
+        }
+
+        c.Expr( result )
     }
 }
