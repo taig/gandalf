@@ -1,10 +1,9 @@
 package io.taig.gandalf.playground
 
-import io.taig.gandalf.typelevel.Macro._
-import io.taig.gandalf.typelevel.Matches.matches
 import io.taig.gandalf.typelevel.Required.required
+import io.taig.gandalf.typelevel.Trim.trim
 import io.taig.gandalf.typelevel._
-import io.taig.gandalf.typelevel.annotation.{ obeys, obeysFancy }
+import io.taig.gandalf.typelevel.annotation.obeys
 import shapeless.Witness
 
 import scala.language.experimental.macros
@@ -13,7 +12,7 @@ import scala.language.implicitConversions
 object Playground extends App {
     import syntax.all._
 
-    val x1 = lift[&&[Required, Required]]( "something" )
+    val x1 = lift[Required && Required]( "something" )
     val x2 = lift[Apply[IsDefined[String], Apply[Trim, Required]]](
         Option( "   something   " )
     )
@@ -26,18 +25,14 @@ object Playground extends App {
     )
 
     case class Experimental(
-        @obeysFancy( required && required ) name:String
+        @obeys( trim ~> required ) name:String
     )
 
-    val x3 = lift[Matches[Int, Witness.`3`.T]]( 3 )
-
-    val z = matches( "asdf" )
-
-    &&( z, required )
-    &&( required, z )
-
-    required && required
-    z && required
+    val x3 = Experimental( "  f" )
 
     println( x3 )
+
+    val x4 = lift[Regex[Witness.`"me.*"`.T]]( "me@web.de" )
+
+    println( x4 )
 }

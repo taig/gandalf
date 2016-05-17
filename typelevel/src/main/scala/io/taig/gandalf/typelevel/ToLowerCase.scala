@@ -8,4 +8,6 @@ trait ToLowerCase extends Transformation {
 
 object ToLowerCase {
     implicit val evaluation = Evaluation.transformation[ToLowerCase]( _.toLowerCase )
+
+    val toLowerCase: Evaluation[ToLowerCase] = evaluation
 }

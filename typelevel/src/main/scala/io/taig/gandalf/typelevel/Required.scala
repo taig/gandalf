@@ -1,6 +1,5 @@
 package io.taig.gandalf.typelevel
 
-//@annotation.Rule[String]
 trait Required extends Rule {
     override type Input = String
 }

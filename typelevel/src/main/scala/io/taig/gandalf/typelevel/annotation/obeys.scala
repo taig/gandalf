@@ -10,8 +10,3 @@ import scala.language.experimental.macros
 class obeys[V <: Validation] extends StaticAnnotation {
     def macroTransform( annottees: Any* ): Any = macro obeys_impl
 }
-
-@compileTimeOnly( "Must be used with macro paradise" )
-class obeysFancy extends StaticAnnotation {
-    def macroTransform( annottees: Any* ): Any = macro obeys_fancy_impl
-}
