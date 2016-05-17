@@ -2,7 +2,8 @@ package io.taig.gandalf.internal
 
 import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }
-import io.taig.gandalf.{ Error, Evaluation, Obeys, Validation }
+import io.taig.gandalf.operator.Obeys
+import io.taig.gandalf.{ Error, Evaluation, Validation }
 
 import scala.reflect.macros.whitebox
 
@@ -27,7 +28,7 @@ object Macro {
         c.eval( expression ) match {
             case Valid( value ) ⇒
                 c.Expr[I Obeys V](
-                    q"""io.taig.gandalf.Obeys[$i, $v](
+                    q"""io.taig.gandalf.operator.Obeys[$i, $v](
                         $expression.getOrElse {
                             throw new IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
@@ -62,7 +63,7 @@ object Macro {
                 }
         }
 
-        def newType( lhs: Tree ) = tq"io.taig.gandalf.Obeys[$lhs, $target]"
+        def newType( lhs: Tree ) = tq"io.taig.gandalf.operator.Obeys[$lhs, $target]"
 
         val valDef = trees
             .collectFirst { case valDef: ValDef ⇒ valDef }

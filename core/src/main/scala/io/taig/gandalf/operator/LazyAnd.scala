@@ -1,9 +1,11 @@
-package io.taig.gandalf
+package io.taig.gandalf.operator
+
+import io.taig.gandalf.{ Error, Evaluation, Rule }
 
 case class LazyAnd[L <: Rule, R <: Rule.Aux[L#Input]](
     left:  Evaluation[L],
     right: Evaluation[R]
-) extends Operation[L, R]
+) extends Operator[L, R]
 
 object LazyAnd {
     implicit def evaluation[L <: Rule, R <: Rule.Aux[L#Output]](

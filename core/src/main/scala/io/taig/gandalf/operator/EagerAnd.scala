@@ -1,12 +1,13 @@
-package io.taig.gandalf
+package io.taig.gandalf.operator
 
-import cats.std.list._
+import io.taig.gandalf.{ Error, Evaluation, Rule }
 import cats.syntax.cartesian._
+import cats.std.list._
 
 case class EagerAnd[L <: Rule, R <: Rule.Aux[L#Input]](
     left:  Evaluation[L],
     right: Evaluation[R]
-) extends Operation[L, R]
+) extends Operator[L, R]
 
 object EagerAnd {
     implicit def evaluation[L <: Rule, R <: Rule.Aux[L#Output]](
