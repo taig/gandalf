@@ -1,16 +1,17 @@
 package io.taig.gandalf.playground
 
-import io.taig.gandalf.typelevel.Required.required
-import io.taig.gandalf.typelevel.Trim.trim
-import io.taig.gandalf.typelevel._
-import io.taig.gandalf.typelevel.annotation.obeys
+import io.taig.gandalf.predef.Required.required
+import io.taig.gandalf.predef.Trim.trim
+import io.taig.gandalf.predef._
+import io.taig.gandalf.annotation.obeys
+import io.taig.gandalf._
 import shapeless.Witness
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions
 
 object Playground extends App {
-    import syntax.all._
+    import io.taig.gandalf.syntax.all._
 
     val x1 = lift[Required && Required]( "something" )
     val x2 = lift[Apply[IsDefined[String], Apply[Trim, Required]]](

@@ -1,19 +1,19 @@
 package io.taig.gandalf
 
-import shapeless._
+trait Error[-V <: Validation] {
+    def error: Option[String]
+}
 
-case class Error[N <: String, A <: HList]( arguments: A )(
-        implicit
-        w: Witness.Aux[N]
-) {
-    def name: String = w.value
+object Error {
+    def apply[V <: Validation: Error]: Error[V] = implicitly[Error[V]]
 
-    override def toString = {
-        val arguments = this.arguments.runtimeList match {
-            case Nil       ⇒ ""
-            case arguments ⇒ s", (${arguments.mkString( ", " )})"
-        }
-
-        s"Error($name$arguments)"
+    def instance[V <: Validation]( message: String ): Error[V] = new Error[V] {
+        override val error = Some( message )
     }
+
+    def none[V <: Validation]: Error[V] = new Error[V] {
+        override val error = None
+    }
+
+    implicit val transformation = none[Transformation]
 }

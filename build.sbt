@@ -9,11 +9,12 @@ lazy val gandalf = project.in( file( "." ) )
         publishLocal := (),
         test <<= test in tests in Test
     )
-    .aggregate( core, predef, report, typelevel, android )
+    .aggregate( core, predef )
 
 lazy val core = project
     .settings( Settings.common )
     .settings(
+        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ),
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.1" ::
             "org.typelevel" %% "cats-core" % "0.6.0" ::
@@ -25,40 +26,29 @@ lazy val predef = project
     .settings( Settings.common )
     .dependsOn( core )
 
-lazy val report = project
-    .settings( Settings.common )
-    .dependsOn( core )
-
-lazy val typelevel = project
-    .settings( Settings.common )
-    .settings(
-        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ),
-        libraryDependencies ++=
-            "com.chuusai" %% "shapeless" % "2.3.0" ::
-            "org.typelevel" %% "cats-core" % "0.5.0" ::
-            "org.typelevel" %% "cats-macros" % "0.5.0" ::
-            Nil
-    )
+//lazy val report = project
+//    .settings( Settings.common )
+//    .dependsOn( core )
 
 lazy val playground = project
     .settings( Settings.common )
     .settings(
         addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
     )
-    .dependsOn( typelevel )
+    .dependsOn( core, predef )
 
-lazy val android = project
-    .settings( androidBuildAar ++ Settings.common )
-    .settings(
-        libraryDependencies ++=
-            "io.taig.android" %% "viewvalue-core" % "1.2.4" ::
-            Nil,
-        minSdkVersion := "1",
-        platformTarget := "android-23",
-        targetSdkVersion := "23",
-        typedResources := false
-    )
-    .dependsOn( core, predef, report )
+//lazy val android = project
+//    .settings( androidBuildAar ++ Settings.common )
+//    .settings(
+//        libraryDependencies ++=
+//            "io.taig.android" %% "viewvalue-core" % "1.2.4" ::
+//            Nil,
+//        minSdkVersion := "1",
+//        platformTarget := "android-23",
+//        targetSdkVersion := "23",
+//        typedResources := false
+//    )
+//    .dependsOn( core, predef, report )
 
 lazy val tests = project
     .settings( Settings.common )
@@ -67,4 +57,4 @@ lazy val tests = project
             "org.scalatest" %% "scalatest" % "3.0.0-M15" ::
             Nil
     )
-    .dependsOn( core, predef, report )
+    .dependsOn( core, predef )

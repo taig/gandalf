@@ -1,45 +1,11 @@
 package io.taig.gandalf
 
-import cats.data.Validated.{ Invalid, Valid }
-import io.taig.gandalf.ops.Extraction
-import shapeless._
-
-import scala.language.higherKinds
-
-abstract class Mutation[N <: String, I, O, A <: HList](
-        implicit
-        w: Witness.Aux[N]
-) extends Term[N, I, O, A] {
-    override type V = Mutation[N, I, O, A] :: HNil
-
-    override type E = Error[N, A]
-
-    override def validations: V = this :: HNil
-}
+trait Mutation extends Validation
 
 object Mutation {
-    def apply[I, O]( name: String ): Builder1[name.type, I, O] = new Builder1()( Witness.mkWitness( name ) )
+    type In[I] = Mutation { type Input = I }
 
-    class Builder1[N <: String, I, O]( implicit w: Witness.Aux[N] ) {
-        def apply[F[_]]( f: I ⇒ F[O] )(
-            implicit
-            e: Extraction[O, F]
-        ): Mutation[N, I, O, HNil] with Chain1[N, I, O] = new Mutation[N, I, O, HNil] with Chain1[N, I, O] {
-            override def validate( input: I ) = e.extract( f( input ) ) match {
-                case Some( output ) ⇒ Valid( output )
-                case None           ⇒ Invalid( Error( HNil: HNil ) )
-            }
+    type Out[O] = Mutation { type Output = O }
 
-            override def apply[A <: HList]( g: I ⇒ A ): Mutation[N, I, O, A] = new Mutation[N, I, O, A] {
-                override def validate( input: I ) = e.extract( f( input ) ) match {
-                    case Some( output ) ⇒ Valid( output )
-                    case None           ⇒ Invalid( Error( g( input ) ) )
-                }
-            }
-        }
-    }
-
-    trait Chain1[N <: String, I, O] {
-        def apply[A <: HList]( f: I ⇒ A ): Mutation[N, I, O, A]
-    }
+    type Aux[I, O] = Mutation { type Input = I; type Output = O }
 }
