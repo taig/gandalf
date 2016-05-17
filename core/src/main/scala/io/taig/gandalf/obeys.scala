@@ -1,6 +1,5 @@
-package io.taig.gandalf.annotation
+package io.taig.gandalf
 
-import io.taig.gandalf.Validation
 import io.taig.gandalf.internal.Macro
 
 import scala.annotation.{ StaticAnnotation, compileTimeOnly }

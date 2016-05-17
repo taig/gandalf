@@ -1,4 +1,6 @@
-package io.taig.gandalf
+package io.taig.gandalf.operator
+
+import io.taig.gandalf.{ Error, Evaluation, Mutation, Validation }
 
 case class Apply[L <: Mutation, R <: Validation.In[L#Output]](
         left:  Evaluation[L],

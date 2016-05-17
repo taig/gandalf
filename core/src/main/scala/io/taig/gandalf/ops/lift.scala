@@ -2,7 +2,8 @@ package io.taig.gandalf.ops
 
 import cats.data.Validated
 import io.taig.gandalf.internal.Macro
-import io.taig.gandalf.{ Error, Evaluation, Obeys, Validation }
+import io.taig.gandalf.operator.Obeys
+import io.taig.gandalf.{ Error, Evaluation, Validation }
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions

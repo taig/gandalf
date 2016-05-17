@@ -3,8 +3,8 @@ package io.taig.gandalf.playground
 import io.taig.gandalf.predef.Required.required
 import io.taig.gandalf.predef.Trim.trim
 import io.taig.gandalf.predef._
-import io.taig.gandalf.annotation.obeys
-import io.taig.gandalf._
+import io.taig.gandalf.{ obeys, _ }
+import io.taig.gandalf.operator.Apply
 import shapeless.Witness
 
 import scala.language.experimental.macros
