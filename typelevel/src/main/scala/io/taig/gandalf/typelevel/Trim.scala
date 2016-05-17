@@ -8,4 +8,6 @@ trait Trim extends Transformation {
 
 object Trim {
     implicit val evaluation = Evaluation.transformation[Trim]( _.trim )
+
+    val trim: Evaluation[Trim] = evaluation
 }

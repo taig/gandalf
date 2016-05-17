@@ -21,7 +21,7 @@ object Macro {
     ): c.Expr[I Obeys V] = {
         import c.universe._
 
-        val validation = reify( ev.splice.validate( value.splice ) )
+        val validation = reify( ev.splice.validate( value.splice )( er.splice ) )
         val expression = c.Expr[Validated[List[String], V#Output]]( c.untypecheck( validation.tree ) )
 
         c.eval( expression ) match {
@@ -51,9 +51,18 @@ object Macro {
 
         val trees = annottees.map( _.tree )
 
-        val annotation = c.prefix
-        val q"new obeys[$validation]" = annotation.tree
-        def newType( lhs: Tree ) = tq"io.taig.gandalf.typelevel.Obeys[$lhs,$validation]"
+        val target = c.prefix.tree match {
+            case q"new obeys[$validation]" ⇒ validation
+            case q"new obeys( $validation )" ⇒
+                c.typecheck {
+                    q"""
+                    import io.taig.gandalf.typelevel.syntax.all._
+                    $validation
+                    """
+                }
+        }
+
+        def newType( lhs: Tree ) = tq"io.taig.gandalf.typelevel.Obeys[$lhs, $target]"
 
         val valDef = trees
             .collectFirst { case valDef: ValDef ⇒ valDef }
@@ -64,7 +73,7 @@ object Macro {
                 )
             }
 
-        val classDef = trees
+        val ClassDef( mods, name, tparams, Template( parents, self, body ) ) = trees
             .collectFirst { case classDef: ClassDef ⇒ classDef }
             .getOrElse {
                 c.abort(
@@ -73,46 +82,23 @@ object Macro {
                 )
             }
 
-        val result = classDef match {
-            case classDef @ ClassDef( mods, name, tparams, Template( parents, self, body ) ) ⇒
-                val newBody = body.map {
-                    case target @ ValDef( mods, name, tpt, rhs ) if valDef equalsStructure target ⇒
-                        ValDef( mods, name, newType( tpt ), rhs )
-                    case constructor @ DefDef( mods, CONSTRUCTOR, tparams, vparamss, tpt, rhs ) ⇒
-                        val newVparamss = vparamss.map { vparams ⇒
-                            vparams.map {
-                                case target @ ValDef( mods, name, tpt, rhs ) if valDef.name == target.name ⇒
-                                    ValDef( mods, name, newType( tpt ), rhs )
-                                case default ⇒ default
-                            }
-                        }
-
-                        DefDef( mods, CONSTRUCTOR, tparams, newVparamss, tpt, rhs )
-                    case default ⇒ default
+        val newBody = body.map {
+            case target @ ValDef( mods, name, tpt, rhs ) if valDef equalsStructure target ⇒
+                ValDef( mods, name, newType( tpt ), rhs )
+            case constructor @ DefDef( mods, CONSTRUCTOR, tparams, vparamss, tpt, rhs ) ⇒
+                val newVparamss = vparamss.map { vparams ⇒
+                    vparams.map {
+                        case target @ ValDef( mods, name, tpt, rhs ) if valDef.name == target.name ⇒
+                            ValDef( mods, name, newType( tpt ), rhs )
+                        case default ⇒ default
+                    }
                 }
 
-                ClassDef( mods, name, tparams, Template( parents, self, newBody ) )
+                DefDef( mods, CONSTRUCTOR, tparams, newVparamss, tpt, rhs )
+            case default ⇒ default
         }
 
-        c.Expr( result )
-    }
-
-    def obeys_fancy_impl( c: whitebox.Context )( annottees: c.Expr[Any]* ): c.Expr[Any] = {
-        import c.universe._
-
-        val q"new obeysFancy( $validation )" = c.prefix.tree
-        val tree = c.typecheck {
-            q"""
-            import io.taig.gandalf.typelevel.syntax.all._
-            $validation
-            """
-        }
-
-        println( tree.tpe )
-
-        reify {
-            null
-        }
+        c.Expr( ClassDef( mods, name, tparams, Template( parents, self, newBody ) ) )
     }
 
     def rule_impl[I]( c: whitebox.Context )( annottees: c.Expr[Any]* ): c.Expr[Any] = annottees.head
