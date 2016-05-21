@@ -15,7 +15,7 @@ import scala.language.implicitConversions
 object Playground extends App {
     import io.taig.gandalf.syntax.all._
 
-    val x1 = lift[Required && Required]( "something" )
+    val x1 = lift[Required && Required]( "" )
     val x2 = lift[Apply[IsDefined[String], Apply[Trim, LazyAnd[Required, Required]]]](
         Option( "  fd    " )
     )
