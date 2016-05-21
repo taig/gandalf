@@ -1,8 +1,8 @@
 package io.taig.gandalf.ops
 
 import io.taig.gandalf.operator.Apply
-import io.taig.gandalf.{ Evaluation, Mutation, Validation }
+import io.taig.gandalf.{ Mutation, Validation }
 
-class mutation[L <: Mutation]( left: Evaluation[L] ) {
-    def ~>[R <: Validation.In[L#Output]]( right: Evaluation[R] ): L Apply R = Apply( left, right )
+class mutation[I, O, L <: Mutation.Aux[I, O]]( left: L ) {
+    def ~>[P, R <: Validation.In[O]]( right: R with Validation.Aux[O, P] ): L Apply R = new Apply[L, R]
 }

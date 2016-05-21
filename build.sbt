@@ -14,6 +14,7 @@ lazy val gandalf = project.in( file( "." ) )
 lazy val core = project
     .settings( Settings.common )
     .settings(
+        addCompilerPlugin( "com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full ),
         addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ),
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.1" ::
@@ -33,6 +34,7 @@ lazy val predef = project
 lazy val playground = project
     .settings( Settings.common )
     .settings(
+        addCompilerPlugin( "com.milessabin" % "si2712fix-plugin" % "1.2.0" cross CrossVersion.full ),
         addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
     )
     .dependsOn( core, predef )

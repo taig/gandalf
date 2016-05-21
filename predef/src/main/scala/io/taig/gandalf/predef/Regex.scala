@@ -14,7 +14,7 @@ object Regex {
         Evaluation.rule[Regex[T]]( _ matches w.value )
     }
 
-    def regex[T <: String]( regex: Witness.Aux[T] )( implicit e: Error[Regex[T]] ): Evaluation[Regex[T]] = {
-        evaluation[T]( regex, e )
+    def regex[T <: String]( regex: Witness.Aux[T] )( implicit e: Error[Regex[T]] ): Regex[T] = {
+        new Regex[T] {}
     }
 }

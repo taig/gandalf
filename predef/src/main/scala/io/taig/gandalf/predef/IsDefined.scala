@@ -12,4 +12,6 @@ object IsDefined {
     implicit val error = Error.instance[IsDefined[_]]( "isDefined" )
 
     implicit def evaluation[T] = Evaluation.mutation[IsDefined[T]]( identity )
+
+    def isDefined[T]: IsDefined[T] = new IsDefined[T] {}
 }
