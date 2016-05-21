@@ -30,13 +30,6 @@ lazy val predef = project
 //    .settings( Settings.common )
 //    .dependsOn( core )
 
-lazy val playground = project
-    .settings( Settings.common )
-    .settings(
-        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
-    )
-    .dependsOn( core, predef )
-
 //lazy val android = project
 //    .settings( androidBuildAar ++ Settings.common )
 //    .settings(
