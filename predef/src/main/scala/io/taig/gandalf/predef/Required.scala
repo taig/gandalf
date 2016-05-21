@@ -11,5 +11,5 @@ object Required {
 
     implicit val evaluation = Evaluation.rule[Required]( _.nonEmpty )
 
-    val required: Evaluation[Required] = evaluation
+    val required: Required = new Required {}
 }

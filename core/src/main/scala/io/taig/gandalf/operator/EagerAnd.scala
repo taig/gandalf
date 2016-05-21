@@ -1,13 +1,11 @@
 package io.taig.gandalf.operator
 
-import io.taig.gandalf.{ Error, Evaluation, Rule }
+import io.taig.gandalf._
 import cats.syntax.cartesian._
 import cats.std.list._
+import io.taig.gandalf.internal.TypeShow
 
-case class EagerAnd[L <: Rule, R <: Rule.Aux[L#Input]](
-    left:  Evaluation[L],
-    right: Evaluation[R]
-) extends Operator[L, R]
+class EagerAnd[L <: Rule, R <: Rule.Aux[L#Input]] extends Operator[L, R]
 
 object EagerAnd {
     implicit def evaluation[L <: Rule, R <: Rule.Aux[L#Output]](
@@ -24,4 +22,10 @@ object EagerAnd {
                 .leftMap( e.error.map( List( _ ) ).getOrElse( _ ) )
         }
     }
+
+    implicit def show[L <: Rule, R <: Rule.Aux[L#Input]](
+        implicit
+        l: TypeShow[L],
+        r: TypeShow[R]
+    ) = TypeShow.instance[L EagerAnd R]( s"${l.show} & ${r.show}" )
 }

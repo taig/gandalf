@@ -14,7 +14,8 @@ object Macro {
         value: c.Expr[I]
     )(
         ev: c.Expr[Evaluation[V]],
-        er: c.Expr[Error[V]]
+        er: c.Expr[Error[V]],
+        ts: c.Expr[TypeShow[V]]
     )(
         implicit
         i: c.WeakTypeTag[I],
@@ -24,6 +25,8 @@ object Macro {
 
         val validation = reify( ev.splice.validate( value.splice )( er.splice ) )
         val expression = c.Expr[Validated[List[String], V#Output]]( c.untypecheck( validation.tree ) )
+
+        val validationType = c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
 
         c.eval( expression ) match {
             case Valid( value ) ⇒
@@ -41,7 +44,7 @@ object Macro {
 
                 c.abort(
                     c.enclosingPosition,
-                    s"Can not lift value '${show( value.tree )}' into ${v.tpe}:$messages"
+                    s"Can not lift value '${show( value.tree )}' into $validationType:$messages"
                 )
         }
     }
@@ -50,7 +53,31 @@ object Macro {
         import c.universe._
         import termNames.CONSTRUCTOR
 
+        def mutate( tree: Tree, injection: Tree ): Tree = tree match {
+            case Apply( tree, args )                    ⇒ Apply( mutate( tree, injection ), args )
+            case Select( ident @ Ident( _ ), operator ) ⇒ Select( Apply( injection, List( ident ) ), operator )
+            case Select( tree, name )                   ⇒ Select( mutate( tree, injection ), name )
+            case _                                      ⇒ tree
+        }
+
         val trees = annottees.map( _.tree )
+        val Expr( ValDef( _, _, input, _ ) ) = annottees.head
+        val injection = Select(
+            TypeApply(
+                Select(
+                    Select(
+                        Select(
+                            Select( Select( Ident( TermName( "io" ) ), TermName( "taig" ) ), TermName( "gandalf" ) ),
+                            TermName( "internal" )
+                        ),
+                        TermName( "Identity" )
+                    ),
+                    TermName( "identity" )
+                ),
+                List( input )
+            ),
+            TermName( "$tilde$greater" )
+        )
 
         val target = c.prefix.tree match {
             case q"new obeys[$validation]" ⇒ validation
@@ -58,9 +85,13 @@ object Macro {
                 c.typecheck {
                     q"""
                     import io.taig.gandalf.syntax.all._
-                    $validation
+                    ${mutate( validation, injection )}
                     """
                 }
+            case _ ⇒ c.abort(
+                c.enclosingPosition,
+                "Illegal @obeys format. Can bei either @obeys[Required] or @obeys( required )"
+            )
         }
 
         def newType( lhs: Tree ) = tq"io.taig.gandalf.operator.Obeys[$lhs, $target]"

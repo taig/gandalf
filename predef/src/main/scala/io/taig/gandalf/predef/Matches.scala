@@ -14,7 +14,7 @@ object Matches {
         Evaluation.rule[Matches[I, T]]( _ == w.value )
     }
 
-    def matches[I, T <: I]( w: Witness.Aux[T] )( implicit e: Error[Matches[I, T]] ): Evaluation[Matches[I, T]] = {
-        evaluation[I, T]( w, e )
+    def matches[I, T <: I]( w: Witness.Aux[T] )( implicit e: Error[Matches[I, T]] ): Matches[I, T] = {
+        new Matches[I, T] {}
     }
 }

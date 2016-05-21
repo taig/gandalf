@@ -1,11 +1,9 @@
 package io.taig.gandalf.operator
 
+import io.taig.gandalf.internal.TypeShow
 import io.taig.gandalf.{ Error, Evaluation, Rule }
 
-case class LazyAnd[L <: Rule, R <: Rule.Aux[L#Input]](
-    left:  Evaluation[L],
-    right: Evaluation[R]
-) extends Operator[L, R]
+class LazyAnd[L <: Rule, R <: Rule.Aux[L#Input]] extends Operator[L, R]
 
 object LazyAnd {
     implicit def evaluation[L <: Rule, R <: Rule.Aux[L#Output]](
@@ -21,4 +19,10 @@ object LazyAnd {
                 .leftMap( e.error.map( List( _ ) ).getOrElse( _ ) )
         }
     }
+
+    implicit def show[L <: Rule, R <: Rule.Aux[L#Input]](
+        implicit
+        l: TypeShow[L],
+        r: TypeShow[R]
+    ) = TypeShow.instance[L LazyAnd R]( s"${l.show} && ${r.show}" )
 }
