@@ -5,5 +5,6 @@ trait all
     with lift
     with mutation
     with rule
+    with validation
 
 object all extends all
