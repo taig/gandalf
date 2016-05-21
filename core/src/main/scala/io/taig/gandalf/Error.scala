@@ -5,6 +5,7 @@ trait Error[-V <: Validation] {
 }
 
 object Error {
+    @inline
     def apply[V <: Validation: Error]: Error[V] = implicitly[Error[V]]
 
     def instance[V <: Validation]( message: String ): Error[V] = new Error[V] {

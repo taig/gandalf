@@ -3,6 +3,7 @@ package io.taig.gandalf.operator
 import cats.data.Validated._
 import io.taig.gandalf._
 import io.taig.gandalf.internal.TypeShow
+import io.taig.gandalf.syntax.aliases._
 
 class EagerOr[L <: Rule, R <: Rule.Aux[L#Input]] extends Operator[L, R]
 
@@ -13,9 +14,9 @@ object EagerOr {
         ler: Error[L],
         rev: Evaluation[R],
         rer: Error[R],
-        e:   Error[L EagerOr R]
+        e:   Error[L | R]
     ) = {
-        Evaluation.instance[L EagerOr R] { input ⇒
+        Evaluation.instance[L | R] { input ⇒
             ( lev.validate( input ), rev.validate( input ) ) match {
                 case ( valid @ Valid( _ ), _ ) ⇒ valid
                 case ( _, valid @ Valid( _ ) ) ⇒ valid
@@ -29,5 +30,5 @@ object EagerOr {
         implicit
         l: TypeShow[L],
         r: TypeShow[R]
-    ) = TypeShow.instance[L EagerOr R]( s"${l.show} | ${r.show}" )
+    ) = TypeShow.instance[L | R]( s"(${l.show} | ${r.show})" )
 }

@@ -13,6 +13,7 @@ trait Evaluation[V <: Validation] {
 }
 
 object Evaluation {
+    @inline
     def apply[V <: Validation: Evaluation]: Evaluation[V] = Evaluation[V]
 
     def instance[V <: Validation]( f: V#Input ⇒ Validated[List[String], V#Output] )( implicit e: Error[V] ): Evaluation[V] = {
