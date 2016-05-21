@@ -26,10 +26,6 @@ lazy val predef = project
     .settings( Settings.common )
     .dependsOn( core )
 
-//lazy val report = project
-//    .settings( Settings.common )
-//    .dependsOn( core )
-
 //lazy val android = project
 //    .settings( androidBuildAar ++ Settings.common )
 //    .settings(
