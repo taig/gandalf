@@ -13,10 +13,10 @@ trait IsDefined[T] extends Mutation {
 }
 
 object IsDefined {
-    implicit val error = Error.instance[IsDefined[_]]( "isDefined" )
-
-    implicit def evaluation[T] = Evaluation.mutation[IsDefined[T]]( identity ) { input ⇒
-        "input" ->> input :: HNil
+    implicit def evaluation[T]( implicit e: Error[IsDefined[T]] ) = {
+        Evaluation.mutation[IsDefined[T]]( identity ) { input ⇒
+            "input" ->> input :: HNil
+        }
     }
 
     def isDefined[T]: IsDefined[T] = new IsDefined[T] {}

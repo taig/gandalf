@@ -11,8 +11,6 @@ trait Regex[T <: String] extends Rule {
 }
 
 object Regex {
-    implicit val error = Error.instance[Regex[_]]( "regex" )
-
     implicit def evaluation[T <: String]( implicit w: Witness.Aux[T], e: Error[Regex[T]] ) = {
         Evaluation.rule[Regex[T]]( _ matches w.value ) { input ⇒
             "input" ->> input :: "expected" ->> w.value :: HNil

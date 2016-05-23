@@ -11,10 +11,10 @@ trait Required extends Rule {
 }
 
 object Required {
-    implicit val error = Error.instance[Required]( "required" )
-
-    implicit val evaluation = Evaluation.rule[Required]( _.nonEmpty ) { input ⇒
-        "input" ->> input :: HNil
+    implicit def evaluation( implicit e: Error[Required] ) = {
+        Evaluation.rule[Required]( _.nonEmpty ) { input ⇒
+            "input" ->> input :: HNil
+        }
     }
 
     val required: Required = new Required {}
