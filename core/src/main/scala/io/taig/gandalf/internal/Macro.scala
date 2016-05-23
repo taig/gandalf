@@ -1,9 +1,11 @@
 package io.taig.gandalf.internal
 
-import cats.data.Validated
 import cats.data.Validated.{ Invalid, Valid }
+import cats.std.list._
+import cats.syntax.foldable._
 import io.taig.gandalf.operator.Obeys
-import io.taig.gandalf.{ Error, Evaluation, Validation }
+import io.taig.gandalf.syntax.aliases._
+import io.taig.gandalf.{ Evaluation, Validation }
 
 import scala.reflect.macros.whitebox
 
@@ -14,7 +16,6 @@ object Macro {
         value: c.Expr[I]
     )(
         ev: c.Expr[Evaluation[V]],
-        er: c.Expr[Error[V]],
         ts: c.Expr[TypeShow[V]]
     )(
         implicit
@@ -23,9 +24,8 @@ object Macro {
     ): c.Expr[I Obeys V] = {
         import c.universe._
 
-        val validation = reify( ev.splice.validate( value.splice )( er.splice ) )
-        val expression = c.Expr[Validated[List[String], V#Output]]( c.untypecheck( validation.tree ) )
-
+        val validation = reify( ev.splice.validate( value.splice ) )
+        val expression = c.Expr[Result[V#Output]]( c.untypecheck( validation.tree ) )
         val validationType = c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
 
         c.eval( expression ) match {
@@ -40,11 +40,11 @@ object Macro {
                     )"""
                 )
             case Invalid( errors ) ⇒
-                val messages = errors.mkString( "\n - ", "\n - ", "" )
+                val messages = errors.map( " - " + _ ).toList.mkString( "\n" )
 
                 c.abort(
                     c.enclosingPosition,
-                    s"Can not lift value '${show( value.tree )}' into $validationType:$messages"
+                    s"Can not lift value '${show( value.tree )}' into $validationType:\n$messages"
                 )
         }
     }

@@ -1,12 +1,11 @@
 package io.taig.gandalf.ops
 
-import cats.data.Validated
 import io.taig.gandalf._
+import io.taig.gandalf.syntax.aliases._
 
 class validation[V <: Validation]( validation: V )(
         implicit
-        ev: Evaluation[V],
-        er: Error[V]
+        ev: Evaluation[V]
 ) {
-    def validate( value: V#Input ): Validated[List[String], V#Output] = ev.validate( value )
+    def validate( value: V#Input ): Result[V#Output] = ev.validate( value )
 }
