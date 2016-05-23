@@ -1,6 +1,6 @@
 package io.taig.gandalf.internal
 
-trait TypeShow[+T] {
+trait TypeShow[T] {
     def show: String
 }
 

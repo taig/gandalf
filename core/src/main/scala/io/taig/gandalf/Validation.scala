@@ -1,14 +1,16 @@
 package io.taig.gandalf
 
 import io.taig.gandalf.internal.TypeShow
+import shapeless.HList
 
-import scala.reflect.ClassTag
-import scala.reflect.classTag
+import scala.reflect.{ ClassTag, classTag }
 
 trait Validation {
     type Input
 
     type Output
+
+    type Arguments <: HList
 }
 
 object Validation {

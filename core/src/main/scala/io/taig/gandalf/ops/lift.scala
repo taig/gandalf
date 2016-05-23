@@ -1,8 +1,8 @@
 package io.taig.gandalf.ops
 
-import cats.data.Validated
 import io.taig.gandalf.internal.{ Macro, TypeShow }
 import io.taig.gandalf.operator.Obeys
+import io.taig.gandalf.syntax.aliases._
 import io.taig.gandalf.{ Error, Evaluation, Validation }
 
 import scala.language.experimental.macros
@@ -12,7 +12,6 @@ trait lift {
     implicit def valueToLifted[I <: V#Input, V <: Validation]( value: I )(
         implicit
         ev: Evaluation[V],
-        er: Error[V],
         ts: TypeShow[V]
     ): I Obeys V = macro Macro.lift[I, V]
 
@@ -24,7 +23,6 @@ trait lift {
         def apply[I <: V#Input]( value: I )(
             implicit
             ev: Evaluation[V],
-            er: Error[V],
             ts: TypeShow[V]
         ): I Obeys V = macro Macro.lift[I, V]
     }
@@ -33,5 +31,5 @@ trait lift {
         implicit
         ev: Evaluation[V],
         er: Error[V]
-    ): Validated[List[String], V#Output] = ev.validate( value )
+    ): Result[V#Output] = ev.validate( value )
 }

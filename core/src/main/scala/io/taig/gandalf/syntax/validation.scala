@@ -5,10 +5,9 @@ import io.taig.gandalf._
 import scala.language.implicitConversions
 
 trait validation {
-    implicit def validationSytax[V <: Validation]( validation: V )(
+    implicit def validationSyntax[V <: Validation]( validation: V )(
         implicit
-        ev:    Evaluation[V],
-        error: Error[V]
+        ev: Evaluation[V]
     ): ops.validation[V] = new ops.validation[V]( validation )
 }
 
