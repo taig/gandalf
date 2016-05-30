@@ -19,7 +19,9 @@ object Apply {
     implicit def evaluation[L <: Mutation, R <: Validation.In[L#Output]](
         implicit
         lev: Evaluation[L],
+        ler: Error[L],
         rev: Evaluation[R],
+        rer: Error[R],
         e:   Error[L ~> R]
     ) = {
         Evaluation.instance[L ~> R] { input ⇒
@@ -28,7 +30,7 @@ object Apply {
         }
     }
 
-    implicit def show[L <: Mutation: Evaluation, R <: Validation.In[L#Output]](
+    implicit def show[L <: Mutation, R <: Validation.In[L#Output]](
         implicit
         l: TypeShow[L],
         r: TypeShow[R]

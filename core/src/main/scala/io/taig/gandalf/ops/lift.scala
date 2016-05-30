@@ -12,6 +12,7 @@ trait lift {
     implicit def valueToLifted[I <: V#Input, V <: Validation]( value: I )(
         implicit
         ev: Evaluation[V],
+        er: Error[V],
         ts: TypeShow[V]
     ): I Obeys V = macro Macro.lift[I, V]
 
@@ -23,6 +24,7 @@ trait lift {
         def apply[I <: V#Input]( value: I )(
             implicit
             ev: Evaluation[V],
+            er: Error[V],
             ts: TypeShow[V]
         ): I Obeys V = macro Macro.lift[I, V]
     }
