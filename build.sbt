@@ -16,8 +16,8 @@ lazy val core = project
     .settings(
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.0" ::
-            "org.typelevel" %% "cats-core" % "0.5.0" ::
-            "org.typelevel" %% "cats-macros" % "0.5.0" ::
+            "org.typelevel" %% "cats-core" % "0.6.0" ::
+            "org.typelevel" %% "cats-macros" % "0.6.0" ::
             Nil
     )
 
