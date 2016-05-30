@@ -10,37 +10,31 @@ import io.taig.gandalf.syntax.aliases._
  * An instance of this type class must be defined for every user defined Validation.
  */
 trait Evaluation[V <: Validation] {
-    def validate( input: V#Input ): Result[V#Output]
+    def validate( input: V#Input )( implicit e: Error[V] ): Result[V#Output]
 }
 
 object Evaluation {
     @inline
-    def apply[V <: Validation: Evaluation]: Evaluation[V] = Evaluation[V]
+    def apply[V <: Validation]( implicit e: Evaluation[V] ): Evaluation[V] = e
 
     def instance[V <: Validation]( f: V#Input ⇒ Result[V#Output] ): Evaluation[V] = {
         new Evaluation[V] {
-            override def validate( input: V#Input ) = f( input )
+            override def validate( input: V#Input )( implicit e: Error[V] ) = f( input )
         }
     }
 
-    def mutation[M <: Mutation: Error]( f: M#Input ⇒ Option[M#Output] )( g: M#Input ⇒ M#Arguments )(
-        implicit
-        e: Error[M]
-    ): Evaluation[M] = {
+    def mutation[M <: Mutation]( f: M#Input ⇒ Option[M#Output] )( g: M#Input ⇒ M#Arguments ): Evaluation[M] = {
         new Evaluation[M] {
-            override def validate( input: M#Input ) = {
+            override def validate( input: M#Input )( implicit e: Error[M] ) = {
                 Validated.fromOption( f( input ), e.error( g( input ) ) )
             }
         }
     }
 
-    def rule[R <: Rule]( condition: R#Input ⇒ Boolean )( g: R#Input ⇒ R#Arguments )(
-        implicit
-        e: Error[R]
-    ): Evaluation[R] = {
+    def rule[R <: Rule]( f: R#Input ⇒ Boolean )( g: R#Input ⇒ R#Arguments ): Evaluation[R] = {
         new Evaluation[R] {
-            override def validate( input: R#Input ) = {
-                condition( input ) match {
+            override def validate( input: R#Input )( implicit e: Error[R] ) = {
+                f( input ) match {
                     case true  ⇒ valid( input )
                     case false ⇒ invalid( e.error( g( input ) ) )
                 }
@@ -50,7 +44,7 @@ object Evaluation {
 
     def transformation[T <: Transformation]( f: T#Input ⇒ T#Output ): Evaluation[T] = {
         new Evaluation[T] {
-            override def validate( input: T#Input ) = valid( f( input ) )
+            override def validate( input: T#Input )( implicit e: Error[T] ) = valid( f( input ) )
         }
     }
 }
