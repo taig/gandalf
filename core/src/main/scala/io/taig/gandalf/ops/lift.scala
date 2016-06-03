@@ -11,8 +11,7 @@ import scala.language.implicitConversions
 trait lift {
     implicit def valueToLifted[I <: V#Input, V <: Validation]( value: I )(
         implicit
-        ev: Evaluation[V],
-        er: Error[V],
+        e:  Evaluation[V],
         ts: TypeShow[V]
     ): I Obeys V = macro Macro.lift[I, V]
 
@@ -23,15 +22,13 @@ trait lift {
     class LiftHelper[V <: Validation] {
         def apply[I <: V#Input]( value: I )(
             implicit
-            ev: Evaluation[V],
-            er: Error[V],
+            e:  Evaluation[V],
             ts: TypeShow[V]
         ): I Obeys V = macro Macro.lift[I, V]
     }
 
     def tryLift[V <: Validation]( value: V#Input )(
         implicit
-        ev: Evaluation[V],
-        er: Error[V]
-    ): Result[V#Output] = ev.validate( value )
+        e: Evaluation[V]
+    ): Result[V#Output] = e.validate( value )
 }

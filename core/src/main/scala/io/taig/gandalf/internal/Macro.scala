@@ -16,8 +16,7 @@ object Macro {
     )(
         value: c.Expr[I]
     )(
-        ev: c.Expr[Evaluation[V]],
-        er: c.Expr[Error[V]],
+        e:  c.Expr[Evaluation[V]],
         ts: c.Expr[TypeShow[V]]
     )(
         implicit
@@ -26,7 +25,7 @@ object Macro {
     ): c.Expr[I Obeys V] = {
         import c.universe._
 
-        val validation = reify( ev.splice.validate( value.splice )( er.splice ) )
+        val validation = reify( e.splice.validate( value.splice ) )
         val expression = c.Expr[Result[V#Output]]( c.untypecheck( validation.tree ) )
         val validationType = c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
 
