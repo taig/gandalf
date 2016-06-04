@@ -7,9 +7,9 @@ trait Transformation extends Mutation {
 }
 
 object Transformation {
-    type In[I] = Mutation { type Input = I }
+    type In[I] = Transformation { type Input = I }
 
-    type Out[O] = Mutation { type Output = O }
+    type Out[O] = Transformation { type Output = O }
 
-    type Aux[I, O] = Mutation { type Input = I; type Output = O }
+    type Aux[I, O] = Transformation { type Input = I; type Output = O }
 }
