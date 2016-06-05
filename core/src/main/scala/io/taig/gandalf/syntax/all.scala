@@ -6,5 +6,6 @@ trait all
     with mutation
     with rule
     with transformation
+    with validation
 
 object all extends all

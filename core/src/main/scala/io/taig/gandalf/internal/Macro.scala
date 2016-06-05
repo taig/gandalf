@@ -4,27 +4,28 @@ import cats.data.Validated.{ Invalid, Valid }
 import cats.std.list._
 import cats.syntax.foldable._
 import io.taig.gandalf._
-import io.taig.gandalf.operator.Obeys
+import io.taig.gandalf.operation.Obeys
 import io.taig.gandalf.syntax.aliases._
 import io.taig.gandalf.Action
 
 import scala.reflect.macros.whitebox
 
 object Macro {
-    def lift[I, A <: Action.In[I]](
+    def lift[I, O, A <: Action.Aux[I, O]](
         c: whitebox.Context
     )(
         value: c.Expr[I]
     )(
-        i: c.Expr[Instance[A]]
+        v: c.Expr[Validation[O, A]]
     )(
         implicit
         wtti: c.WeakTypeTag[I],
+        wtto: c.WeakTypeTag[O],
         wttv: c.WeakTypeTag[A]
     ): c.Expr[I Obeys A] = {
         import c.universe._
 
-        val validation = reify( i.splice.get.validate( value.splice ) )
+        val validation = reify( v.splice.validate( value.splice ) )
         val expression = c.Expr[Result[A#Output]]( c.untypecheck( validation.tree ) )
         def validationType = ??? // c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
 
