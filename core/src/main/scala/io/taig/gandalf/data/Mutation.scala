@@ -1,4 +1,6 @@
-package io.taig.gandalf
+package io.taig.gandalf.data
+
+import io.taig.gandalf.Arguments
 
 trait Mutation extends Action with Arguments
 

@@ -1,6 +1,6 @@
 package io.taig.gandalf.internal
 
-import io.taig.gandalf.Transformation
+import io.taig.gandalf.data.Transformation
 
 final class Identity[T] extends Transformation {
     override type Input = T

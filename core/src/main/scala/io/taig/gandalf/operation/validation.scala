@@ -1,6 +1,7 @@
-package io.taig.gandalf.ops
+package io.taig.gandalf.operation
 
 import io.taig.gandalf._
+import io.taig.gandalf.data.Action
 import io.taig.gandalf.syntax.aliases._
 
 final class validation[O, A <: Action.Output[O]]( action: A ) {

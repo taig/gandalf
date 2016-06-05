@@ -3,7 +3,8 @@ package io.taig.gandalf.tests
 import cats.data.NonEmptyList
 import cats.data.Validated._
 import io.taig.gandalf.implicits._
-import io.taig.gandalf.predef.{ IsDefined, Matches, Required, Trim }
+import io.taig.gandalf.predef._
+import io.taig.gandalf.predef.messages._
 
 class SyntaxTest extends Suite {
     "<~>" should "allow to transform data" in {
@@ -14,7 +15,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "be aliased by ~>" in {
-        // TODO ( Trim <~> Required ) shouldBe ( Trim ~> Required )
+        ( Trim <~> Required ).getClass shouldBe ( Trim ~> Required ).getClass
     }
 
     "<*>" should "allow to mutate data" in {
@@ -24,7 +25,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "be aliased by ~>" in {
-        // TODO ( IsDefined[String] <*> Required ) shouldBe ( IsDefined[String] ~> Required )
+        ( IsDefined[String] <*> Required ).getClass shouldBe ( IsDefined[String] ~> Required ).getClass
     }
 
     "&&" should "mimic the logical AND" in {

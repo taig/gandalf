@@ -1,6 +1,7 @@
 package io.taig.gandalf
 
 import cats.data.Validated._
+import io.taig.gandalf.data.{ Action, Mutation, Rule, Transformation }
 import io.taig.gandalf.syntax.aliases._
 
 trait Validation[O, -A <: Action.Output[O]] {
@@ -15,15 +16,27 @@ object Validation {
         override def validate( input: A#Input ) = f( input )
     }
 
-    def mutation[O, M <: Mutation.Output[O]]( f: M#Input ⇒ Result[O] ): Validation[O, M] = {
+    def mutation[O, M <: Mutation.Output[O]]( f: M#Input ⇒ Option[O] )( args: M#Input ⇒ M#Arguments )(
+        implicit
+        e: Error[M]
+    ): Validation[O, M] = {
         new Validation[O, M] {
-            override def validate( input: M#Input ) = f( input )
+            override def validate( input: M#Input ) = f( input ) match {
+                case Some( output ) ⇒ valid( output )
+                case None           ⇒ invalid( e.error( args( input ) ) )
+            }
         }
     }
 
-    def rule[T, R <: Rule.Aux[T]]( f: T ⇒ Result[T] ): Validation[T, R] = {
+    def rule[T, R <: Rule.Aux[T]]( f: T ⇒ Boolean )( args: T ⇒ R#Arguments )(
+        implicit
+        e: Error[R]
+    ): Validation[T, R] = {
         new Validation[T, R] {
-            override def validate( input: R#Input ) = f( input )
+            override def validate( input: T ) = f( input ) match {
+                case true  ⇒ valid( input )
+                case false ⇒ invalid( e.error( args( input ) ) )
+            }
         }
     }
 
