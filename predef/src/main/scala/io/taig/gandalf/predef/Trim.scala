@@ -1,15 +1,15 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.{ Evaluation, Transformation }
+import io.taig.gandalf.Transformation
 
-trait Trim extends Transformation {
+class Trim extends Transformation {
     override type Input = String
 
     override type Output = String
+
+    override def transform( input: String ) = input.trim
 }
 
 object Trim {
-    implicit val evaluation = Evaluation.transformation[Trim]( _.trim )
-
-    val trim: Trim = new Trim {}
+    val trim: Trim = new Trim
 }

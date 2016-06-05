@@ -1,15 +1,15 @@
 package io.taig.gandalf.internal
 
-import io.taig.gandalf.{ Evaluation, Transformation }
+import io.taig.gandalf.Transformation
 
-trait Identity[T] extends Transformation {
+class Identity[T] extends Transformation {
     override type Input = T
 
     override type Output = T
+
+    override def transform( input: T ) = input
 }
 
 object Identity {
-    implicit def evaluation[T] = Evaluation.transformation[Identity[T]]( Predef.identity )
-
-    implicit def identity[T]: Identity[T] = new Identity[T] {}
+    implicit def identity[T]: Identity[T] = new Identity[T]
 }

@@ -6,33 +6,33 @@ import cats.syntax.foldable._
 import io.taig.gandalf._
 import io.taig.gandalf.operator.Obeys
 import io.taig.gandalf.syntax.aliases._
-import io.taig.gandalf.{ Evaluation, Validation }
+import io.taig.gandalf.Action
 
 import scala.reflect.macros.whitebox
 
 object Macro {
-    def lift[I <: V#Input, V <: Validation](
+    def lift[I, A <: Action.In[I]](
         c: whitebox.Context
     )(
         value: c.Expr[I]
     )(
-        e:  c.Expr[Evaluation[V]],
-        ts: c.Expr[TypeShow[V]]
+        i: c.Expr[Instance[A]],
+        v: c.Expr[Validation[A]]
     )(
         implicit
-        i: c.WeakTypeTag[I],
-        v: c.WeakTypeTag[V]
-    ): c.Expr[I Obeys V] = {
+        wtti: c.WeakTypeTag[I],
+        wttv: c.WeakTypeTag[A]
+    ): c.Expr[I Obeys A] = {
         import c.universe._
 
-        val validation = reify( e.splice.validate( value.splice ) )
-        val expression = c.Expr[Result[V#Output]]( c.untypecheck( validation.tree ) )
-        val validationType = c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
+        val validation = reify( v.splice.validate( i.splice.get )( value.splice ) )
+        val expression = c.Expr[Result[A#Output]]( c.untypecheck( validation.tree ) )
+        def validationType = ??? // c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
 
         c.eval( expression ) match {
             case Valid( value ) ⇒
-                c.Expr[I Obeys V](
-                    q"""io.taig.gandalf.operator.Obeys[$i, $v](
+                c.Expr[I Obeys A](
+                    q"""io.taig.gandalf.operator.Obeys[$wtti, $wttv](
                         $expression.getOrElse {
                             throw new IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
@@ -41,7 +41,7 @@ object Macro {
                     )"""
                 )
             case Invalid( errors ) ⇒
-                val messages = errors.map( " - " + _ ).toList.mkString( "\n" )
+                val messages = ??? //errors.map( " - " + _ ).toList.mkString( "\n" )
 
                 c.abort(
                     c.enclosingPosition,

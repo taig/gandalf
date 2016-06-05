@@ -1,8 +1,10 @@
 package io.taig.gandalf.ops
 
-import io.taig.gandalf._
 import io.taig.gandalf.syntax.aliases._
+import io.taig.gandalf.{ Action, Validation }
 
-class validation[V <: Validation]( validation: V ) {
-    def validate( value: V#Input )( implicit e: Evaluation[V] ): Result[V#Output] = e.validate( value )
+class validation[A <: Action]( action: A ) {
+    def validate( input: action.Input )( implicit v: Validation[A] ): Result[A#Output] = {
+        v.validate( action )( input )
+    }
 }

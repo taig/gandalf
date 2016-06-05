@@ -1,6 +1,7 @@
 package io.taig.gandalf.tests
 
 import cats.data.Validated._
+import io.taig.gandalf.Validation
 import io.taig.gandalf.implicits._
 import io.taig.gandalf.predef.IsDefined.isDefined
 import io.taig.gandalf.predef.Matches.matches
@@ -8,7 +9,6 @@ import io.taig.gandalf.predef.Regex
 import io.taig.gandalf.predef.Required.required
 import io.taig.gandalf.predef.ToLowerCase.toLowerCase
 import io.taig.gandalf.predef.Trim.trim
-import io.taig.gandalf.predef.messages._
 
 class PredefTest extends Suite {
     "IsDefined" should "validate Options" in {
