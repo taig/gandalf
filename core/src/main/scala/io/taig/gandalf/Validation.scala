@@ -1,6 +1,6 @@
 package io.taig.gandalf
 
-trait Validation extends ErrorArguments {
+trait Validation extends Arguments {
     type Input
 
     type Output
