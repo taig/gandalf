@@ -11,5 +11,5 @@ class Identity[T] extends Transformation {
 }
 
 object Identity {
-    implicit def identity[T]: Identity[T] = new Identity[T]
+    def apply[T]: Identity[T] = new Identity[T]
 }

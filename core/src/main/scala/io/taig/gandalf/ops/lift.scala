@@ -10,8 +10,7 @@ import scala.language.implicitConversions
 trait lift {
     implicit def valueToLifted[I, A <: Action.In[I]]( value: I )(
         implicit
-        i: Instance[A],
-        v: Validation[A]
+        i: Instance[A]
     ): I Obeys A = macro Macro.lift[I, A]
 
     implicit def liftedToValue[V <: Action]( lifted: V#Input Obeys V ): V#Output = lifted.value

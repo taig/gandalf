@@ -16,8 +16,7 @@ object Macro {
     )(
         value: c.Expr[I]
     )(
-        i: c.Expr[Instance[A]],
-        v: c.Expr[Validation[A]]
+        i: c.Expr[Instance[A]]
     )(
         implicit
         wtti: c.WeakTypeTag[I],
@@ -25,7 +24,7 @@ object Macro {
     ): c.Expr[I Obeys A] = {
         import c.universe._
 
-        val validation = reify( v.splice.validate( i.splice.get )( value.splice ) )
+        val validation = reify( i.splice.get.validate( value.splice ) )
         val expression = c.Expr[Result[A#Output]]( c.untypecheck( validation.tree ) )
         def validationType = ??? // c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
 
