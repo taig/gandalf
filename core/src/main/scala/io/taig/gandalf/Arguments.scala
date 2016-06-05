@@ -2,6 +2,6 @@ package io.taig.gandalf
 
 import shapeless.HList
 
-trait ErrorArguments {
+trait Arguments {
     type Arguments <: HList
 }
