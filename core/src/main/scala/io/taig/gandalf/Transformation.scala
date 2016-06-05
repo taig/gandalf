@@ -1,9 +1,7 @@
 package io.taig.gandalf
 
-import shapeless.HNil
-
-trait Transformation extends Mutation {
-    override final type Arguments = HNil
+trait Transformation extends Action {
+    def transform( input: Input ): Output
 }
 
 object Transformation {

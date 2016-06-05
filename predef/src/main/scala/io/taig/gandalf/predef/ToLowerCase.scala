@@ -1,15 +1,15 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.{ Evaluation, Transformation }
+import io.taig.gandalf.Transformation
 
-trait ToLowerCase extends Transformation {
+class ToLowerCase extends Transformation {
     override type Input = String
 
     override type Output = String
+
+    override def transform( input: String ) = input.toLowerCase
 }
 
 object ToLowerCase {
-    implicit val evaluation = Evaluation.transformation[ToLowerCase]( _.toLowerCase )
-
-    val toLowerCase: ToLowerCase = new ToLowerCase {}
+    val toLowerCase: ToLowerCase = new ToLowerCase
 }

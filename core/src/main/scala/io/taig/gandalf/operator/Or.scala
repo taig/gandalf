@@ -4,35 +4,19 @@ import cats.data.Validated._
 import cats.std.list._
 import cats.syntax.semigroup._
 import io.taig.gandalf._
-import io.taig.gandalf.internal.TypeShow
-import io.taig.gandalf.syntax.aliases._
-import shapeless._
-import shapeless.syntax.singleton._
 
-class Or[L <: Rule, R <: Rule.Aux[L#Input]] extends Operator[L, R]
+case class Or[L <: Rule, R <: Rule.Aux[L#Input]]( left: L, right: R ) extends Operation[L, R] {
+    override type Input = left.Input
 
-object Or {
-    implicit def evaluation[L <: Rule, R <: Rule.Aux[L#Output]](
-        implicit
-        lev: Evaluation[L],
-        rev: Evaluation[R],
-        e:   Error[L || R]
-    ) = {
-        Evaluation.instance[L || R] { input ⇒
-            lev.validate( input ) match {
-                case valid @ Valid( _ ) ⇒ valid
-                case Invalid( errors1 ) ⇒ rev.validate( input ) match {
-                    case valid @ Valid( _ ) ⇒ valid
-                    case Invalid( errors2 ) ⇒
-                        invalid( e.error( "input" ->> input :: "errors" ->> ( errors1 |+| errors2 ) :: HNil ) )
-                }
-            }
+    override type Output = R#Output
+
+    override def apply( input: Input ) = left.verify( input ) match {
+        case valid @ Valid( _ ) ⇒ valid
+        case Invalid( errors1 ) ⇒ right.verify( input ) match {
+            case valid @ Valid( _ ) ⇒ valid
+            case Invalid( errors2 ) ⇒ invalid( errors1 |+| errors2 )
         }
     }
 
-    implicit def show[L <: Rule, R <: Rule.Aux[L#Input]](
-        implicit
-        l: TypeShow[L],
-        r: TypeShow[R]
-    ) = TypeShow.instance[L || R]( s"(${l.show} || ${r.show})" )
+    override def toString = s"($left || $right)"
 }

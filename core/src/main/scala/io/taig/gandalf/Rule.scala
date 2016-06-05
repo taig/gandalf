@@ -1,7 +1,11 @@
 package io.taig.gandalf
 
-trait Rule extends Validation {
+import io.taig.gandalf.syntax.aliases._
+
+trait Rule extends Action with Arguments {
     override final type Output = Input
+
+    def verify( input: Input ): Result[Output]
 }
 
 object Rule {

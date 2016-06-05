@@ -1,15 +1,35 @@
 package io.taig.gandalf
 
-trait Validation extends Arguments {
-    type Input
+import cats.data.Validated._
+import io.taig.gandalf.operator.Operation
+import io.taig.gandalf.syntax.aliases._
 
-    type Output
+trait Validation[A <: Action] {
+    def validate( action: A )( input: action.Input ): Result[A#Output]
 }
 
 object Validation {
-    type In[I] = Validation { type Input = I }
+    implicit def mutation[M <: Mutation]: Validation[M] = new Validation[M] {
+        override def validate( mutation: M )( input: mutation.Input ) = {
+            mutation.mutate( input )
+        }
+    }
 
-    type Out[O] = Validation { type Output = O }
+    implicit def operation[O <: Operation[_, _]]: Validation[O] = new Validation[O] {
+        override def validate( action: O )( input: action.Input ) = {
+            action.apply( input )
+        }
+    }
 
-    type Aux[I, O] = Validation { type Input = I; type Output = O }
+    implicit def transformation[T <: Transformation]: Validation[T] = new Validation[T] {
+        override def validate( transformation: T )( input: transformation.Input ) = {
+            valid( transformation.transform( input ) )
+        }
+    }
+
+    implicit def rule[R <: Rule]: Validation[R] = new Validation[R] {
+        override def validate( rule: R )( input: rule.Input ) = {
+            rule.verify( input )
+        }
+    }
 }

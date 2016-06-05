@@ -1,23 +1,24 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.{ Error, Evaluation, Rule }
+import cats.data.Validated._
+import io.taig.gandalf.{ Error, Rule }
 import shapeless._
-import shapeless.syntax.singleton._
 
 import scala.language.existentials
 
-trait Matches[T, I >: T] extends Rule {
+class Matches[T, I >: T]( implicit w: Witness.Aux[T] ) extends Rule {
     override type Input = I
 
     override type Arguments = Error.Expectation[Matches[T, I], T]
+
+    override def verify( input: I ) = input == w.value match {
+        case true  ⇒ valid( input )
+        case false ⇒ invalidNel( "Matches" )
+    }
 }
 
 object Matches {
-    implicit def evaluation[T, I >: T]( implicit w: Witness.Aux[T], e: Error[Matches[T, I]] ) = {
-        Evaluation.rule[Matches[T, I]]( _ == w.value ) { input ⇒
-            "input" ->> input :: "expected" ->> w.value :: HNil
-        }
+    def matches[T]( compare: Witness.Aux[T] )( implicit wid: Widen[T] ): Matches[T, wid.Out] = {
+        new Matches[T, wid.Out]()( compare )
     }
-
-    def matches[T]( wit: Witness.Aux[T] )( implicit wid: Widen[T] ): Matches[T, wid.Out] = new Matches[T, wid.Out] {}
 }

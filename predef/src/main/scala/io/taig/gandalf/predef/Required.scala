@@ -1,21 +1,19 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.{ Error, Evaluation, Rule }
-import shapeless._
-import shapeless.syntax.singleton._
+import cats.data.Validated._
+import io.taig.gandalf.{ Error, Rule }
 
-trait Required extends Rule {
+class Required extends Rule {
     override type Input = String
 
     override type Arguments = Error.Input[Required]
+
+    override def verify( input: String ) = input.nonEmpty match {
+        case true  ⇒ valid( input )
+        case false ⇒ invalidNel( "Required" )
+    }
 }
 
 object Required {
-    implicit def evaluation( implicit e: Error[Required] ) = {
-        Evaluation.rule[Required]( _.nonEmpty ) { input ⇒
-            "input" ->> input :: HNil
-        }
-    }
-
-    val required: Required = new Required {}
+    val required: Required = new Required
 }
