@@ -1,10 +1,11 @@
 package io.taig.gandalf.tests
 
 import cats.data.Validated._
-import io.taig.gandalf.predef.{ Required, Trim }
+import io.taig.gandalf.predef._
+import io.taig.gandalf.predef.messages._
 import io.taig.gandalf.syntax.all._
 
-class ExtendabilityTest extends Suite {
+class ExtensibilityTest extends Suite {
     it should "be possible to create custom Actions with inheritance" in {
         trait MyRequired extends ( Trim <~> Required )
         object MyRequired extends MyRequired

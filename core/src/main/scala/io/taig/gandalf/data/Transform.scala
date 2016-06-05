@@ -1,4 +1,4 @@
-package io.taig.gandalf.operation
+package io.taig.gandalf.data
 
 import io.taig.gandalf._
 import io.taig.gandalf.syntax.aliases._

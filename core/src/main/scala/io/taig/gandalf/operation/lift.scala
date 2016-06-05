@@ -1,8 +1,8 @@
-package io.taig.gandalf.ops
+package io.taig.gandalf.operation
 
 import io.taig.gandalf._
 import io.taig.gandalf.internal.Macro
-import io.taig.gandalf.operation.Obeys
+import io.taig.gandalf.data.{ Action, Obeys }
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions

@@ -4,9 +4,8 @@ import cats.data.Validated.{ Invalid, Valid }
 import cats.std.list._
 import cats.syntax.foldable._
 import io.taig.gandalf._
-import io.taig.gandalf.operation.Obeys
+import io.taig.gandalf.data.{ Action, Obeys }
 import io.taig.gandalf.syntax.aliases._
-import io.taig.gandalf.Action
 
 import scala.reflect.macros.whitebox
 

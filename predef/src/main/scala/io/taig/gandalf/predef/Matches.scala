@@ -1,7 +1,7 @@
 package io.taig.gandalf.predef
 
-import cats.data.Validated._
-import io.taig.gandalf.{ Error, Rule, Validation }
+import io.taig.gandalf.data.Rule
+import io.taig.gandalf.{ Error, Validation }
 import shapeless._
 
 import scala.language.existentials
@@ -9,18 +9,15 @@ import scala.language.existentials
 final class Matches[T, I >: T] extends Rule {
     override type Input = I
 
-    override type Arguments = Error.Expectation[Matches[T, I], T]
+    override type Arguments = Error.Expectation[Matches[T, I]]
 }
 
 object Matches {
-    implicit def validation[T, I >: T]( implicit w: Witness.Aux[T] ): Validation[I, Matches[T, I]] = {
-        Validation.rule { input ⇒
-            input == w.value match {
-                case true  ⇒ valid( input )
-                case false ⇒ invalidNel( "Matches" )
-            }
-        }
-    }
+    implicit def validation[T, I >: T](
+        implicit
+        w: Witness.Aux[T],
+        e: Error[Matches[T, I]]
+    ) = Validation.rule[I, Matches[T, I]]( _ == w.value )( Error.expectation[Matches[T, I]]( _, w.value ) )
 
     def apply[T, I >: T]( compare: Witness.Aux[T] ): Matches[T, I] = new Matches[T, I]
 }

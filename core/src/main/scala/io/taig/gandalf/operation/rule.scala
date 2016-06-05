@@ -1,7 +1,6 @@
-package io.taig.gandalf.ops
+package io.taig.gandalf.operation
 
-import io.taig.gandalf.Rule
-import io.taig.gandalf.operation.{ EagerAnd, LazyAnd, Or }
+import io.taig.gandalf.data.{ EagerAnd, LazyAnd, Or, Rule }
 import io.taig.gandalf.syntax.aliases._
 
 final class rule[T, L <: Rule.Aux[T]]( left: L ) {

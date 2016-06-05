@@ -1,7 +1,7 @@
 package io.taig.gandalf.syntax
 
 import cats.data.ValidatedNel
-import io.taig.gandalf.operation._
+import io.taig.gandalf.data._
 import io.taig.gandalf._
 
 trait aliases {

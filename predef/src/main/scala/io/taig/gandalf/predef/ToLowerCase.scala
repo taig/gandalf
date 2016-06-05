@@ -1,6 +1,7 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.{ Transformation, Validation }
+import io.taig.gandalf.Validation
+import io.taig.gandalf.data.Transformation
 
 sealed trait ToLowerCase extends Transformation {
     override type Input = String

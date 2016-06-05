@@ -1,4 +1,4 @@
-package io.taig.gandalf
+package io.taig.gandalf.data
 
 trait Transformation extends Action
 
