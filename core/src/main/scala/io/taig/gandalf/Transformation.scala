@@ -1,6 +1,10 @@
 package io.taig.gandalf
 
+import cats.data.Validated._
+
 trait Transformation extends Action {
+    override def validate( input: Input ) = valid( transform( input ) )
+
     def transform( input: Input ): Output
 }
 

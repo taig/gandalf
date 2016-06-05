@@ -3,6 +3,8 @@ package io.taig.gandalf
 import io.taig.gandalf.syntax.aliases._
 
 trait Mutation extends Action with Arguments {
+    override final def validate( input: Input ) = mutate( input )
+
     def mutate( input: Input ): Result[Output]
 }
 
