@@ -12,9 +12,7 @@ object LazyAnd {
     implicit def evaluation[L <: Rule, R <: Rule.Aux[L#Output]](
         implicit
         lev: Evaluation[L],
-        ler: Error[L],
         rev: Evaluation[R],
-        rer: Error[R],
         e:   Error[L && R]
     ) = {
         Evaluation.instance[L && R] { input ⇒

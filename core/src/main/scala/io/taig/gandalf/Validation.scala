@@ -1,13 +1,9 @@
 package io.taig.gandalf
 
-import shapeless.HList
-
-trait Validation {
+trait Validation extends ErrorArguments {
     type Input
 
     type Output
-
-    type Arguments <: HList
 }
 
 object Validation {
