@@ -1,15 +1,19 @@
 package io.taig.gandalf.predef
 
 import cats.data.Validated._
-import io.taig.gandalf.{ Error, Rule }
+import io.taig.gandalf.{ Error, Rule, Validation }
 
-object Required extends Rule {
+sealed trait Required extends Rule {
     override type Input = String
 
-    override type Arguments = Error.Input[Required.type]
+    override type Arguments = Error.Input[Required]
+}
 
-    override def verify( input: String ) = input.nonEmpty match {
-        case true  ⇒ valid( input )
-        case false ⇒ invalidNel( "Required" )
+object Required extends Required {
+    implicit val validation: Validation[String, Required] = Validation.rule { input ⇒
+        input.nonEmpty match {
+            case true  ⇒ valid( input )
+            case false ⇒ invalidNel( "Required" )
+        }
     }
 }

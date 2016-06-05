@@ -1,17 +1,11 @@
 package io.taig.gandalf
 
-import io.taig.gandalf.syntax.aliases._
-
-trait Mutation extends Action with Arguments {
-    override final def validate( input: Input ) = mutate( input )
-
-    def mutate( input: Input ): Result[Output]
-}
+trait Mutation extends Action with Arguments
 
 object Mutation {
-    type In[I] = Mutation { type Input = I }
+    type Input[I] = Mutation { type Input = I }
 
-    type Out[O] = Mutation { type Output = O }
+    type Output[O] = Mutation { type Output = O }
 
-    type Aux[I, O] = Mutation { type Input = I; type Output = O }
+    type Aux[I, O] = Input[I] with Output[O]
 }

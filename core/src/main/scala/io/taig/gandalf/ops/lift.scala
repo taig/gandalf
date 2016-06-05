@@ -2,16 +2,16 @@ package io.taig.gandalf.ops
 
 import io.taig.gandalf._
 import io.taig.gandalf.internal.Macro
-import io.taig.gandalf.operator.Obeys
+import io.taig.gandalf.operation.Obeys
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions
 
 trait lift {
-    implicit def valueToLifted[I, A <: Action.In[I]]( value: I )(
+    implicit def valueToLifted[I, O, A <: Action.Aux[I, O]]( value: I )(
         implicit
-        i: Instance[A]
-    ): I Obeys A = macro Macro.lift[I, A]
+        v: Validation[O, A]
+    ): I Obeys A = macro Macro.lift[I, O, A]
 
     implicit def liftedToValue[V <: Action]( lifted: V#Input Obeys V ): V#Output = lifted.value
 

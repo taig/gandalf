@@ -1,11 +1,13 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.Transformation
+import io.taig.gandalf.{ Transformation, Validation }
 
-object Trim extends Transformation {
+sealed trait Trim extends Transformation {
     override type Input = String
 
     override type Output = String
+}
 
-    override def transform( input: String ) = input.trim
+object Trim extends Trim {
+    implicit val validation: Validation[String, Trim] = Validation.transformation( _.trim )
 }

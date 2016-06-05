@@ -1,4 +1,4 @@
-package io.taig.gandalf.operator
+package io.taig.gandalf.operation
 
 import io.taig.gandalf.Action
 
