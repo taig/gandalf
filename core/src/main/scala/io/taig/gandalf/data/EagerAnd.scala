@@ -11,10 +11,13 @@ object EagerAnd {
     implicit def validation[T, L <: Rule.Aux[T], R <: Rule.Aux[T]](
         implicit
         l: Validation[T, L],
-        r: Validation[T, R]
-    ): Validation[T, L & R] = {
-        Validation.instance { input ⇒
-            ( l.validate( input ) |@| r.validate( input ) ).map { case ( _, _ ) ⇒ input }
+        r: Validation[T, R],
+        e: Error[L & R]
+    ) = {
+        Validation.operation[T, L, R, L & R] { input ⇒
+            ( l.validate( input ) |@| r.validate( input ) ) map { case ( _, _ ) ⇒ input }
+        } {
+            Error.forward[L & R]( _, _ )
         }
     }
 }

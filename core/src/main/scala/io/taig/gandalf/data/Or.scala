@@ -12,9 +12,10 @@ object Or {
     implicit def validation[T, L <: Rule.Aux[T], R <: Rule.Aux[T]](
         implicit
         l: Validation[T, L],
-        r: Validation[T, R]
-    ): Validation[T, L || R] = {
-        Validation.instance { input ⇒
+        r: Validation[T, R],
+        e: Error[L || R]
+    ) = {
+        Validation.operation[T, L, R, L || R] { input ⇒
             l.validate( input ) match {
                 case Valid( output ) ⇒ valid( output )
                 case Invalid( errorsLeft ) ⇒ r.validate( input ) match {
@@ -22,6 +23,8 @@ object Or {
                     case Invalid( errorsRight ) ⇒ invalid( errorsLeft |+| errorsRight )
                 }
             }
+        } {
+            Error.forward[L || R]( _, _ )
         }
     }
 }

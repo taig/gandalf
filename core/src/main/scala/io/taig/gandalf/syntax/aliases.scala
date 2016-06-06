@@ -2,7 +2,6 @@ package io.taig.gandalf.syntax
 
 import cats.data.ValidatedNel
 import io.taig.gandalf.data._
-import io.taig.gandalf._
 
 trait aliases {
     type <*>[L <: Mutation, R <: Action.Input[L#Output]] = Mutate[L, R]
