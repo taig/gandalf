@@ -9,10 +9,11 @@ object Mutate {
     implicit def validation[O, P, L <: Mutation.Output[O], R <: Action.Aux[O, P]](
         implicit
         l: Validation[O, L],
-        r: Validation[P, R]
-    ): Validation[P, L <*> R] = {
-        Validation.instance { input ⇒
-            l.validate( input ) andThen r.validate
+        r: Validation[P, R],
+        e: Error[L <*> R]
+    ) = {
+        Validation.operation[P, L, R, L <*> R]( l.validate( _ ) andThen r.validate ) {
+            Error.forward[L <*> R]( _, _ )
         }
     }
 }

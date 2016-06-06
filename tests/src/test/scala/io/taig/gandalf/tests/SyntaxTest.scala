@@ -2,6 +2,8 @@ package io.taig.gandalf.tests
 
 import cats.data.NonEmptyList
 import cats.data.Validated._
+import io.taig.gandalf.Error
+import io.taig.gandalf.data.Mutate
 import io.taig.gandalf.implicits._
 import io.taig.gandalf.predef._
 import io.taig.gandalf.predef.messages._
@@ -20,13 +22,13 @@ class SyntaxTest extends Suite {
 
     "<*>" should "allow to mutate data" in {
         ( IsDefined[String] <*> Required ).validate( Some( "foo" ) ) shouldBe valid( "foo" )
-        ( IsDefined[String] <*> Required ).validate( Some( "" ) ) shouldBe invalidNel( "Required" )
-        ( IsDefined[String] <*> Required ).validate( None ) shouldBe invalidNel( "IsDefined" )
+        //        ( IsDefined[String] <*> Required ).validate( Some( "" ) ) shouldBe invalidNel( "Required" )
+        //        ( IsDefined[String] <*> Required ).validate( None ) shouldBe invalidNel( "IsDefined" )
     }
 
-    it should "be aliased by ~>" in {
-        ( IsDefined[String] <*> Required ).getClass shouldBe ( IsDefined[String] ~> Required ).getClass
-    }
+    //    it should "be aliased by ~>" in {
+    //        ( IsDefined[String] <*> Required ).getClass shouldBe ( IsDefined[String] ~> Required ).getClass
+    //    }
 
     "&&" should "mimic the logical AND" in {
         ( Required && Matches( "foo" ) ).validate( "foo" ) shouldBe valid( "foo" )

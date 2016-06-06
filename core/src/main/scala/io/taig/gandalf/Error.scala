@@ -1,12 +1,12 @@
 package io.taig.gandalf
 
 import cats.data.NonEmptyList
-import io.taig.gandalf.data.Action
+import io.taig.gandalf.data.{ Action, Operation }
 import shapeless.HNil
-import shapeless.record.Record
+import shapeless.record._
 import shapeless.syntax.singleton._
 
-trait Error[-A <: Action with Arguments] {
+trait Error[-A <: Arguments] {
     def error( arguments: A#Arguments ): NonEmptyList[String]
 }
 
@@ -49,7 +49,7 @@ object Error {
     type Forward[A <: Action with Arguments] = Record.`"input" -> A#Input, "errors" -> NonEmptyList[String]`.T
 
     /**
-     * Error representation that provides the input and accumultated errors
+     * Error representation that provides the input and accumulated errors
      *
      * Intended to be primarily used with Operations.
      */
@@ -57,14 +57,22 @@ object Error {
         "input" ->> input :: "errors" ->> errors :: HNil
     }
 
-    @inline
-    def apply[A <: Action with Arguments: Error]: Error[A] = implicitly[Error[A]]
+    implicit def errorOperation[L <: Action with Arguments, R <: Action.Input[L#Output] with Arguments](
+        implicit
+        l: Error[L],
+        r: Error[R]
+    ): Error[L Operation R] = new Error[L Operation R] {
+        override def error( arguments: Forward[L Operation R] ) = arguments( "errors" )
+    }
 
-    def instance[A <: Action with Arguments]( message: String ): Error[A] = new Error[A] {
+    @inline
+    def apply[A <: Arguments: Error]: Error[A] = implicitly[Error[A]]
+
+    def instance[A <: Arguments]( message: String ): Error[A] = new Error[A] {
         override def error( arguments: A#Arguments ) = NonEmptyList( message )
     }
 
-    def instance[A <: Action with Arguments]( f: A#Arguments ⇒ String ): Error[A] = new Error[A] {
+    def instance[A <: Arguments]( f: A#Arguments ⇒ String ): Error[A] = new Error[A] {
         override def error( arguments: A#Arguments ) = NonEmptyList( f( arguments ) )
     }
 }

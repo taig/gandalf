@@ -9,10 +9,11 @@ object LazyAnd {
     implicit def validation[T, L <: Rule.Aux[T], R <: Rule.Aux[T]](
         implicit
         l: Validation[T, L],
-        r: Validation[T, R]
-    ): Validation[T, L && R] = {
-        Validation.instance { input ⇒
-            l.validate( input ) andThen r.validate
+        r: Validation[T, R],
+        e: Error[L && R]
+    ) = {
+        Validation.operation[T, L, R, L && R]( l.validate( _ ) andThen r.validate ) {
+            Error.forward[L && R]( _, _ )
         }
     }
 }
