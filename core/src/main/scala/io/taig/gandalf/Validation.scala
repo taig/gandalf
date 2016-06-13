@@ -31,7 +31,7 @@ object Validation {
         }
     }
 
-    def operation[P, O <: Operation { type Output = P }](
+    def operation[P, O <: Operation.Output[P]](
         f: O#Input ⇒ Result[P]
     )(
         args: ( O#Input, NonEmptyList[String] ) ⇒ Error.Forward[O]
@@ -40,8 +40,8 @@ object Validation {
         e: Error[O]
     ): Validation[P, O] = {
         new Validation[P, O] {
-            override def validate( input: O#Input ) = {
-                f( input ) //.leftMap( errors ⇒ e.error( args( input, errors ) ) )
+            override def validate( input: O#Input ): Result[P] = {
+                f( input ).leftMap( errors ⇒ e.error( args( input, errors ) ) )
             }
         }
     }

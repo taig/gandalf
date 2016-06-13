@@ -3,7 +3,6 @@ package io.taig.gandalf.data
 import cats.std.list._
 import cats.syntax.cartesian._
 import io.taig.gandalf._
-import io.taig.gandalf.syntax.aliases._
 
 class EagerAnd extends Operation {
     override type Left <: Rule
