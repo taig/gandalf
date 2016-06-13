@@ -31,17 +31,17 @@ object Validation {
         }
     }
 
-    def operation[P, L <: Action, R <: Action.Aux[L#Output, P], O <: Operation[L, R]](
-        f: L#Input ⇒ Result[P]
+    def operation[P, O <: Operation { type Output = P }](
+        f: O#Input ⇒ Result[P]
     )(
-        args: ( L#Input, NonEmptyList[String] ) ⇒ Error.Forward[O]
+        args: ( O#Input, NonEmptyList[String] ) ⇒ Error.Forward[O]
     )(
         implicit
         e: Error[O]
     ): Validation[P, O] = {
         new Validation[P, O] {
-            override def validate( input: L#Input ) = {
-                f( input ).leftMap( errors ⇒ e.error( args( input, errors ) ) )
+            override def validate( input: O#Input ) = {
+                f( input ) //.leftMap( errors ⇒ e.error( args( input, errors ) ) )
             }
         }
     }

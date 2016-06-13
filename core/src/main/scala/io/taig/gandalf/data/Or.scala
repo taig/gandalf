@@ -6,16 +6,22 @@ import cats.syntax.semigroup._
 import io.taig.gandalf._
 import io.taig.gandalf.syntax.aliases._
 
-class Or[L <: Rule, R <: Rule.Aux[L#Input]] extends Operation[L, R]
+class Or extends Operation {
+    override type Left <: Rule
+
+    override type Right <: Rule.Aux[Left#Output]
+}
 
 object Or {
-    implicit def validation[T, L <: Rule.Aux[T], R <: Rule.Aux[T]](
+    type Aux[L <: Rule, R <: Rule.Aux[L#Output]] = Or { type Left = L; type Right = R }
+
+    implicit def validation[T, O <: Or { type Left <: Rule.Aux[T]; type Right <: Rule.Aux[T] }](
         implicit
-        l: Validation[T, L],
-        r: Validation[T, R],
-        e: Error[L || R]
+        l: Validation[T, O#Left],
+        r: Validation[T, O#Right],
+        e: Error[O]
     ) = {
-        Validation.operation[T, L, R, L || R] { input ⇒
+        Validation.operation[T, O] { input ⇒
             l.validate( input ) match {
                 case Valid( output ) ⇒ valid( output )
                 case Invalid( errorsLeft ) ⇒ r.validate( input ) match {
@@ -24,7 +30,7 @@ object Or {
                 }
             }
         } {
-            Error.forward[L || R]( _, _ )
+            Error.forward[O]( _, _ )
         }
     }
 }

@@ -5,17 +5,21 @@ import io.taig.gandalf._
 import io.taig.gandalf.syntax.aliases._
 import shapeless.record._
 
-class Transform[L <: Transformation, R <: Action.Input[L#Output]] extends Operation[L, R]
+class Transform extends Operation {
+    override type Left <: Transformation
+}
 
 object Transform {
-    implicit def validation[O, P, L <: Transformation.Output[O], R <: Action.Aux[O, P]](
+    type Aux[L <: Transformation, R <: Action.Input[L#Output]] = Transform { type Left = L; type Right = R }
+
+    implicit def validation[L, R, T <: Transform { type Left <: Transformation.Output[L]; type Right <: Action.Aux[L, R] }](
         implicit
-        l: Validation[O, L],
-        r: Validation[P, R],
-        e: Error[L <~> R]
+        l: Validation[L, T#Left],
+        r: Validation[R, T#Right],
+        e: Error[T]
     ) = {
-        Validation.operation[P, L, R, L <~> R]( l.validate( _ ) andThen r.validate ) {
-            Error.forward[L <~> R]( _, _ )
+        Validation.operation[R, T]( l.validate( _ ) andThen r.validate ) {
+            Error.forward[T]( _, _ )
         }
     }
 
