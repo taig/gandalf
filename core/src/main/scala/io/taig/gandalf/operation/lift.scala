@@ -1,8 +1,9 @@
 package io.taig.gandalf.operation
 
 import io.taig.gandalf._
-import io.taig.gandalf.internal.Macro
 import io.taig.gandalf.data.{ Action, Obeys }
+import io.taig.gandalf.internal.Macro
+import io.taig.gandalf.syntax.aliases._
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions
@@ -25,8 +26,5 @@ trait lift {
     //        ): I Obeys V = macro Macro.lift[I, V]
     //    }
 
-    //    def tryLift[V <: Action]( value: V#Input )(
-    //        implicit
-    //        e: V
-    //    ): Result[V#Output] = e.validate( value )
+    def tryLift[A <: Action]( value: A#Input )( implicit v: Validation[_, A] ): v.Output = v.validate( value )
 }
