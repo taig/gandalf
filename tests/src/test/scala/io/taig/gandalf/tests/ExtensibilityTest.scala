@@ -2,7 +2,7 @@ package io.taig.gandalf.tests
 
 import cats.data.Validated._
 import io.taig.gandalf._
-import io.taig.gandalf.data.{ Mutate, Mutation, Operation }
+import io.taig.gandalf.data.Mutate
 import io.taig.gandalf.predef._
 import io.taig.gandalf.predef.messages._
 import io.taig.gandalf.syntax.all._
@@ -35,6 +35,6 @@ class ExtensibilityTest extends Suite {
         //        implicit val error = Error.instance[IsDefined[String] <*> Required]( "foobar" )
         implicit val error = Error.instance[MyRequired]( "foobar" )
 
-        MyRequired.validate( Some( "" ) ) shouldBe invalidNel( "foobar" )
+        MyRequired.validate( Some( "" ) )( Mutate.validation ) shouldBe invalidNel( "foobar" )
     }
 }
