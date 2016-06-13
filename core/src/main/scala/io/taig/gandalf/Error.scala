@@ -6,8 +6,6 @@ import shapeless.HNil
 import shapeless.record._
 import shapeless.syntax.singleton._
 
-import scala.language.reflectiveCalls
-
 trait Error[-A <: Arguments] {
     def error( arguments: A#Arguments ): NonEmptyList[String]
 }

@@ -30,11 +30,11 @@ class ExtensibilityTest extends Suite {
 
     it should "be possible to override Operation error messages" in {
         trait MyRequired extends ( IsDefined[String] <*> Required )
-        object MyRequired extends MyRequired
 
-        //        implicit val error = Error.instance[IsDefined[String] <*> Required]( "foobar" )
+        object MyRequired extends MyRequired {
+        }
         implicit val error = Error.instance[MyRequired]( "foobar" )
 
-        MyRequired.validate( Some( "" ) )( Mutate.validation ) shouldBe invalidNel( "foobar" )
+        MyRequired.validate( Some( "" ) ) shouldBe invalidNel( "foobar" )
     }
 }

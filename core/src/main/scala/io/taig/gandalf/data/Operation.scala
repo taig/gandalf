@@ -13,5 +13,13 @@ trait Operation
 
     override final type Output = Right#Output
 
-    override final type Arguments = Error.Forward[this.type]
+    override final type Arguments = Error.Forward[Operation]
+}
+
+object Operation {
+    type Input[I] = Operation { type Output = I }
+
+    type Output[O] = Operation { type Output = O }
+
+    type Aux[I, O] = Input[I] with Output[I]
 }
