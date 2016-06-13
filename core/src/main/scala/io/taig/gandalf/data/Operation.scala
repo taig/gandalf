@@ -1,6 +1,7 @@
 package io.taig.gandalf.data
 
 import io.taig.gandalf._
+import shapeless.record._
 
 trait Operation
         extends Action
@@ -22,4 +23,8 @@ object Operation {
     type Output[O] = Operation { type Output = O }
 
     type Aux[I, O] = Input[I] with Output[I]
+
+    implicit def errorOperation[O <: Operation]: Error[O] = new Error[O] {
+        override def error( arguments: O#Arguments ) = arguments( "errors" )
+    }
 }

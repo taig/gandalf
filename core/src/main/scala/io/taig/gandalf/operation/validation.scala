@@ -4,6 +4,6 @@ import io.taig.gandalf._
 import io.taig.gandalf.data.Action
 import io.taig.gandalf.syntax.aliases._
 
-final class validation[O, A <: Action.Output[O]]( action: A ) {
-    def validate( input: A#Input )( implicit v: Validation[O, A] ): Result[O] = v.validate( input )
+final class validation[I, O, A <: Action.Aux[I, O]]( action: A ) {
+    def validate( input: I )( implicit v: Validation[O, A] ): Result[O] = v.validate( input )
 }
