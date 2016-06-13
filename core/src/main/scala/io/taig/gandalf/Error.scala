@@ -1,7 +1,7 @@
 package io.taig.gandalf
 
 import cats.data.NonEmptyList
-import io.taig.gandalf.data.{ Action, Operation }
+import io.taig.gandalf.data.Action
 import shapeless.HNil
 import shapeless.record._
 import shapeless.syntax.singleton._
@@ -55,10 +55,6 @@ object Error {
      */
     def forward[A <: Action with Arguments]( input: A#Input, errors: NonEmptyList[String] ): Forward[A] = {
         "input" ->> input :: "errors" ->> errors :: HNil
-    }
-
-    implicit val errorOperation: Error[Operation] = new Error[Operation] {
-        override def error( arguments: Operation#Arguments ) = arguments( "errors" )
     }
 
     @inline

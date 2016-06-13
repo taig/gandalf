@@ -2,8 +2,6 @@ package io.taig.gandalf.data
 
 import io.taig.gandalf._
 
-import scala.language.reflectiveCalls
-
 class Mutate extends Operation {
     override type Left <: Mutation
 
