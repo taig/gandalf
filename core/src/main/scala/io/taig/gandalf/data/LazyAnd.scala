@@ -3,17 +3,23 @@ package io.taig.gandalf.data
 import io.taig.gandalf._
 import io.taig.gandalf.syntax.aliases._
 
-class LazyAnd[L <: Rule, R <: Rule.Aux[L#Input]] extends Operation[L, R]
+class LazyAnd extends Operation {
+    override type Left <: Rule
+
+    override type Right <: Rule.Aux[Left#Output]
+}
 
 object LazyAnd {
-    implicit def validation[T, L <: Rule.Aux[T], R <: Rule.Aux[T]](
+    type Aux[L <: Rule, R <: Rule.Aux[L#Output]] = LazyAnd { type Left = L; type Right = R }
+
+    implicit def validation[T, LA <: LazyAnd { type Left <: Rule.Aux[T]; type Right <: Rule.Aux[T] }](
         implicit
-        l: Validation[T, L],
-        r: Validation[T, R],
-        e: Error[L && R]
+        l: Validation[T, LA#Left],
+        r: Validation[T, LA#Right],
+        e: Error[LA]
     ) = {
-        Validation.operation[T, L, R, L && R]( l.validate( _ ) andThen r.validate ) {
-            Error.forward[L && R]( _, _ )
+        Validation.operation[T, LA]( l.validate( _ ) andThen r.validate ) {
+            Error.forward[LA]( _, _ )
         }
     }
 }

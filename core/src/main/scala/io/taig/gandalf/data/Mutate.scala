@@ -1,19 +1,26 @@
 package io.taig.gandalf.data
 
 import io.taig.gandalf._
-import io.taig.gandalf.syntax.aliases._
 
-class Mutate[L <: Mutation, R <: Action.Input[L#Output]] extends Operation[L, R]
+import scala.language.reflectiveCalls
+
+class Mutate extends Operation {
+    override type Left <: Mutation
+
+    override type Right <: Action.Input[Left#Output]
+}
 
 object Mutate {
-    implicit def validation[O, P, L <: Mutation.Output[O], R <: Action.Aux[O, P]](
+    type Aux[L <: Mutation, R <: Action.Input[L#Output]] = Mutate { type Left = L; type Right = R }
+
+    implicit def validation[L, R, M <: Mutate { type Left <: Mutation.Output[L]; type Right <: Action.Aux[L, R] }](
         implicit
-        l: Validation[O, L],
-        r: Validation[P, R],
-        e: Error[L <*> R]
+        l: Validation[L, M#Left],
+        r: Validation[R, M#Right],
+        e: Error[M]
     ) = {
-        Validation.operation[P, L, R, L <*> R]( l.validate( _ ) andThen r.validate ) {
-            Error.forward[L <*> R]( _, _ )
+        Validation.operation[R, M]( l.validate( _ ) andThen r.validate ) {
+            Error.forward[M]( _, _ )
         }
     }
 }

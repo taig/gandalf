@@ -6,6 +6,8 @@ import shapeless.HNil
 import shapeless.record._
 import shapeless.syntax.singleton._
 
+import scala.language.reflectiveCalls
+
 trait Error[-A <: Arguments] {
     def error( arguments: A#Arguments ): NonEmptyList[String]
 }
@@ -57,12 +59,8 @@ object Error {
         "input" ->> input :: "errors" ->> errors :: HNil
     }
 
-    implicit def errorOperation[L <: Action with Arguments, R <: Action.Input[L#Output] with Arguments](
-        implicit
-        l: Error[L],
-        r: Error[R]
-    ): Error[L Operation R] = new Error[L Operation R] {
-        override def error( arguments: Forward[L Operation R] ) = arguments( "errors" )
+    implicit val errorOperation: Error[Operation] = new Error[Operation] {
+        override def error( arguments: Operation#Arguments ) = arguments( "errors" )
     }
 
     @inline
