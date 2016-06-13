@@ -37,7 +37,7 @@ object Validation {
         args: ( L#Input, NonEmptyList[String] ) ⇒ Error.Forward[O]
     )(
         implicit
-        e: Error[_ <: O]
+        e: Error[O]
     ): Validation[P, O] = {
         new Validation[P, O] {
             override def validate( input: L#Input ) = {
