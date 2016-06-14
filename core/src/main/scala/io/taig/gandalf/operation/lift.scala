@@ -9,17 +9,17 @@ import scala.language.experimental.macros
 import scala.language.implicitConversions
 
 trait lift {
-    implicit def valueToLifted[O, A <: Action.Output[O]]( value: A#Input )(
+    implicit def valueToLifted[A <: Action]( value: A#Input )(
         implicit
-        v: Validation[O, A]
-    ): A#Input Obeys A = macro Macro.lift[O, A]
+        v: Validation[_, A]
+    ): A#Input Obeys A = macro Macro.lift[A]
 
     implicit def liftedToValue[V <: Action]( lifted: V#Input Obeys V ): V#Output = lifted.value
 
-    def lift[O, A <: Action.Output[O]]( value: A#Input )(
+    def lift[A <: Action]( value: A#Input )(
         implicit
-        v: Validation[O, A]
-    ): A#Input Obeys A = macro Macro.lift[O, A]
+        v: Validation[_, A]
+    ): A#Input Obeys A = macro Macro.lift[A]
 
     def tryLift[A <: Action]( value: A#Input )( implicit v: Validation[_, A] ) = v.validate( value )
 }

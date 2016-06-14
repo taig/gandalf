@@ -10,15 +10,14 @@ import io.taig.gandalf.syntax.aliases._
 import scala.reflect.macros.whitebox
 
 object Macro {
-    def lift[O, A <: Action.Output[O]](
+    def lift[A <: Action](
         c: whitebox.Context
     )(
         value: c.Expr[A#Input]
     )(
-        v: c.Expr[Validation[O, A]]
+        v: c.Expr[Validation[_, A]]
     )(
         implicit
-        wtto: c.WeakTypeTag[O],
         wttv: c.WeakTypeTag[A]
     ): c.Expr[A#Input Obeys A] = {
         import c.universe._
@@ -30,7 +29,7 @@ object Macro {
         c.eval( expression ) match {
             case Valid( value ) ⇒
                 c.Expr[A#Input Obeys A](
-                    q"""io.taig.gandalf.operator.Obeys[A#Input, $wttv](
+                    q"""io.taig.gandalf.data.Obeys[${wttv}#Input, $wttv](
                         $expression.getOrElse {
                             throw new IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
