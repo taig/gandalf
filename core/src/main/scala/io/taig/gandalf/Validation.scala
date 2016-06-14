@@ -6,9 +6,7 @@ import io.taig.gandalf.data._
 import io.taig.gandalf.syntax.aliases._
 
 trait Validation[O, -A <: Action.Output[O]] {
-    type Output = Result[O]
-
-    def validate( input: A#Input ): Output
+    def validate( input: A#Input ): Result[O]
 }
 
 object Validation {
