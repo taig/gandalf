@@ -10,28 +10,27 @@ import io.taig.gandalf.syntax.aliases._
 import scala.reflect.macros.whitebox
 
 object Macro {
-    def lift[I, O, A <: Action.Aux[I, O]](
+    def lift[O, A <: Action.Output[O]](
         c: whitebox.Context
     )(
-        value: c.Expr[I]
+        value: c.Expr[A#Input]
     )(
         v: c.Expr[Validation[O, A]]
     )(
         implicit
-        wtti: c.WeakTypeTag[I],
         wtto: c.WeakTypeTag[O],
         wttv: c.WeakTypeTag[A]
-    ): c.Expr[I Obeys A] = {
+    ): c.Expr[A#Input Obeys A] = {
         import c.universe._
 
         val validation = reify( v.splice.validate( value.splice ) )
         val expression = c.Expr[Result[A#Output]]( c.untypecheck( validation.tree ) )
-        def validationType = ??? // c.eval( c.Expr[String]( c.untypecheck( reify( ts.splice.show ).tree ) ) )
+        def validationType = c.eval( c.Expr[String]( c.untypecheck( reify( value.splice.toString ).tree ) ) )
 
         c.eval( expression ) match {
             case Valid( value ) ⇒
-                c.Expr[I Obeys A](
-                    q"""io.taig.gandalf.operator.Obeys[$wtti, $wttv](
+                c.Expr[A#Input Obeys A](
+                    q"""io.taig.gandalf.operator.Obeys[A#Input, $wttv](
                         $expression.getOrElse {
                             throw new IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
@@ -40,7 +39,7 @@ object Macro {
                     )"""
                 )
             case Invalid( errors ) ⇒
-                val messages = ??? //errors.map( " - " + _ ).toList.mkString( "\n" )
+                val messages = errors.map( " - " + _ ).toList.mkString( "\n" )
 
                 c.abort(
                     c.enclosingPosition,
