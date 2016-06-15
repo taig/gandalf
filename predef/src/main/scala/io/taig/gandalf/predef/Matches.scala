@@ -6,7 +6,7 @@ import shapeless._
 
 import scala.language.existentials
 
-final class Matches[T, I >: T] extends Rule {
+class Matches[T, I >: T] extends Rule {
     override type Input = I
 
     override type Arguments = Error.Expectation[Matches[T, I]]
@@ -19,5 +19,5 @@ object Matches {
         e: Error[Matches[T, I]]
     ) = Validation.rule[I, Matches[T, I]]( _ == w.value )( Error.expectation[Matches[T, I]]( _, w.value ) )
 
-    def apply[T, I >: T]( compare: Witness.Aux[T] ): Matches[T, I] = new Matches[T, I]
+    def matches[T, I >: T]( compare: Witness.Aux[T] ): Matches[T, I] = new Matches[T, I]
 }

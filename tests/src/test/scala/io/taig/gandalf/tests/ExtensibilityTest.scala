@@ -9,44 +9,48 @@ import shapeless.Witness
 
 class ExtensibilityTest extends Suite {
     it should "be possible to create custom Actions with inheritance" in {
-        trait MyRequired extends ( Trim <~> Required )
-        object MyRequired extends MyRequired
+        class MyRequired extends ( Trim <~> Required )
+        val myRequired = new MyRequired
 
-        MyRequired.validate( "foo" ) shouldBe valid( "foo" )
-        MyRequired.validate( "  foo   " ) shouldBe valid( "foo" )
-        MyRequired.validate( "" ) shouldBe invalidNel( "Required" )
-        MyRequired.validate( "    " ) shouldBe invalidNel( "Required" )
+        myRequired.validate( "foo" ) shouldBe valid( "foo" )
+        myRequired.validate( "  foo   " ) shouldBe valid( "foo" )
+        myRequired.validate( "" ) shouldBe invalidNel( "Required" )
+        myRequired.validate( "    " ) shouldBe invalidNel( "Required" )
     }
 
     it should "be possible to create custom Actions with type aliases" in {
         type MyRequired = Trim <~> Required
-        val MyRequired = new MyRequired
+        val myRequired = new MyRequired
 
-        MyRequired.validate( "foo" ) shouldBe valid( "foo" )
-        MyRequired.validate( "  foo   " ) shouldBe valid( "foo" )
-        MyRequired.validate( "" ) shouldBe invalidNel( "Required" )
-        MyRequired.validate( "    " ) shouldBe invalidNel( "Required" )
+        myRequired.validate( "foo" ) shouldBe valid( "foo" )
+        myRequired.validate( "  foo   " ) shouldBe valid( "foo" )
+        myRequired.validate( "" ) shouldBe invalidNel( "Required" )
+        myRequired.validate( "    " ) shouldBe invalidNel( "Required" )
     }
 
     it should "be possible to override Operation error messages" in {
-        trait MyRequired extends ( IsDefined[String] <*> Required )
+        class MyRequired extends ( IsDefined[String] <*> Required )
 
-        object MyRequired extends MyRequired {
+        object MyRequired {
             implicit val error = Error.instance[MyRequired]( "foobar" )
         }
 
-        MyRequired.validate( Some( "foobar" ) ) shouldBe valid( "foobar" )
-        MyRequired.validate( Some( "" ) ) shouldBe invalidNel( "foobar" )
-        MyRequired.validate( None ) shouldBe invalidNel( "foobar" )
+        val myRequired = new MyRequired
 
-        trait MyMatch extends ( Trim <~> Matches[Witness.`"foo"`.T, String] )
+        myRequired.validate( Some( "foobar" ) ) shouldBe valid( "foobar" )
+        myRequired.validate( Some( "" ) ) shouldBe invalidNel( "foobar" )
+        myRequired.validate( None ) shouldBe invalidNel( "foobar" )
 
-        object MyMatch extends MyMatch {
+        class MyMatch extends ( Trim <~> Matches[Witness.`"foo"`.T, String] )
+
+        object MyMatch {
             implicit val error = Error.instance[MyMatch]( "foobar" )
         }
 
-        MyMatch.validate( "foo" ) shouldBe valid( "foo" )
-        MyMatch.validate( " foo  " ) shouldBe valid( "foo" )
-        MyMatch.validate( "" ) shouldBe invalidNel( "foobar" )
+        val myMatch = new MyMatch
+
+        myMatch.validate( "foo" ) shouldBe valid( "foo" )
+        myMatch.validate( " foo  " ) shouldBe valid( "foo" )
+        myMatch.validate( "" ) shouldBe invalidNel( "foobar" )
     }
 }

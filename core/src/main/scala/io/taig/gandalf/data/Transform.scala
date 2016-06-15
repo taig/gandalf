@@ -2,7 +2,7 @@ package io.taig.gandalf.data
 
 import io.taig.gandalf._
 
-class Transform extends Operation {
+class Transform extends Operation with Transformation {
     override type Left <: Transformation
 }
 
