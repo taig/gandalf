@@ -18,11 +18,11 @@ trait Operation
 }
 
 object Operation {
-    type Input[I] = Operation { type Output = I }
+    type Input[I] = Operation { type Input = I }
 
     type Output[O] = Operation { type Output = O }
 
-    type Aux[I, O] = Input[I] with Output[I]
+    type Aux[I, O] = Operation { type Input = I; type Output = O }
 
     implicit def errorOperation[O <: Operation]: Error[O] = new Error[O] {
         override def error( arguments: O#Arguments ) = arguments( "errors" )

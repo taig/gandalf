@@ -9,5 +9,5 @@ object Mutation {
 
     type Output[O] = Mutation { type Output = O }
 
-    type Aux[I, O] = Input[I] with Output[O]
+    type Aux[I, O] = Mutation { type Input = I; type Output = O }
 }

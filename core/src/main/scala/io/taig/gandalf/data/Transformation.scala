@@ -7,5 +7,5 @@ object Transformation {
 
     type Output[O] = Transformation { type Output = O }
 
-    type Aux[I, O] = Input[I] with Output[O]
+    type Aux[I, O] = Transformation { type Input = I; type Output = O }
 }
