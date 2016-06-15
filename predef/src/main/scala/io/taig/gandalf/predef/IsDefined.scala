@@ -1,6 +1,5 @@
 package io.taig.gandalf.predef
 
-import cats.data.Validated._
 import io.taig.gandalf.data.Mutation
 import io.taig.gandalf.{ Error, Validation }
 

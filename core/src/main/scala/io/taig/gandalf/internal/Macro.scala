@@ -7,6 +7,7 @@ import io.taig.gandalf._
 import io.taig.gandalf.data.{ Action, Obeys }
 import io.taig.gandalf.syntax.aliases._
 
+import scala.reflect.ClassTag
 import scala.reflect.macros.whitebox
 
 object Macro {
@@ -51,18 +52,21 @@ object Macro {
         import termNames.CONSTRUCTOR
 
         val trees = annottees.map( _.tree )
-        val Expr( ValDef( _, _, input, _ ) ) = annottees.head
+        //        val Expr( ValDef( _, _, input, _ ) ) = annottees.head
+
+        def generalize( tree: Tree ): Tree = tree match {
+            case ident @ Ident( TermName( name ) ) ⇒
+                q"$ident: ${TypeName( name )}"
+            case x ⇒
+                println( showRaw( x ) )
+                x
+        }
 
         val target = c.prefix.tree match {
             case q"new obeys[$validation]" ⇒
                 validation
             case q"new obeys( $validation )" ⇒
-                c.typecheck {
-                    q"""
-                    import io.taig.gandalf.syntax.all._
-                    io.taig.gandalf.internal.Identity[$input] ~> $validation
-                    """
-                }
+                c.typecheck( q"${generalize( validation )}" )
             case _ ⇒ c.abort(
                 c.enclosingPosition,
                 "Illegal @obeys format. Can bei either @obeys[Trim <~> Required] or @obeys( Trim ~> Required )"

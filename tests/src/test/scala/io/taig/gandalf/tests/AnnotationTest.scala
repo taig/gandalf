@@ -11,6 +11,6 @@ class AnnotationTest extends Suite {
     "@obeys" should "work with case class fields" in {
         case class User( @obeys( Required ) name:String )
 
-        User( "yolo" )
+        User( lift[Required]( "taig" ) )
     }
 }
