@@ -10,15 +10,14 @@ import io.taig.gandalf.syntax.aliases._
 import scala.reflect.macros.whitebox
 
 object Macro {
-    def lift[A <: Action](
-        c: whitebox.Context
-    )(
-        value: c.Expr[A#Input]
-    )(
-        v: c.Expr[Validation[_, A]]
-    )(
+    def liftInputAction[I, A <: Action.Input[I]]( c: whitebox.Context )( value: c.Expr[I] )( v: c.Expr[Validation[_, A]] )(
         implicit
-        wttv: c.WeakTypeTag[A]
+        wtta: c.WeakTypeTag[A]
+    ): c.Expr[I Obeys A] = liftAction[A]( c )( value )( v )
+
+    def liftAction[A <: Action]( c: whitebox.Context )( value: c.Expr[A#Input] )( v: c.Expr[Validation[_, A]] )(
+        implicit
+        wtta: c.WeakTypeTag[A]
     ): c.Expr[A#Input Obeys A] = {
         import c.universe._
 
@@ -29,7 +28,7 @@ object Macro {
         c.eval( expression ) match {
             case Valid( value ) ⇒
                 c.Expr[A#Input Obeys A](
-                    q"""io.taig.gandalf.data.Obeys[${wttv}#Input, $wttv](
+                    q"""io.taig.gandalf.data.Obeys[$wtta#Input, $wtta](
                         $expression.getOrElse {
                             throw new IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
@@ -51,48 +50,26 @@ object Macro {
         import c.universe._
         import termNames.CONSTRUCTOR
 
-        def mutate( tree: Tree, injection: Tree ): Tree = tree match {
-            case Apply( tree, args )                    ⇒ Apply( mutate( tree, injection ), args )
-            case Select( ident @ Ident( _ ), operator ) ⇒ Select( Apply( injection, List( ident ) ), operator )
-            case Select( tree, name )                   ⇒ Select( mutate( tree, injection ), name )
-            case _                                      ⇒ tree
-        }
-
         val trees = annottees.map( _.tree )
         val Expr( ValDef( _, _, input, _ ) ) = annottees.head
-        val injection = Select(
-            TypeApply(
-                Select(
-                    Select(
-                        Select(
-                            Select( Select( Ident( TermName( "io" ) ), TermName( "taig" ) ), TermName( "gandalf" ) ),
-                            TermName( "internal" )
-                        ),
-                        TermName( "Identity" )
-                    ),
-                    TermName( "identity" )
-                ),
-                List( input )
-            ),
-            TermName( "$tilde$greater" )
-        )
 
         val target = c.prefix.tree match {
-            case q"new obeys[$validation]" ⇒ validation
+            case q"new obeys[$validation]" ⇒
+                validation
             case q"new obeys( $validation )" ⇒
                 c.typecheck {
                     q"""
                     import io.taig.gandalf.syntax.all._
-                    ${mutate( validation, injection )}
+                    io.taig.gandalf.internal.Identity[$input] ~> $validation
                     """
                 }
             case _ ⇒ c.abort(
                 c.enclosingPosition,
-                "Illegal @obeys format. Can bei either @obeys[Required] or @obeys( required )"
+                "Illegal @obeys format. Can bei either @obeys[Trim <~> Required] or @obeys( Trim ~> Required )"
             )
         }
 
-        def newType( lhs: Tree ) = tq"io.taig.gandalf.operator.Obeys[$lhs, $target]"
+        def newType( lhs: Tree ) = tq"io.taig.gandalf.data.Obeys[$lhs, $target]"
 
         val valDef = trees
             .collectFirst { case valDef: ValDef ⇒ valDef }
