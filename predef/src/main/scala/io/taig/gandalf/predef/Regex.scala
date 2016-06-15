@@ -4,7 +4,7 @@ import io.taig.gandalf.data.Rule
 import io.taig.gandalf.{ Error, Validation }
 import shapeless._
 
-final class Regex[T <: String] extends Rule {
+class Regex[T <: String] extends Rule {
     override type Input = String
 
     override type Arguments = Error.Expectation[Regex[T]]
@@ -17,5 +17,5 @@ object Regex {
         e: Error[Regex[T]]
     ) = Validation.rule[String, Regex[T]]( _ matches w.value )( Error.expectation[Regex[T]]( _, w.value ) )
 
-    def apply[T <: String]( regex: Witness.Aux[T] ): Regex[T] = new Regex[T]
+    def regex[T <: String]( regex: Witness.Aux[T] ): Regex[T] = new Regex[T]
 }

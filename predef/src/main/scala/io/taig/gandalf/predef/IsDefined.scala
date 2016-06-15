@@ -3,7 +3,7 @@ package io.taig.gandalf.predef
 import io.taig.gandalf.data.Mutation
 import io.taig.gandalf.{ Error, Validation }
 
-final class IsDefined[T] extends Mutation {
+class IsDefined[T] extends Mutation {
     override type Input = Option[T]
 
     override type Output = T
@@ -17,5 +17,5 @@ object IsDefined {
         e: Error[IsDefined[T]]
     ) = Validation.mutation[T, IsDefined[T]]( Predef.identity )( Error.input( _ ) )
 
-    def apply[T]: IsDefined[T] = new IsDefined[T]
+    def isDefined[T]: IsDefined[T] = new IsDefined[T]
 }

@@ -7,7 +7,6 @@ import io.taig.gandalf._
 import io.taig.gandalf.data.{ Action, Obeys }
 import io.taig.gandalf.syntax.aliases._
 
-import scala.reflect.ClassTag
 import scala.reflect.macros.whitebox
 
 object Macro {
@@ -51,22 +50,26 @@ object Macro {
         import c.universe._
         import termNames.CONSTRUCTOR
 
-        val trees = annottees.map( _.tree )
-        //        val Expr( ValDef( _, _, input, _ ) ) = annottees.head
-
-        def generalize( tree: Tree ): Tree = tree match {
+        /**
+         * Find the first Action in the tree and make sure that its input is inferred correctly
+         */
+        def retype( tree: Tree, input: Tree ): Tree = tree match {
             case ident @ Ident( TermName( name ) ) ⇒
-                q"$ident: ${TypeName( name )}"
-            case x ⇒
-                println( showRaw( x ) )
-                x
+                q"$ident: ${TypeName( name )} { type Input = $input }"
+            case _ ⇒
+                println( showRaw( tree ) )
+                tree
         }
+
+        val trees = annottees.map( _.tree )
+        val Expr( ValDef( _, _, input, _ ) ) = annottees.head
 
         val target = c.prefix.tree match {
             case q"new obeys[$validation]" ⇒
                 validation
             case q"new obeys( $validation )" ⇒
-                c.typecheck( q"${generalize( validation )}" )
+                val retyped = retype( validation, input )
+                c.typecheck( q"$retyped" )
             case _ ⇒ c.abort(
                 c.enclosingPosition,
                 "Illegal @obeys format. Can bei either @obeys[Trim <~> Required] or @obeys( Trim ~> Required )"

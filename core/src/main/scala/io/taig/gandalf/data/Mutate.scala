@@ -2,7 +2,7 @@ package io.taig.gandalf.data
 
 import io.taig.gandalf._
 
-class Mutate extends Operation {
+class Mutate extends Operation with Mutation {
     override type Left <: Mutation
 
     override type Right <: Action.Input[Left#Output]

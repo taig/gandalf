@@ -2,49 +2,50 @@ package io.taig.gandalf.tests
 
 import cats.data.NonEmptyList
 import cats.data.Validated._
-import io.taig.gandalf.Error
-import io.taig.gandalf.data.Mutate
 import io.taig.gandalf.implicits._
-import io.taig.gandalf.predef._
+import io.taig.gandalf.predef.IsDefined.isDefined
+import io.taig.gandalf.predef.Matches.matches
+import io.taig.gandalf.predef.Required.required
+import io.taig.gandalf.predef.Trim.trim
 import io.taig.gandalf.predef.messages._
 
 class SyntaxTest extends Suite {
     "<~>" should "allow to transform data" in {
-        ( Trim <~> Required ).validate( "foo" ) shouldBe valid( "foo" )
-        ( Trim <~> Required ).validate( " foo  " ) shouldBe valid( "foo" )
-        ( Trim <~> Required ).validate( "" ) shouldBe invalidNel( "Required" )
-        ( Trim <~> Required ).validate( "   " ) shouldBe invalidNel( "Required" )
+        ( trim <~> required ).validate( "foo" ) shouldBe valid( "foo" )
+        ( trim <~> required ).validate( " foo  " ) shouldBe valid( "foo" )
+        ( trim <~> required ).validate( "" ) shouldBe invalidNel( "Required" )
+        ( trim <~> required ).validate( "   " ) shouldBe invalidNel( "Required" )
     }
 
     it should "be aliased by ~>" in {
-        ( Trim <~> Required ).getClass shouldBe ( Trim ~> Required ).getClass
+        ( trim <~> required ).getClass shouldBe ( trim ~> required ).getClass
     }
 
     "<*>" should "allow to mutate data" in {
-        ( IsDefined[String] <*> Required ).validate( Some( "foo" ) ) shouldBe valid( "foo" )
-        ( IsDefined[String] <*> Required ).validate( Some( "" ) ) shouldBe invalidNel( "Required" )
-        ( IsDefined[String] <*> Required ).validate( None ) shouldBe invalidNel( "IsDefined" )
+        ( isDefined[String] <*> required ).validate( Some( "foo" ) ) shouldBe valid( "foo" )
+        ( isDefined[String] <*> required ).validate( Some( "" ) ) shouldBe invalidNel( "Required" )
+        ( isDefined[String] <*> required ).validate( None ) shouldBe invalidNel( "IsDefined" )
     }
 
     it should "be aliased by ~>" in {
-        ( IsDefined[String] <*> Required ).getClass shouldBe ( IsDefined[String] ~> Required ).getClass
+        ( isDefined[String] <*> required ).getClass shouldBe ( isDefined[String] ~> required ).getClass
     }
 
     "&&" should "mimic the logical AND" in {
-        ( Required && Matches( "foo" ) ).validate( "foo" ) shouldBe valid( "foo" )
-        ( Required && Matches( "foo" ) ).validate( "foobar" ) shouldBe invalidNel( "Matches" )
-        ( Required && Matches( "foo" ) ).validate( "" ) shouldBe invalidNel( "Required" )
+        ( required && matches( "foo" ) ).validate( "foo" ) shouldBe valid( "foo" )
+        ( required && matches( "foo" ) ).validate( "foobar" ) shouldBe invalidNel( "Matches" )
+        ( required && matches( "foo" ) ).validate( "" ) shouldBe invalidNel( "Required" )
     }
 
     "&" should "mimic the bitwise AND" in {
-        ( Required & Matches( "foo" ) ).validate( "foo" ) shouldBe valid( "foo" )
-        ( Required & Matches( "foo" ) ).validate( "foobar" ) shouldBe invalidNel( "Matches" )
-        ( Required & Matches( "foo" ) ).validate( "" ) shouldBe invalid( NonEmptyList( "Required", "Matches" ) )
+        ( required & matches( "foo" ) ).validate( "foo" ) shouldBe valid( "foo" )
+        ( required & matches( "foo" ) ).validate( "foobar" ) shouldBe invalidNel( "Matches" )
+        ( required & matches( "foo" ) ).validate( "" ) shouldBe invalid( NonEmptyList( "Required", "Matches" ) )
     }
 
     "||" should "mimic the logical OR" in {
-        ( Required || Matches( "foo" ) ).validate( "foo" ) shouldBe valid( "foo" )
-        ( Required || Matches( "foo" ) ).validate( "foobar" ) shouldBe valid( "foobar" )
-        ( Required || Matches( "foo" ) ).validate( "" ) shouldBe invalid( NonEmptyList( "Required", "Matches" ) )
+        ( required || matches( "foo" ) ).validate( "foo" ) shouldBe valid( "foo" )
+        ( required || matches( "foo" ) ).validate( "foobar" ) shouldBe valid( "foobar" )
+        ( required || matches( "foo" ) ).validate( "" ) shouldBe invalid( NonEmptyList( "Required", "Matches" ) )
     }
 }

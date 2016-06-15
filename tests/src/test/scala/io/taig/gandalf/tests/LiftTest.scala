@@ -4,7 +4,6 @@ import cats.data.Validated._
 import io.taig.gandalf.predef._
 import io.taig.gandalf.predef.messages._
 import io.taig.gandalf.syntax.all._
-import shapeless.test.illTyped
 
 class LiftTest extends Suite {
     "tryLift" should "perform runtime validations" in {
