@@ -33,13 +33,15 @@ object Macro {
         c.eval( expression ) match {
             case Valid( value ) ⇒
                 c.Expr[A#Input Obeys A](
-                    q"""io.taig.gandalf.data.Obeys[$wtta#Input, $wtta](
+                    q"""
+                    _root_.io.taig.gandalf.data.Obeys[$wtta#Input, $wtta](
                         $expression.getOrElse {
-                            throw new java.lang.IllegalStateException(
+                            throw new _root_.java.lang.IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
                             )
                         }
-                    )"""
+                    )
+                    """
                 )
             case Invalid( errors ) ⇒
                 val messages = errors.map( " - " + _ ).toList.mkString( "\n" )
@@ -60,19 +62,25 @@ object Macro {
          */
         def retype( tree: Tree, input: Tree ): Tree = tree match {
             case ident @ Ident( TermName( name ) ) ⇒
-                q"$ident: ${TypeName( name )} { type Input = $input }"
-            case _ ⇒
-                println( showRaw( tree ) )
-                tree
+                q"""
+                new _root_.io.taig.gandalf.operation.transformation[
+                    $input,
+                    $input,
+                    _root_.io.taig.gandalf.internal.Identity[$input]
+                ]( _root_.io.taig.gandalf.internal.Identity.identity[$input] ).~>($ident)
+                """
+            case Apply( tree, args )  ⇒ Apply( retype( tree, input ), args )
+            case Select( tree, name ) ⇒ Select( retype( tree, input ), name )
+            case _                    ⇒ tree
         }
 
         val trees = annottees.map( _.tree )
         val Expr( ValDef( _, _, input, _ ) ) = annottees.head
 
         val target = c.prefix.tree match {
-            case q"new obeys[$validation]" ⇒
+            case q"new _root_.io.taig.gandalf.obeys[$validation]" ⇒
                 validation
-            case q"new obeys( $validation )" ⇒
+            case q"new _root_.io.taig.gandalf.obeys( $validation )" ⇒
                 val retyped = retype( validation, input )
                 c.typecheck( q"$retyped" )
             case _ ⇒ c.abort(
@@ -81,7 +89,7 @@ object Macro {
             )
         }
 
-        def newType( lhs: Tree ) = tq"io.taig.gandalf.data.Obeys[$lhs, $target]"
+        def newType( lhs: Tree ) = tq"_root_.io.taig.gandalf.data.Obeys[$lhs, $target]"
 
         val valDef = trees
             .collectFirst { case valDef: ValDef ⇒ valDef }

@@ -10,8 +10,10 @@ import io.taig.gandalf.predef.messages._
 
 class AnnotationTest extends Suite {
     "@obeys" should "work with case class fields" in {
-        case class User( @obeys( isDefined[String] ) name:Option[String] )
+        //        case class User( @obeys( trim ~> required ) name:String )
+    }
 
-        User( Some( "taig" ) )
+    it should "infer the input type" in {
+        case class User( @obeys( isDefined ~> trim ~> required ) name:Option[String] )
     }
 }
