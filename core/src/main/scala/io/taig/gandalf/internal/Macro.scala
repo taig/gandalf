@@ -15,6 +15,11 @@ object Macro {
         wtta: c.WeakTypeTag[A]
     ): c.Expr[I Obeys A] = liftAction[A]( c )( value )( v )
 
+    def liftActionRuntime[A <: Action]( c: whitebox.Context )( action: c.Expr[A] )( value: c.Expr[A#Input] )( v: c.Expr[Validation[_, A]] )(
+        implicit
+        wtta: c.WeakTypeTag[A]
+    ): c.Expr[A#Input Obeys A] = liftAction[A]( c )( value )( v )
+
     def liftAction[A <: Action]( c: whitebox.Context )( value: c.Expr[A#Input] )( v: c.Expr[Validation[_, A]] )(
         implicit
         wtta: c.WeakTypeTag[A]
@@ -30,7 +35,7 @@ object Macro {
                 c.Expr[A#Input Obeys A](
                     q"""io.taig.gandalf.data.Obeys[$wtta#Input, $wtta](
                         $expression.getOrElse {
-                            throw new IllegalStateException(
+                            throw new java.lang.IllegalStateException(
                                 "Runtime-validation failed. What the heck are you doing?!"
                             )
                         }
