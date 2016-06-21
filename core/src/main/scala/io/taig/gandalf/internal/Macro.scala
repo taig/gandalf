@@ -67,7 +67,7 @@ object Macro {
                     $input,
                     $input,
                     _root_.io.taig.gandalf.internal.Identity[$input]
-                ]( _root_.io.taig.gandalf.internal.Identity.identity[$input] ).~>($ident)
+                ]( _root_.io.taig.gandalf.internal.Identity.identity[$input] ).~>( $ident )
                 """
             case Apply( tree, args )  ⇒ Apply( retype( tree, input ), args )
             case Select( tree, name ) ⇒ Select( retype( tree, input ), name )
@@ -78,9 +78,9 @@ object Macro {
         val Expr( ValDef( _, _, input, _ ) ) = annottees.head
 
         val target = c.prefix.tree match {
-            case q"new _root_.io.taig.gandalf.obeys[$validation]" ⇒
+            case q"new obeys[$validation]" ⇒
                 validation
-            case q"new _root_.io.taig.gandalf.obeys( $validation )" ⇒
+            case q"new obeys( $validation )" ⇒
                 val retyped = retype( validation, input )
                 c.typecheck( q"$retyped" )
             case _ ⇒ c.abort(
