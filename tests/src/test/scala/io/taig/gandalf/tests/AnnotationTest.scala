@@ -18,9 +18,9 @@ class AnnotationTest extends Suite {
     }
 
     it should "infer the input type" in {
-        case class User( @obeys( isDefined[Option[String]] ~> trim ) name:Option[String] )
+        case class User( @obeys( isDefined ~> trim ~> required ) name:Option[String] )
 
-        User( Some( "foo" ) )
+        //        User( valueToLifted( Some( "foo" ) ) )
         //        assertTypeError( """User( Some( "" ) )""" )
         //        assertTypeError( """User( Some( "   " ) )""" )
         //        assertTypeError( """User( None )""" )
