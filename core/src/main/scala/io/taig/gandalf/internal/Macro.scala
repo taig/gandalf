@@ -61,17 +61,18 @@ object Macro {
          * Find the first Action in the tree and make sure that its input is inferred correctly
          */
         def retype( tree: Tree, input: Tree ): Tree = tree match {
-            case ident @ Ident( TermName( name ) ) ⇒
-                q"""
+            case Apply( tree, args )  ⇒ Apply( retype( tree, input ), args )
+            case Select( tree, name ) ⇒ Select( retype( tree, input ), name )
+            case ident ⇒
+                val x = q"""
                 new _root_.io.taig.gandalf.operation.transformation[
                     $input,
                     $input,
                     _root_.io.taig.gandalf.internal.Identity[$input]
                 ]( _root_.io.taig.gandalf.internal.Identity.identity[$input] ).~>( $ident )
                 """
-            case Apply( tree, args )  ⇒ Apply( retype( tree, input ), args )
-            case Select( tree, name ) ⇒ Select( retype( tree, input ), name )
-            case _                    ⇒ tree
+                println( "Stuff: " + show( x ) )
+                x
         }
 
         val trees = annottees.map( _.tree )
@@ -82,6 +83,7 @@ object Macro {
                 validation
             case q"new obeys( $validation )" ⇒
                 val retyped = retype( validation, input )
+                println( "Complete: " + show( retyped ) )
                 c.typecheck( q"$retyped" )
             case _ ⇒ c.abort(
                 c.enclosingPosition,
