@@ -65,11 +65,7 @@ object Macro {
             case Select( tree, name ) ⇒ Select( retype( tree, input ), name )
             case ident ⇒
                 q"""
-                new _root_.io.taig.gandalf.operation.transformation[
-                    $input,
-                    $input,
-                    _root_.io.taig.gandalf.internal.Identity[$input]
-                ]( _root_.io.taig.gandalf.internal.Identity.identity[$input] ).~>( $ident )
+                new _root_.io.taig.gandalf.internal.DslInferenceHelper[$input].infer( $ident )
                 """
         }
 
