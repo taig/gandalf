@@ -57,18 +57,6 @@ object Macro {
         import c.universe._
         import termNames.CONSTRUCTOR
 
-        /**
-         * Find the first Action in the tree and make sure that its input is inferred correctly
-         */
-        def retype( tree: Tree, input: Tree ): Tree = tree match {
-            case Apply( tree, args )  ⇒ Apply( retype( tree, input ), args )
-            case Select( tree, name ) ⇒ Select( retype( tree, input ), name )
-            case ident ⇒
-                q"""
-                new _root_.io.taig.gandalf.internal.DslInferenceHelper[$input].infer( $ident )
-                """
-        }
-
         val trees = annottees.map( _.tree )
         val Expr( ValDef( _, _, input, _ ) ) = annottees.head
 
@@ -76,7 +64,7 @@ object Macro {
             case q"new obeys[$validation]" ⇒
                 validation
             case q"new obeys( $validation )" ⇒
-                val retyped = retype( validation, input )
+                val retyped = retype( c )( validation, input )
                 c.typecheck( q"$retyped" )
             case _ ⇒ c.abort(
                 c.enclosingPosition,
@@ -121,5 +109,21 @@ object Macro {
         }
 
         c.Expr( ClassDef( mods, name, tparams, Template( parents, self, newBody ) ) )
+    }
+
+    /**
+     * Find the first Action in the tree and make sure that its input is inferred correctly
+     */
+    private def retype( c: whitebox.Context )( tree: c.Tree, input: c.Tree ): c.Tree = {
+        import c.universe._
+
+        tree match {
+            case Apply( tree, args )  ⇒ Apply( retype( c )( tree, input ), args )
+            case Select( tree, name ) ⇒ Select( retype( c )( tree, input ), name )
+            case ident ⇒
+                q"""
+                new _root_.io.taig.gandalf.internal.DslInferenceHelper[$input].infer( $ident )
+                """
+        }
     }
 }

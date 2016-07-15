@@ -1,6 +1,8 @@
 package io.taig.gandalf.tests
 
 import cats.data.Validated._
+import io.taig.gandalf._
+import io.taig.gandalf.predef.IsDefined._
 import io.taig.gandalf.predef._
 import io.taig.gandalf.predef.Required.required
 import io.taig.gandalf.predef.Trim.trim
@@ -18,7 +20,7 @@ class LiftTest extends Suite {
         tryLift[Trim <~> Required]( "" ) shouldBe invalidNel( "Required" )
     }
 
-    it should "work support the DSL" in {
+    it should "support the DSL" in {
         tryLift( required )( "foobar" ) shouldBe valid( "foobar" )
         tryLift( required )( "" ) shouldBe invalidNel( "Required" )
 
@@ -26,6 +28,10 @@ class LiftTest extends Suite {
         tryLift( trim ~> required )( "  foobar   " ) shouldBe valid( "foobar" )
         tryLift( trim ~> required )( "    " ) shouldBe invalidNel( "Required" )
         tryLift( trim ~> required )( "" ) shouldBe invalidNel( "Required" )
+    }
+
+    it should "infer the input type" in {
+        //        tryLift[Option[String]]( Some( "foobar" ) ).into( isDefined ~> trim ~> required ) shouldBe valid( "foobar" )
     }
 
     "lift" should "perform compile time validations" in {
@@ -38,7 +44,7 @@ class LiftTest extends Suite {
         assertTypeError( """lift[Trim <~> Required]( "" )""" )
     }
 
-    it should "work support the DSL" in {
+    it should "support the DSL" in {
         lift( required )( "foobar" ).value shouldBe "foobar"
         assertTypeError( """lift( required )( "" )""" )
 
@@ -46,5 +52,9 @@ class LiftTest extends Suite {
         lift( trim ~> required )( "   foobar    " ).value shouldBe "foobar"
         assertTypeError( """lift( trim ~> required )( "   " )""" )
         assertTypeError( """lift( trim ~> required )( "" )""" )
+    }
+
+    it should "infer the input type" in {
+        //        lift( isDefined ~> trim ~> required )( Some( "foobar" ) ) shouldBe valid( "foobar" )
     }
 }
