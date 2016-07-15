@@ -2,7 +2,7 @@ lazy val gandalf = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
         aggregate in test := false,
-        name := "Gandalf",
+        name := "gandalf",
         organization := "io.taig",
         publish := (),
         publishArtifact := false,

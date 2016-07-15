@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.5
+
+_2016-07-15_
+
+ * Upgrade to cats 0.6.1
+ * Upgrade to sbt-scalariform 1.7.0
+ * Upgrade to sbt-sonatype 1.1.0
+ * Upgrade to sbt-android 1.6.7
+
 ## 0.3.4
 
 _2016-06-21_
