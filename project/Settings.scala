@@ -11,7 +11,7 @@ object Settings {
             Nil
         ),
         githubProject := "gandalf",
-        name := s"gandalf ${name.value}",
+        name := s"gandalf-${name.value}",
         organization := "io.taig",
         resolvers += Resolver.sonatypeRepo( "snapshots" ),
         scalacOptions ++=
