@@ -36,8 +36,8 @@ lazy val android = project
             "io.taig.android" %% "viewvalue-core" % "1.2.6" ::
             Nil,
         minSdkVersion := "1",
-        platformTarget := "android-23",
-        targetSdkVersion := "23",
+        platformTarget := "android-24",
+        targetSdkVersion := "24",
         typedResources := false
     )
     .dependsOn( core, predef, report )
