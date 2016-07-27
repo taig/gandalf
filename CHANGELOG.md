@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.6
+
+_2016-07-27_
+
+ * Upgrade to viewvalue 1.2.6
+ * Upgrade to Android platform 24
+ * Upgrade to sbt-android 1.6.9
+ * Upgrade to sbt 0.13.12
+
 ## 0.3.5
 
 _2016-07-15_
