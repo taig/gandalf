@@ -2,14 +2,11 @@ lazy val gandalf = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
         aggregate in test := false,
-        name := "Gandalf",
-        organization := "io.taig",
-        publish := (),
-        publishArtifact := false,
-        publishLocal := (),
+        name := "gandalf",
         test <<= test in tests in Test
     )
     .aggregate( core, predef )
+    .dependsOn( core, predef )
 
 lazy val core = project
     .settings( Settings.common )
