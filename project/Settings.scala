@@ -1,6 +1,6 @@
 import sbt._
 import sbt.Keys._
-import io.taig.sbt.sonatype.Plugin.autoImport._
+import io.taig.sbt.sonatype.SonatypeHouserulePlugin.autoImport._
 
 object Settings {
     val common = Def.settings(
