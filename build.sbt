@@ -17,8 +17,8 @@ lazy val core = project
         addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ),
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.2" ::
-            "org.typelevel" %% "cats-core" % "0.6.0" ::
-            "org.typelevel" %% "cats-macros" % "0.6.0" ::
+            "org.typelevel" %% "cats-core" % "0.6.1" ::
+            "org.typelevel" %% "cats-macros" % "0.6.1" ::
             Nil
     )
 
