@@ -6,7 +6,7 @@ import cats.syntax.semigroup._
 import io.taig.gandalf._
 import io.taig.gandalf.syntax.aliases._
 
-class Or extends Operation {
+class Or extends Operator {
     override type Left <: Rule
 
     override type Right <: Rule.Aux[Left#Output]

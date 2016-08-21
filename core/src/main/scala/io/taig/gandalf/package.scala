@@ -1,22 +1,31 @@
 package io.taig
 
-import io.taig.gandalf.data.{ Action, Obeys }
-import io.taig.gandalf.internal.Macro
-
-import scala.language.experimental.macros
+import cats.data._
 
 package object gandalf {
-    def lift[A <: Action]( value: A#Input )(
-        implicit
-        v: Validation[_, A]
-    ): A#Input Obeys A = macro Macro.liftAction[A]
+    type Result[V <: Validatable] = ValidatedNel[String, V#Output]
 
-    def lift[A <: Action]( action: A )( value: A#Input )(
-        implicit
-        v: Validation[_, A]
-    ): A#Input Obeys A = macro Macro.liftActionRuntime[A]
+    class &&[L <: Rule, R <: Rule.Aux[L#Output]] extends LazyAnd {
+        override final type Left = L
 
-    def tryLift[A <: Action]( value: A#Input )( implicit v: Validation[_, A] ) = v.validate( value )
+        override final type Right = R
+    }
 
-    def tryLift[A <: Action]( action: A )( value: A#Input )( implicit v: Validation[_, A] ) = v.validate( value )
+    class &[L <: Rule, R <: Rule.Aux[L#Output]] extends EagerAnd {
+        override final type Left = L
+
+        override final type Right = R
+    }
+
+    class ||[L <: Rule, R <: Rule.Aux[L#Output]] extends Or {
+        override final type Left = L
+
+        override final type Right = R
+    }
+
+    class ~>[L <: Mutation, R <: Validatable.Input[L#Output]] extends Mutate {
+        override final type Left = L
+
+        override final type Right = R
+    }
 }

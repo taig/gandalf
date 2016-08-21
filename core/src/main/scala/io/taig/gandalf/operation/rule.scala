@@ -1,12 +1,21 @@
 package io.taig.gandalf.operation
 
-import io.taig.gandalf.data.{ EagerAnd, LazyAnd, Or, Rule }
-import io.taig.gandalf.syntax.aliases._
+import io.taig.gandalf.{ EagerAnd, LazyAnd, Rule }
 
-final class rule[T, L <: Rule.Aux[T]]( left: L ) {
-    def &[R <: Rule.Aux[T]]( right: R ): EagerAnd.Aux[L, R] = new &[L, R]
+final class rule[L <: Rule] {
+    def &&[R <: Rule.Aux[L#Output]]( right: R ): LazyAnd.Aux[L, R] = {
+        new LazyAnd {
+            override final type Left = L
 
-    def &&[R <: Rule.Aux[T]]( right: R ): LazyAnd.Aux[L, R] = new &&[L, R]
+            override final type Right = R
+        }
+    }
 
-    def ||[R <: Rule.Aux[T]]( right: R ): Or.Aux[L, R] = new ||[L, R]
+    def &[R <: Rule.Aux[L#Output]]( right: R ): EagerAnd.Aux[L, R] = {
+        new EagerAnd {
+            override type Left = L
+
+            override type Right = R
+        }
+    }
 }

@@ -3,7 +3,7 @@ package io.taig.gandalf.data
 import io.taig.gandalf._
 import io.taig.gandalf.syntax.aliases._
 
-class LazyAnd extends Operation {
+class LazyAnd extends Operator {
     override type Left <: Rule
 
     override type Right <: Rule.Aux[Left#Output]

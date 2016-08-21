@@ -1,66 +1,63 @@
 package io.taig.gandalf
 
-import cats.data.NonEmptyList
 import cats.data.Validated._
-import io.taig.gandalf.data._
-import io.taig.gandalf.syntax.aliases._
+import cats.data._
 
-trait Validation[O, -A <: Action.Output[O]] {
-    def validate( input: A#Input ): Result[O]
+sealed trait Validation[V <: Validatable] {
+    def validate( input: V#Input ): Result[V]
 }
 
 object Validation {
     @inline
-    def apply[O, A <: Action.Output[O]]( implicit v: Validation[O, A] ): Validation[O, A] = v
+    def apply[V <: Validatable](
+        implicit
+        v: Validation[V]
+    ): Validation[V] = v
 
-    def instance[O, A <: Action.Output[O]]( f: A#Input ⇒ Result[O] ): Validation[O, A] = {
-        new Validation[O, A] {
-            override def validate( input: A#Input ) = f( input )
+    private def instance[V <: Validatable](
+        f: V#Input ⇒ Result[V]
+    ): Validation[V] = {
+        new Validation[V] {
+            override def validate( input: V#Input ) = f( input )
         }
     }
 
-    def mutation[O, M <: Mutation.Output[O]]( f: M#Input ⇒ Option[O] )( args: M#Input ⇒ M#Arguments )(
+    def mutation[M <: Mutation]( f: M#Input ⇒ Option[M#Output] )(
+        g: M#Input ⇒ M#Arguments
+    )(
         implicit
         e: Error[M]
-    ): Validation[O, M] = {
-        new Validation[O, M] {
-            override def validate( input: M#Input ) = f( input ) match {
-                case Some( output ) ⇒ valid( output )
-                case None           ⇒ invalid( e.error( args( input ) ) )
-            }
-        }
+    ): Validation[M] = instance { input ⇒
+        f( input ).fold[Result[M]]( invalid( e.show( g( input ) ) ) )( valid )
     }
 
-    def operation[P, O <: Operation.Output[P]](
-        f: O#Input ⇒ Result[P]
-    )(
-        args: ( O#Input, NonEmptyList[String] ) ⇒ Error.Forward[O]
+    def operation[O <: Operator]( f: O#Input ⇒ Result[O] )(
+        g: ( O#Input, NonEmptyList[String] ) ⇒ O#Arguments
     )(
         implicit
         e: Error[O]
-    ): Validation[P, O] = {
-        new Validation[P, O] {
-            override def validate( input: O#Input ): Result[P] = {
-                f( input ).leftMap( errors ⇒ e.error( args( input, errors ) ) )
-            }
-        }
+    ): Validation[O] = instance { input ⇒
+        f( input ).leftMap( errors ⇒ e.show( g( input, errors ) ) )
     }
 
-    def rule[T, R <: Rule.Aux[T]]( f: T ⇒ Boolean )( args: T ⇒ R#Arguments )(
+    /**
+     * Construct a Rule Validation definition
+     *
+     * @param f Check the input value and return `true` if validations passes
+     * @param g Prepare values for Error rendering, in most cases this may
+     *          simply be the `identity` function
+     */
+    def rule[R <: Rule]( f: R#Input ⇒ Boolean )( g: R#Input ⇒ R#Arguments )(
         implicit
         e: Error[R]
-    ): Validation[T, R] = {
-        new Validation[T, R] {
-            override def validate( input: T ) = f( input ) match {
-                case true  ⇒ valid( input )
-                case false ⇒ invalid( e.error( args( input ) ) )
-            }
+    ): Validation[R] = instance { input ⇒
+        f( input ) match {
+            case true  ⇒ valid( input )
+            case false ⇒ invalid( e.show( g( input ) ) )
         }
     }
 
-    def transformation[O, T <: Transformation.Output[O]]( f: T#Input ⇒ O ): Validation[O, T] = {
-        new Validation[O, T] {
-            override def validate( input: T#Input ) = valid( f( input ) )
-        }
-    }
+    def transformation[M <: Mutation](
+        f: M#Input ⇒ M#Output
+    ): Validation[M] = instance { input ⇒ valid( f( input ) ) }
 }

@@ -1,16 +1,13 @@
 package io.taig.gandalf.syntax
 
-import io.taig.gandalf._
-import io.taig.gandalf.data.Action
+import io.taig.gandalf.{ Validatable, operation }
 
 import scala.language.implicitConversions
 
 trait validation {
-    implicit def validationSyntax[I, O, A <: Action.Aux[I, O]](
-        action: A with Action.Aux[I, O]
-    ): operation.validation[I, O, A] = {
-        new operation.validation[I, O, A]( action )
-    }
+    implicit def validationSyntax[V <: Validatable](
+        action: V
+    ): operation.validation[V] = new operation.validation[V]
 }
 
 object validation extends validation

@@ -18,7 +18,7 @@ trait dsl {
         new operation.rule[T, R]( rule )
     }
 
-    implicit def transformationSyntax[I, O, T <: Transformation.Aux[I, O]](
+    implicit def transformationSyntax[I, O, T <: Mutation.Aux[I, O]](
         transformation: T with Transformation.Aux[I, O]
     ): operation.transformation[I, O, T] = {
         new operation.transformation[I, O, T]( transformation )

@@ -10,17 +10,17 @@ import io.taig.gandalf.syntax.aliases._
 import scala.reflect.macros.whitebox
 
 object Macro {
-    def liftInputAction[I, A <: Action.Input[I]]( c: whitebox.Context )( value: c.Expr[I] )( v: c.Expr[Validation[_, A]] )(
+    def liftInputAction[I, A <: Validation.Input[I]]( c: whitebox.Context )( value: c.Expr[I] )( v: c.Expr[Validation[_, A]] )(
         implicit
         wtta: c.WeakTypeTag[A]
     ): c.Expr[I Obeys A] = liftAction[A]( c )( value )( v )
 
-    def liftActionRuntime[A <: Action]( c: whitebox.Context )( action: c.Expr[A] )( value: c.Expr[A#Input] )( v: c.Expr[Validation[_, A]] )(
+    def liftActionRuntime[A <: Validation]( c: whitebox.Context )( action: c.Expr[A] )( value: c.Expr[A#Input] )( v: c.Expr[Validation[_, A]] )(
         implicit
         wtta: c.WeakTypeTag[A]
     ): c.Expr[A#Input Obeys A] = liftAction[A]( c )( value )( v )
 
-    def liftAction[A <: Action]( c: whitebox.Context )( value: c.Expr[A#Input] )( v: c.Expr[Validation[_, A]] )(
+    def liftAction[A <: Validation]( c: whitebox.Context )( value: c.Expr[A#Input] )( v: c.Expr[Validation[_, A]] )(
         implicit
         wtta: c.WeakTypeTag[A]
     ): c.Expr[A#Input Obeys A] = {
@@ -112,7 +112,7 @@ object Macro {
     }
 
     /**
-     * Find the first Action in the tree and make sure that its input is inferred correctly
+     * Find the first Validation in the tree and make sure that its input is inferred correctly
      */
     private def retype( c: whitebox.Context )( tree: c.Tree, input: c.Tree ): c.Tree = {
         import c.universe._

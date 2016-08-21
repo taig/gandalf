@@ -1,70 +1,42 @@
 package io.taig.gandalf
 
-import cats.data.NonEmptyList
-import io.taig.gandalf.data.Action
-import shapeless.HNil
-import shapeless.record._
-import shapeless.syntax.singleton._
+import cats.data._
 
-trait Error[-A <: Arguments] {
-    def error( arguments: A#Arguments ): NonEmptyList[String]
+import scala.reflect._
+
+trait Error[-V <: Validatable] {
+    def show( values: V#Arguments ): NonEmptyList[String]
 }
 
-object Error {
-    /**
-     * Error representation that only provides the input value
-     *
-     * Intended to be primarily used with Rules.
-     */
-    type Input[A <: Action with Arguments] = Record.`"input" -> A#Input`.T
-
-    /**
-     * Error representation that only provides the input value
-     *
-     * Intended to be primarily used with Rules.
-     */
-    def input[A <: Action with Arguments]( input: A#Input ): Input[A] = "input" ->> input :: HNil
-
-    /**
-     * Error representation that provides the input and an expected value
-     *
-     * Intended to be primarily used with Mutations.
-     */
-    type Expectation[A <: Action with Arguments] = Record.`"input" -> A#Input, "expected" -> A#Output`.T
-
-    /**
-     * Error representation that provides the input and an expected value
-     *
-     * Intended to be primarily used with Mutations.
-     */
-    def expectation[A <: Action with Arguments]( input: A#Input, expected: A#Output ): Expectation[A] = {
-        "input" ->> input :: "expected" ->> expected :: HNil
+object Error extends Error0 {
+    implicit def errorOperator[O <: Operator]: Error[O] = new Error[O] {
+        override def show( arguments: O#Arguments ) = arguments._2
     }
+}
 
+trait Error0 {
     /**
-     * Error representation that provides the input and accumulated errors
-     *
-     * Intended to be primarily used with Operations.
+     * Summon a type class instance
      */
-    type Forward[A <: Action with Arguments] = Record.`"input" -> A#Input, "errors" -> NonEmptyList[String]`.T
-
-    /**
-     * Error representation that provides the input and accumulated errors
-     *
-     * Intended to be primarily used with Operations.
-     */
-    def forward[A <: Action with Arguments]( input: A#Input, errors: NonEmptyList[String] ): Forward[A] = {
-        "input" ->> input :: "errors" ->> errors :: HNil
-    }
-
     @inline
-    def apply[A <: Arguments: Error]: Error[A] = implicitly[Error[A]]
+    def apply[V <: Validatable]( implicit e: Error[V] ): Error[V] = e
 
-    def instance[A <: Arguments]( message: String ): Error[A] = new Error[A] {
-        override def error( arguments: A#Arguments ) = NonEmptyList( message )
+    /**
+     * Construct a type class instance
+     */
+    def instance[V <: Validatable]( f: V#Arguments ⇒ String ): Error[V] = {
+        new Error[V] {
+            override def show( values: V#Arguments ) = {
+                NonEmptyList( f( values ) )
+            }
+        }
     }
 
-    def instance[A <: Arguments]( f: A#Arguments ⇒ String ): Error[A] = new Error[A] {
-        override def error( arguments: A#Arguments ) = NonEmptyList( f( arguments ) )
+    /**
+     * Default error representation that simply renders the Actionable's name as
+     * error message
+     */
+    implicit def errorValidatable[V <: Validatable: ClassTag] = instance[V] { _ ⇒
+        classTag[V].runtimeClass.getSimpleName.replace( "$", "" )
     }
 }

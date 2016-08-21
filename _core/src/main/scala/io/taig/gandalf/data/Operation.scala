@@ -4,11 +4,11 @@ import io.taig.gandalf._
 import shapeless.record._
 
 trait Operation
-        extends Action
+        extends Validation
         with Arguments {
-    type Left <: Action
+    type Left <: Validation
 
-    type Right <: Action.Input[Left#Output]
+    type Right <: Validation.Input[Left#Output]
 
     override final type Input = Left#Input
 
