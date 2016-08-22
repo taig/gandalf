@@ -9,20 +9,20 @@ class RawTest extends Suite {
     it should "be available for Errors" in {
         rule.required.validate( "" ) match {
             case Valid( _ )       ⇒ fail()
-            case Invalid( error ) ⇒ error.raw shouldBe NonEmptyList( ( "required", Nil ) )
+            case Invalid( error ) ⇒ error.raw shouldBe NonEmptyList.of( ( "required", Nil ) )
         }
     }
 
     it should "be available for Validations" in {
-        rule.required.validate( "" ).raw shouldBe Invalid( NonEmptyList( ( "required", Nil ) ) )
+        rule.required.validate( "" ).raw shouldBe Invalid( NonEmptyList.of( ( "required", Nil ) ) )
     }
 
     it should "be available for Policies" in {
         ( rule.required ~> mutation.parse ).validate( "asdf" ).raw shouldBe
-            Invalid( NonEmptyList( ( "parse", Nil ) ) )
+            Invalid( NonEmptyList.of( ( "parse", Nil ) ) )
 
         ( transformation.trim ~> rule.required ).validate( "  " ).raw shouldBe
-            Invalid( NonEmptyList( ( "required", Nil ) ) )
+            Invalid( NonEmptyList.of( ( "required", Nil ) ) )
     }
 
     it should "be available for ReportableErrors" in {

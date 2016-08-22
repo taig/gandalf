@@ -2,7 +2,7 @@ package io.taig.gandalf.android.ops
 
 import android.view.View
 import cats.data.Validated.{ Invalid, Valid }
-import cats.data.{ NonEmptyList, OneAnd, Validated }
+import cats.data.{ NonEmptyList, Validated }
 import io.taig.android.viewvalue.syntax.error._
 import io.taig.android.viewvalue.syntax.value._
 import io.taig.android.viewvalue.{ Extraction, Injection }
@@ -21,7 +21,7 @@ class validation[I, O, V <: HList, E]( validation: Validation.Aux[I, O, V, E] ) 
             case valid @ Valid( _ ) ⇒
                 view.error = None
                 valid
-            case invalid @ Invalid( OneAnd( error, _ ) ) ⇒
+            case invalid @ Invalid( NonEmptyList( error, _ ) ) ⇒
                 view.error = Some( error )
                 invalid
         }

@@ -15,7 +15,7 @@ trait Report[-I, O] {
 object Report {
     def instance[N <: String, A <: HList, O]( f: A ⇒ O ): Report[Error[N, A], O] = {
         new Report[Error[N, A], O] {
-            override def report( error: Error[N, A] ) = NonEmptyList( f( error.arguments ) )
+            override def report( error: Error[N, A] ) = NonEmptyList.of( f( error.arguments ) )
         }
     }
 
@@ -53,7 +53,7 @@ object Report {
     ): Report[C, O] = new Report[C, O] {
         override def report( computation: C ) = {
             val list = computation.foldLeft( List.empty[O] )( collect )
-            NonEmptyList( list.head, list.tail )
+            NonEmptyList.of( list.head, list.tail: _* )
         }
     }
 
@@ -64,14 +64,14 @@ object Report {
             implicit
             r: Report[Error[N, A], P]
         ): Case.Aux[List[P], Validated[Error[N, A], O], List[P]] = at { ( errors, validated ) ⇒
-            import cats.std.list._
-            errors ++ validated.leftMap( _.report.unwrap ).swap.getOrElse( Nil )
+            import cats.instances.list._
+            errors ++ validated.leftMap( _.report.toList ).swap.getOrElse( Nil )
         }
 
         implicit def reportableError[N <: String, O, A <: HList, P]: Case.Aux[List[P], Validated[ReportableError[N, A, P], O], List[P]] = {
             at { ( errors, validated ) ⇒
-                import cats.std.list._
-                errors ++ validated.leftMap( _.report.unwrap ).swap.getOrElse( Nil )
+                import cats.instances.list._
+                errors ++ validated.leftMap( _.report.toList ).swap.getOrElse( Nil )
             }
         }
 

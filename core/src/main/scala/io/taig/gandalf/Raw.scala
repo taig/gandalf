@@ -19,7 +19,7 @@ trait Raw[-T] {
 
 object Raw {
     implicit def rawError[N <: String, A <: HList] = new Raw[Error[N, A]] {
-        override def raw( error: Error[N, A] ) = NonEmptyList( ( error.name, error.arguments.runtimeList ) )
+        override def raw( error: Error[N, A] ) = NonEmptyList.of( ( error.name, error.arguments.runtimeList ) )
     }
 
     implicit def rawComputation[C <: HList](
@@ -40,8 +40,8 @@ object Raw {
             r: Raw[E]
         ): Case.Aux[List[( String, List[Any] )], Validated[E, A], List[( String, List[Any] )]] = {
             at { ( errors, validated ) ⇒
-                import cats.std.list._
-                errors ++ validated.leftMap( e ⇒ r.raw( e ).unwrap ).swap.getOrElse( Nil )
+                import cats.instances.list._
+                errors ++ validated.leftMap( e ⇒ r.raw( e ).toList ).swap.getOrElse( Nil )
             }
         }
 

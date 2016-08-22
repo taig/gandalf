@@ -16,36 +16,36 @@ class ReportTest extends Suite {
 
         rule.required.validate( "" ) match {
             case Valid( _ )       ⇒ fail()
-            case Invalid( error ) ⇒ error.report shouldBe NonEmptyList( "Pflichtfeld" )
+            case Invalid( error ) ⇒ error.report shouldBe NonEmptyList.of( "Pflichtfeld" )
         }
 
         mutation.parse.validate( "foo" ) match {
             case Valid( _ )       ⇒ fail()
-            case Invalid( error ) ⇒ error.report shouldBe NonEmptyList( "Keine gültige Zahl" )
+            case Invalid( error ) ⇒ error.report shouldBe NonEmptyList.of( "Keine gültige Zahl" )
         }
     }
 
     it should "be available for Terms" in {
         import report._
 
-        rule.required.validate( "" ).report shouldBe Invalid( NonEmptyList( "Pflichtfeld" ) )
+        rule.required.validate( "" ).report shouldBe Invalid( NonEmptyList.of( "Pflichtfeld" ) )
 
-        mutation.parse.validate( "foo" ).report shouldBe Invalid( NonEmptyList( "Keine gültige Zahl" ) )
+        mutation.parse.validate( "foo" ).report shouldBe Invalid( NonEmptyList.of( "Keine gültige Zahl" ) )
     }
 
     it should "be available for Policies" in {
         import report._
 
         Policy( rule.required :: HNil ).validate( "" ).report[String] shouldBe
-            Invalid( NonEmptyList( "Pflichtfeld" ) )
+            Invalid( NonEmptyList.of( "Pflichtfeld" ) )
         Policy( rule.min( 6 ) :: HNil ).validate( "" ).report[String] shouldBe
-            Invalid( NonEmptyList( "Mindestens 6 Zeichen" ) )
+            Invalid( NonEmptyList.of( "Mindestens 6 Zeichen" ) )
 
         ( rule.required & rule.min( 6 ) ).validate( "foo" ).report[String] shouldBe
-            Invalid( NonEmptyList( "Mindestens 6 Zeichen" ) )
+            Invalid( NonEmptyList.of( "Mindestens 6 Zeichen" ) )
 
         ( transformation.trim ~> rule.min( 6 ) ).validate( "foo     " ).report[String] shouldBe
-            Invalid( NonEmptyList( "Mindestens 6 Zeichen" ) )
+            Invalid( NonEmptyList.of( "Mindestens 6 Zeichen" ) )
     }
 
     it should "be possible to attach reports to Terms" in {
@@ -57,16 +57,16 @@ class ReportTest extends Suite {
         import report._
 
         Policy( rule.required.as0( "yolo" ) :: HNil ).validate( "" ).report[String] shouldBe
-            Invalid( NonEmptyList( "yolo" ) )
+            Invalid( NonEmptyList.of( "yolo" ) )
 
         ( rule.required & rule.required.as0( "yolo" ) ).validate( "" ).report[String] shouldBe
-            Invalid( NonEmptyList( "Pflichtfeld", "yolo" ) )
+            Invalid( NonEmptyList.of( "Pflichtfeld", "yolo" ) )
     }
 
     it should "be possible to report a ReportableError" in {
         rule.required.as0( "yolo" ).validate( "" ) match {
             case Valid( _ )       ⇒ fail()
-            case Invalid( error ) ⇒ error.report shouldBe NonEmptyList( "yolo" )
+            case Invalid( error ) ⇒ error.report shouldBe NonEmptyList.of( "yolo" )
         }
     }
 }
