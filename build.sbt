@@ -46,7 +46,7 @@ lazy val tests = project
     .settings( Settings.common )
     .settings(
         libraryDependencies ++=
-            "org.scalatest" %% "scalatest" % "3.0.0-M15" ::
+            "org.scalatest" %% "scalatest" % "3.0.0" ::
             Nil
     )
     .dependsOn( core, predef, report )
