@@ -1,21 +1,24 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.{ Arguments, Input, Rule, Validation }
+import io.taig.gandalf._
 
 trait iterable {
-    class isEmpty extends Rule with Input[Iterable[_]] with Arguments.Input
+    sealed class nonEmpty[T] extends Rule with Input[Iterable[T]] with Arguments.Input {
+        override def check( input: Iterable[T] ) = input.nonEmpty
 
-    object isEmpty extends isEmpty {
-        implicit val validation = {
-            Validation.rule[isEmpty.type]( _.isEmpty )( identity )
-        }
+        override def arguments( input: Iterable[T] ) = input
     }
 
-    class nonEmpty extends Rule with Input[Iterable[_]] with Arguments.Input
+    object nonEmpty {
+        @inline
+        def apply[T]: nonEmpty[T] = new nonEmpty[T]
 
-    object nonEmpty extends nonEmpty {
-        implicit val validation = {
-            Validation.rule[nonEmpty.type]( _.nonEmpty )( identity )
+        implicit def validation[T]: Validation[nonEmpty[T]] = {
+            new Validation[nonEmpty[T]] {
+                override def validate( input: nonEmpty[T]#Input ) = {
+                    nonEmpty[T].apply( input )
+                }
+            }
         }
     }
 }

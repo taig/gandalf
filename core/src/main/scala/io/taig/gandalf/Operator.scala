@@ -1,6 +1,6 @@
 package io.taig.gandalf
 
-import cats.data._
+import cats.data.NonEmptyList
 
 trait Operator extends Validatable {
     type Left <: Validatable
@@ -11,13 +11,5 @@ trait Operator extends Validatable {
 
     override type Output = Right#Output
 
-    override type Arguments = ( Left#Input, NonEmptyList[String] )
-}
-
-object Operator {
-    type Left[L <: Validatable] = Operator { type Left = L }
-
-    type Right[R <: Validatable] = Operator { type Right = R }
-
-    type Aux[L <: Validatable, R <: Validatable] = Operator { type Left = L; type Right = R }
+    override type Arguments = ( Input, NonEmptyList[String] )
 }

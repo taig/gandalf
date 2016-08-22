@@ -22,6 +22,9 @@ lazy val core = project
 
 lazy val predef = project
     .settings( Settings.common )
+    .settings(
+        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
+    )
     .dependsOn( core )
 
 //lazy val android = project

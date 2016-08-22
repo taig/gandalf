@@ -5,7 +5,7 @@ import cats.data._
 import scala.reflect._
 
 trait Error[-V <: Validatable] {
-    def show( values: V#Arguments ): NonEmptyList[String]
+    def show( arguments: V#Arguments ): NonEmptyList[String]
 }
 
 object Error extends Error0 {
@@ -32,11 +32,13 @@ trait Error0 {
         }
     }
 
+    def identifier[V <: Validatable: ClassTag] = instance[V] { _ ⇒
+        classTag[V].runtimeClass.getSimpleName.replace( "$", "" )
+    }
+
     /**
      * Default error representation that simply renders the Actionable's name as
      * error message
      */
-    implicit def errorValidatable[V <: Validatable: ClassTag] = instance[V] { _ ⇒
-        classTag[V].runtimeClass.getSimpleName.replace( "$", "" )
-    }
+    implicit def errorValidatable[V <: Validatable: ClassTag] = identifier[V]
 }

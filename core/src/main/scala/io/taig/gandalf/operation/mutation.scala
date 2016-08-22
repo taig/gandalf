@@ -1,13 +1,13 @@
 package io.taig.gandalf.operation
 
-import io.taig.gandalf.{ Mutate, Mutation, Validatable }
+import io.taig.gandalf._
 
-final class mutation[L <: Mutation] {
-    def ~>[R <: Validatable.Input[L#Output]]( right: R ): Mutate.Aux[L, R] = {
+final case class mutation[L <: Mutation]( left: L ) {
+    def ~>[R <: Validatable.Input[L#Output]]( right: R ) = {
         new Mutate {
-            override final type Left = L
+            override type Left = L
 
-            override final type Right = R
+            override type Right = R
         }
     }
 }

@@ -1,12 +1,12 @@
 package io.taig.gandalf.syntax
 
-import io.taig.gandalf.{ Validatable, operation }
+import io.taig.gandalf._
 
 import scala.language.implicitConversions
 
 trait validation {
     implicit def validationSyntax[V <: Validatable](
-        action: V
+        validatable: V
     ): operation.validation[V] = new operation.validation[V]
 }
 
