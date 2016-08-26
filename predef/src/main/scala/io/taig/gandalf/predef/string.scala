@@ -4,11 +4,16 @@ import io.taig.gandalf._
 import io.taig.gandalf.predef.iterable.nonEmpty
 import shapeless.Witness
 
+import scala.language.higherKinds
+
 trait string {
     /**
      * Compare strings
      */
-    sealed class matches[T <: String]( implicit w: Witness.Aux[T] ) extends Rule with Input[String] {
+    sealed class matches[T <: String](
+            implicit
+            w: Witness.Aux[T]
+    ) extends Rule with Input[String] {
         override def check( input: Input ) = input == w.value
 
         override def arguments( input: Input ): Arguments = ( input, w.value )
@@ -17,15 +22,11 @@ trait string {
     }
 
     object matches {
-        implicit def validation[T <: String](
+        implicit def validation[T <: String, M[A <: String] <: matches[A]](
             implicit
             w: Witness.Aux[T]
-        ): Validation[matches[T]] = {
-            new Validation[matches[T]] {
-                override def validate( input: matches[T]#Input ) = {
-                    matches[T]( w )( input )
-                }
-            }
+        ): Validation[M[T]] = {
+            Validation.instance[M[T]]( matches[T]( w )( _ ) )
         }
 
         def apply[T <: String]( value: Witness.Aux[T] ): matches[T] = {
@@ -40,7 +41,11 @@ trait string {
         override def transform( input: Input ) = input.toUpperCase
     }
 
-    object toLower extends toLower
+    object toLower extends toLower {
+        implicit def validation[TL <: toLower]: Validation[TL] = {
+            Validation.instance[TL]( toLower( _ ) )
+        }
+    }
 
     /**
      * Require stuff
@@ -60,7 +65,11 @@ trait string {
         override def transform( input: String ) = input.to[Iterable]
     }
 
-    object asIterable extends asIterable
+    object asIterable extends asIterable {
+        implicit def validation[AI <: asIterable]: Validation[AI] = {
+            Validation.instance[AI]( asIterable( _ ) )
+        }
+    }
 
     /**
      * Transform to a String
@@ -73,16 +82,11 @@ trait string {
     }
 
     object asString {
-        @inline
-        def apply[T]: asString[T] = new asString[T]
-
-        implicit def validation[T]: Validation[asString[T]] = {
-            new Validation[asString[T]] {
-                override def validate( input: asString[T]#Input ) = {
-                    apply[T]( input )
-                }
-            }
+        implicit def validation[T, AS[A] <: asString[A]]: Validation[AS[T]] = {
+            Validation.instance[AS[T]]( apply[T].apply( _ ) )
         }
+
+        def apply[T]: asString[T] = new asString[T]
     }
 
     /**
@@ -92,7 +96,11 @@ trait string {
         override def transform( input: Input ) = input.toUpperCase
     }
 
-    object toUpper extends toUpper
+    object toUpper extends toUpper {
+        implicit def validation[TU <: toUpper]: Validation[TU] = {
+            Validation.instance[TU]( toUpper( _ ) )
+        }
+    }
 
     /**
      * Trim
