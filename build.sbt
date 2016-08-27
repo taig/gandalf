@@ -15,8 +15,8 @@ lazy val core = project
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.2" ::
             "org.scala-lang" % "scala-reflect" % "2.11.8" ::
-            "org.typelevel" %% "cats-core" % "0.6.1" ::
-            "org.typelevel" %% "cats-macros" % "0.6.1" ::
+            "org.typelevel" %% "cats-core" % "0.7.0" ::
+            "org.typelevel" %% "cats-macros" % "0.7.0" ::
             Nil
     )
 
