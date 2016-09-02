@@ -17,8 +17,9 @@ object Settings {
         scalacOptions ++=
             "-deprecation" ::
             "-feature" ::
-            "-Xfuture" ::
+            "-Yliteral-types" ::
             Nil,
+        scalaOrganization := "org.typelevel",
         scalaVersion := "2.11.8",
         testOptions in ThisBuild += Tests.Argument( "-oDF" )
     )

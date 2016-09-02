@@ -2,24 +2,17 @@ package io.taig.gandalf.predef
 
 import io.taig.gandalf._
 
-trait iterable {
-    sealed class nonEmpty[T] extends Rule with Input[Iterable[T]] with Arguments.Input {
-        override def check( input: Iterable[T] ) = input.nonEmpty
+import scala.language.higherKinds
 
-        override def arguments( input: Iterable[T] ) = input
+trait iterable {
+    @Definition
+    sealed class isEmpty[T] extends Rule with Input[Iterable[T]] with Arguments.Input {
+        override def check( input: Iterable[T] ) = input.isEmpty
     }
 
-    object nonEmpty {
-        @inline
-        def apply[T]: nonEmpty[T] = new nonEmpty[T]
-
-        implicit def validation[T]: Validation[nonEmpty[T]] = {
-            new Validation[nonEmpty[T]] {
-                override def validate( input: nonEmpty[T]#Input ) = {
-                    nonEmpty[T].apply( input )
-                }
-            }
-        }
+    @Definition
+    sealed class nonEmpty[T] extends Rule with Input[Iterable[T]] with Arguments.Input {
+        override def check( input: Iterable[T] ) = input.nonEmpty
     }
 }
 

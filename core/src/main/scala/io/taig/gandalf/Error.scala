@@ -27,7 +27,7 @@ trait Error0 {
     def instance[V <: Validatable]( f: V#Arguments ⇒ String ): Error[V] = {
         new Error[V] {
             override def show( values: V#Arguments ) = {
-                NonEmptyList( f( values ) )
+                NonEmptyList.of( f( values ) )
             }
         }
     }

@@ -17,4 +17,8 @@ trait Rule extends Validatable with Applyable with Symmetric {
 
 object Rule {
     type Aux[T] = Rule { type Input = T }
+
+    abstract class With[T]( f: T ⇒ Boolean ) extends Rule with Input[T] {
+        override def check( input: Input ) = f( input )
+    }
 }

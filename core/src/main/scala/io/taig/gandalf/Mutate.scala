@@ -14,10 +14,9 @@ object Mutate {
         e:  Error[M]
     ): Validation[M] = new Validation[M] {
         override def validate( input: M#Input ) = {
-            //            vl.validate( input ).andThen { output ⇒
-            //                vr.validate( output.asInstanceOf[M#Right#Input] )
-            //            }.leftMap( e.show( input, _ ) )
-            ???
+            vl.validate( input ).andThen { output ⇒
+                vr.validate( output.asInstanceOf[M#Right#Input] )
+            }.leftMap( e.show( input, _ ) )
         }
     }
 }

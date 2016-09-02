@@ -1,7 +1,5 @@
 package io.taig.gandalf
 
-import shapeless.Witness
-
 trait Validatable {
     type Input
 
@@ -24,32 +22,28 @@ trait Applyable extends Validatable {
     def arguments( input: Input ): Arguments
 }
 
-object Applyable {
-    implicit def validation[A <: Applyable](
-        implicit
-        w: Witness.Aux[A],
-        e: Error[A]
-    ): Validation[A] = new Validation[A] {
-        override def validate( input: A#Input ) = {
-            w.value.apply( input.asInstanceOf[w.value.Input] )
-        }
-    }
-}
-
 trait Input[I] { this: Validatable ⇒
-    override type Input = I
+    override final type Input = I
 }
 
 trait Output[O] { this: Validatable ⇒
-    override type Output = O
+    override final type Output = O
 }
 
 trait Symmetric { this: Validatable ⇒
-    override type Output = Input
+    override final type Output = Input
+}
+
+object Symmetric {
+    trait With[T] extends Symmetric { this: Validatable ⇒
+        override final type Input = T
+    }
 }
 
 object Arguments {
-    trait Input { this: Validatable ⇒
+    trait Input extends Applyable {
         override final type Arguments = Input
+
+        override final def arguments( input: Input ) = input
     }
 }

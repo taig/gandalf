@@ -20,4 +20,11 @@ object Transformation {
     type Output[O] = Transformation { type Output = O }
 
     type Aux[I, O] = Transformation { type Input = I; type Output = O }
+    
+    abstract class With[I, O]( f: I => O )
+        extends Transformation
+            with Input[I]
+            with Output[O] {
+        override def transform( input: I ) = f( input )
+    }
 }

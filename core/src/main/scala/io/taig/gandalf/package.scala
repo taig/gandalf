@@ -28,4 +28,10 @@ package object gandalf {
 
         override type Right = R
     }
+
+    class |>[L <: Mutation, R <: Validatable.Input[L#Output]] extends Asdf {
+        override type Left = L
+
+        override type Right = R
+    }
 }

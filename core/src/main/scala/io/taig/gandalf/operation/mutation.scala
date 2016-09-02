@@ -10,4 +10,12 @@ final case class mutation[L <: Mutation]( left: L ) {
             override type Right = R
         }
     }
+
+    def |>[R <: Rule.Aux[L#Output]]( right: R ) = {
+        new Asdf {
+            override type Left = L
+
+            override type Right = R
+        }
+    }
 }
