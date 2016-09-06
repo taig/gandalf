@@ -1,21 +1,24 @@
 package io.taig.gandalf
 
-import io.taig.gandalf.Rule.{ Applyable, Arguments }
 import cats.data.NonEmptyList
+import io.taig.gandalf.Rule.Applyable
 
 import scala.reflect._
 
-trait Error[-A <: Arguments] {
-    def show( input: A#Arguments ): NonEmptyList[String]
+/**
+ * Type class that describes how to show a failed validation
+ */
+trait Error[-R <: Reportable] {
+    def show( input: R#Arguments ): NonEmptyList[String]
 }
 
 object Error {
     @inline
-    def apply[A <: Arguments]( implicit e: Error[A] ): Error[A] = e
+    def apply[R <: Reportable]( implicit e: Error[R] ): Error[R] = e
 
-    def instance[A <: Arguments]( f: A#Arguments ⇒ String ): Error[A] = {
-        new Error[A] {
-            override def show( input: A#Arguments ) = {
+    def instance[R <: Reportable]( f: R#Arguments ⇒ String ): Error[R] = {
+        new Error[R] {
+            override def show( input: R#Arguments ) = {
                 NonEmptyList.of( f( input ) )
             }
         }

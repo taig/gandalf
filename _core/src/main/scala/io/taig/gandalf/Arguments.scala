@@ -7,5 +7,5 @@ trait Arguments {
 }
 
 object Arguments {
-    type Aux[A <: HList] = Arguments { type Arguments = A }
+    type Aux[A <: HList] = Reportable { type Arguments = A }
 }

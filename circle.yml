@@ -17,7 +17,7 @@ dependencies:
 
 general:
   artifacts:
-    - target/scala-2.11/coverage-report
+    - target/scala-2.11/coverage-show
 
 test:
   pre:

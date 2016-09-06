@@ -37,4 +37,4 @@ lazy val predef = project
 //        targetSdkVersion := "23",
 //        typedResources := false
 //    )
-//    .dependsOn( core, predef, report )
+//    .dependsOn( core, predef, show )

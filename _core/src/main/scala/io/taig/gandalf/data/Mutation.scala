@@ -1,8 +1,8 @@
 package io.taig.gandalf.data
 
-import io.taig.gandalf.Arguments
+import io.taig.gandalf.Reportable$
 
-trait Mutation extends Action with Arguments
+trait Mutation extends Action with Reportable
 
 object Mutation {
     type Input[I] = Mutation { type Input = I }

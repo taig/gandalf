@@ -15,7 +15,7 @@ object Rule {
 
     type Aux[I, O] = Rule { type Input = I; type Output = O }
 
-    trait Applyable extends Rule with Arguments {
+    trait Applyable extends Rule with Reportable {
         def apply( input: Input )(
             implicit
             e: Error[this.type]
@@ -34,27 +34,29 @@ object Rule {
                 input.asInstanceOf[w.value.Input]
             )( e.asInstanceOf[Error[w.value.type]] )
         }
-    }
 
-    trait Arguments extends Rule {
-        type Arguments
-    }
-
-    object Arguments {
-        trait With[A] extends Arguments {
-            override final type Arguments = ( Input, A )
+        implicit def arguments[A <: Applyable](
+            implicit
+            w: Witness.Aux[A]
+        ): Arguments[A] = Arguments.instance { input ⇒
+            w.value.arguments( input.asInstanceOf[w.value.Input] )
         }
 
-        trait Input extends Applyable {
-            override final type Arguments = Input
+        def implicits[A <: Applyable]( f: ⇒ A )(
+            implicit
+            e: Error[A]
+        ): Validation[A] with Arguments[A] = {
+            val applyable = f
 
-            override final def arguments( input: Input ) = input
-        }
+            new Validation[A] with Arguments[A] {
+                override def validate( input: A#Input ) = {
+                    applyable.apply( input.asInstanceOf[applyable.Input] )
+                }
 
-        trait None extends Applyable {
-            override final type Arguments = Unit
-
-            override final def arguments( input: Input ) = {}
+                override def collect( input: A#Input ) = {
+                    applyable.arguments( input.asInstanceOf[applyable.Input] )
+                }
+            }
         }
     }
 }

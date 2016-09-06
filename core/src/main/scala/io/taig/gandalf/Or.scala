@@ -2,13 +2,7 @@ package io.taig.gandalf
 
 import cats.data.Validated._
 
-class Or
-        extends Operator
-        with Condition {
-    override type Left <: Condition
-
-    override type Right <: Condition.Aux[Left#Output]
-}
+class Or extends Operator.Logical
 
 object Or {
     implicit def validation[O <: Or](

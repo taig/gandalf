@@ -1,12 +1,6 @@
 package io.taig.gandalf
 
-class LazyAnd
-        extends Operator
-        with Condition {
-    override type Left <: Condition
-
-    override type Right <: Condition.Aux[Left#Output]
-}
+class LazyAnd extends Operator.Logical
 
 object LazyAnd {
     implicit def validation[A <: LazyAnd](

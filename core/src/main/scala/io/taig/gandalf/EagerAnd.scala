@@ -2,13 +2,7 @@ package io.taig.gandalf
 
 import cats.syntax.cartesian._
 
-class EagerAnd
-        extends Operator
-        with Condition {
-    override type Left <: Condition
-
-    override type Right <: Condition.Aux[Left#Output]
-}
+class EagerAnd extends Operator.Logical
 
 object EagerAnd {
     implicit def validation[A <: EagerAnd](

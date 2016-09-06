@@ -1,6 +1,6 @@
 package io.taig.gandalf
 
-class Alter
+trait Alter
         extends Operator
         with Alteration {
     override type Left <: Alteration

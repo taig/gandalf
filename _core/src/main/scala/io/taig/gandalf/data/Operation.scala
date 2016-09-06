@@ -5,7 +5,7 @@ import shapeless.record._
 
 trait Operation
         extends Validation
-        with Arguments {
+        with Reportable {
     type Left <: Validation
 
     type Right <: Validation.Input[Left#Output]

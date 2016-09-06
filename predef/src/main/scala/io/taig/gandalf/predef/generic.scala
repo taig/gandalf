@@ -1,12 +1,12 @@
 package io.taig.gandalf.predef
 
+import io.taig.gandalf.Rule.Applyable
 import io.taig.gandalf._
 
 trait generic {
     final class equal[T <: U: ValueOf, U]
-            extends Condition.With[U]( _ == valueOf[T] ) {
-        override type Arguments = ( Input, T )
-
+            extends Condition.With[U]( _ == valueOf[T] )
+            with Reportable.With[T] {
         override def arguments( input: Input ) = ( input, valueOf[T] )
     }
 
@@ -15,13 +15,8 @@ trait generic {
             new equal[value.type, T]
         }
 
-        implicit def validation[T <: U: ValueOf, U](
-            implicit
-            e: Error[equal[T, U]]
-        ): Validation[equal[T, U]] = {
-            Validation.instance[equal[T, U]] {
-                new equal[T, U].apply( _ )
-            }
+        implicit def implicits[T <: U: ValueOf, U] = {
+            Applyable.implicits[equal[T, U]]( new equal[T, U] )
         }
     }
 }

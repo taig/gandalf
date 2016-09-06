@@ -4,7 +4,7 @@ import android.content.Context
 import io.taig.gandalf.android.resource.R
 import io.taig.gandalf.report.Report
 import io.taig.gandalf.predef.all._
-import io.taig.gandalf.{ Error, Term }
+import io.taig.gandalf.{ Report$, Term }
 import shapeless.HList
 import shapeless.record._
 
@@ -14,7 +14,7 @@ trait reports {
     private def report[N <: String, A <: HList]( term: Term[N, _, _, A], message: Int )(
         implicit
         context: Context
-    ): Report[Error[N, A], String] = Report( term )( _ ⇒ context.getString( message ) )
+    ): Report[Report[N, A], String] = Report( term )( _ ⇒ context.getString( message ) )
 
     implicit def reportEmail( implicit context: Context ) = report( email, R.string.gandalf_email )
 

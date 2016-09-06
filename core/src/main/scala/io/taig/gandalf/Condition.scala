@@ -1,9 +1,8 @@
 package io.taig.gandalf
 
 import cats.data.Validated._
-import io.taig.gandalf.Rule.Arguments
 
-trait Condition extends Rule with Arguments {
+trait Condition extends Rule with Reportable {
     override final type Output = Input
 }
 

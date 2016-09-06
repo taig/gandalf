@@ -1,8 +1,8 @@
 package io.taig.gandalf.data
 
-import io.taig.gandalf.Arguments
+import io.taig.gandalf.Reportable$
 
-trait Rule extends Action with Arguments {
+trait Rule extends Action with Reportable {
     override final type Output = Input
 }
 
