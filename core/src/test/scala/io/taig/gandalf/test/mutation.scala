@@ -12,7 +12,7 @@ object mutation {
             extends Mutation.With[String, String]( _ ⇒ None )
             with Arguments.None {
         implicit val error: Error[this.type] = {
-            Error.instance( _ ⇒ "mutation" )
+            Error.instance( _ ⇒ "alteration" )
         }
     }
 }

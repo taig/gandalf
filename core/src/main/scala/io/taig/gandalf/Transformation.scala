@@ -3,7 +3,7 @@ package io.taig.gandalf
 import cats.data.Validated._
 import shapeless.Witness
 
-trait Transformation extends Mutation {
+trait Transformation extends Alteration {
     final def apply( input: Input ) = valid( transform( input ) )
 
     def transform( input: Input ): Output

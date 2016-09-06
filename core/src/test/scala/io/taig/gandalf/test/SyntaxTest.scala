@@ -10,11 +10,11 @@ class SyntaxTest extends Suite {
         ( mutation.success ~> mutation.success ).validate( "foo" ) shouldBe
             valid( "foo" )
         ( mutation.success ~> mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+            invalidNel( "alteration" )
         ( mutation.failure ~> mutation.success ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+            invalidNel( "alteration" )
         ( mutation.failure ~> mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+            invalidNel( "alteration" )
     }
 
     it should "combine Transformations" in {
@@ -26,11 +26,11 @@ class SyntaxTest extends Suite {
         ( mutation.success ~> transformation ).validate( "foo" ) shouldBe
             valid( "foo" )
         ( mutation.failure ~> transformation ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+            invalidNel( "alteration" )
         ( transformation ~> mutation.success ).validate( "foo" ) shouldBe
             valid( "foo" )
         ( transformation ~> mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+            invalidNel( "alteration" )
     }
 
     it should "combine with Conditions on the rhs" in {
@@ -39,13 +39,13 @@ class SyntaxTest extends Suite {
         ( mutation.success ~> condition.failure ).validate( "foo" ) shouldBe
             invalidNel( "condition" )
         ( mutation.failure ~> condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+            invalidNel( "alteration" )
         ( mutation.failure ~> condition.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+            invalidNel( "alteration" )
     }
 
     it should "not combine with Conditions on the lhs" in {
-        illTyped( "condition.success ~> mutation.success" )
+        illTyped( "condition.success ~> alteration.success" )
     }
 
     "&&" should "combine Conditions" in {
@@ -60,8 +60,8 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        illTyped( "condition.success && mutation.success" )
-        illTyped( "mutation.success && condition.success" )
+        illTyped( "condition.success && alteration.success" )
+        illTyped( "alteration.success && condition.success" )
     }
 
     "&" should "combine Conditions" in {
@@ -76,8 +76,8 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        illTyped( "condition.success & mutation.success" )
-        illTyped( "mutation.success & condition.success" )
+        illTyped( "condition.success & alteration.success" )
+        illTyped( "alteration.success & condition.success" )
     }
 
     "||" should "combine Conditions" in {
@@ -92,7 +92,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        illTyped( "condition.success || mutation.success" )
-        illTyped( "mutation.success || condition.success" )
+        illTyped( "condition.success || alteration.success" )
+        illTyped( "alteration.success || condition.success" )
     }
 }

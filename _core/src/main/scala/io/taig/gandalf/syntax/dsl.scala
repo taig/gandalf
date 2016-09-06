@@ -8,8 +8,8 @@ import scala.language.implicitConversions
 trait dsl {
     implicit def mutationSyntax[I, O, M <: Mutation.Aux[I, O]](
         mutation: M with Mutation.Aux[I, O]
-    ): operation.mutation[I, O, M] = {
-        new operation.mutation[I, O, M]( mutation )
+    ): operation.alteration[I, O, M] = {
+        new operation.alteration[I, O, M]( mutation )
     }
 
     implicit def ruleSyntax[T, R <: Rule.Aux[T]](
