@@ -1,8 +1,8 @@
 package io.taig.gandalf.syntax
 
 trait all
-    extends mutation
-    with rule
+    extends condition
+    with mutation
     with validation
 
 object all extends all

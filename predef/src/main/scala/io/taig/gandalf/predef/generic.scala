@@ -1,17 +1,28 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.{ Definition, Input, Rule }
-
-import scala.language.higherKinds
+import io.taig.gandalf._
 
 trait generic {
-    @Definition
-    sealed class eq[T, U <: T: ValueOf] extends Rule with Input[T] {
-        override type Arguments = ( T, U )
+    final class equal[T <: U: ValueOf, U]
+            extends Condition.With[U]( _ == valueOf[T] ) {
+        override type Arguments = ( Input, T )
 
-        override def check( input: T ) = input == valueOf[U]
+        override def arguments( input: Input ) = ( input, valueOf[T] )
+    }
 
-        override def arguments( input: T ) = ( input, valueOf[U] )
+    object equal {
+        def apply[T]( value: T ): equal[value.type, T] = {
+            new equal[value.type, T]
+        }
+
+        implicit def validation[T <: U: ValueOf, U](
+            implicit
+            e: Error[equal[T, U]]
+        ): Validation[equal[T, U]] = {
+            Validation.instance[equal[T, U]] {
+                new equal[T, U].apply( _ )
+            }
+        }
     }
 }
 

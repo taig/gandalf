@@ -1,7 +1,6 @@
 lazy val gandalf = project.in( file( "." ) )
     .settings( Settings.common )
     .settings(
-        aggregate in test := false,
         name := "gandalf"
     )
     .aggregate( core, predef )
@@ -25,7 +24,7 @@ lazy val predef = project
     .settings(
         addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
     )
-    .dependsOn( core )
+    .dependsOn( core % "compile->compile;test->test" )
 
 //lazy val android = project
 //    .settings( androidBuildAar ++ Settings.common )

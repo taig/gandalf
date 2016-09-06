@@ -1,15 +1,10 @@
 package io.taig.gandalf
 
 import cats.data.Validated._
+import shapeless.Witness
 
-trait Transformation extends Mutation with Applyable {
-    override final type Arguments = Unit
-
-    final def arguments( input: Input ): Arguments = {}
-
-    override final def apply( input: Input )( implicit e: Error[this.type] ) = {
-        valid( transform( input ) )
-    }
+trait Transformation extends Mutation {
+    final def apply( input: Input ) = valid( transform( input ) )
 
     def transform( input: Input ): Output
 }
@@ -20,11 +15,19 @@ object Transformation {
     type Output[O] = Transformation { type Output = O }
 
     type Aux[I, O] = Transformation { type Input = I; type Output = O }
-    
-    abstract class With[I, O]( f: I => O )
-        extends Transformation
-            with Input[I]
-            with Output[O] {
-        override def transform( input: I ) = f( input )
+
+    abstract class With[I, O]( f: I ⇒ O ) extends Transformation {
+        override final type Input = I
+
+        override final type Output = O
+
+        override final def transform( input: Input ) = f( input )
+    }
+
+    implicit def validation[T <: Transformation](
+        implicit
+        w: Witness.Aux[T]
+    ): Validation[T] = Validation.instance[T] { input ⇒
+        w.value.apply( input.asInstanceOf[w.value.Input] )
     }
 }

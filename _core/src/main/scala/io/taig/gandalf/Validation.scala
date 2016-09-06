@@ -31,7 +31,7 @@ object Validation {
         }
     }
 
-    def operation[P, O <: Operation.Output[P]](
+    def operation[P, O <: Operator.Output[P]](
         f: O#Input ⇒ Result[P]
     )(
         args: ( O#Input, NonEmptyList[String] ) ⇒ Error.Forward[O]

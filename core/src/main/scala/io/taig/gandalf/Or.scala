@@ -1,36 +1,32 @@
-//package io.taig.gandalf
-//
-//import cats.data.Validated._
-//import cats.std.list._
-//import cats.syntax.semigroup._
-//
-//trait Or extends Operator with Rule {
-//    override type Left <: Rule
-//
-//    override type Right <: Rule.Aux[Left#Output]
-//}
-//
-//object Or {
-//    type Aux[L <: Rule, R <: Rule.Aux[L#Output]] = LazyAnd {
-//        type Left = L
-//
-//        type Right = R
-//    }
-//
-//    implicit def validation[LA <: LazyAnd](
-//        implicit
-//        l: Validation[LA#Left],
-//        r: Validation[LA#Right],
-//        e: Error[LA]
-//    ): Validation[LA] = Validation.operation[LA] { input ⇒
-//        l.validate( input ) match {
-//            case Valid( output ) ⇒ valid( output )
-//            case Invalid( errorsLeft ) ⇒
-//                r.validate( input.asInstanceOf[LA#Right#Input] ) match {
-//                    case Valid( output ) ⇒ valid( output )
-//                    case Invalid( errorsRight ) ⇒
-//                        invalid( errorsLeft |+| errorsRight )
-//                }
-//        }
-//    } { ( _, _ ) }
-//}
+package io.taig.gandalf
+
+import cats.data.Validated._
+
+class Or
+        extends Operator
+        with Condition {
+    override type Left <: Condition
+
+    override type Right <: Condition.Aux[Left#Output]
+}
+
+object Or {
+    implicit def validation[O <: Or](
+        implicit
+        l: Validation[O#Left],
+        r: Validation[O#Right],
+        e: Error[O]
+    ): Validation[O] = Validation.instance[O] { input ⇒
+        val left = l.validate( input )
+        val right = r.validate( input.asInstanceOf[O#Right#Input] )
+        ( left, right ) match {
+            case ( Invalid( left ), Invalid( right ) ) ⇒
+                invalid( left concat right ).leftMap( e.show( input, _ ) )
+            case _ ⇒ valid( input )
+        }
+    }
+}
+
+class ||[L <: Condition, R <: Condition.Aux[L#Output]]
+    extends Or
+    with Operator.Aux[L, R]

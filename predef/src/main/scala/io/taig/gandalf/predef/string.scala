@@ -1,62 +1,39 @@
 package io.taig.gandalf.predef
 
+import io.taig.gandalf.Rule.Arguments
 import io.taig.gandalf._
-import io.taig.gandalf.syntax.all._
-
-import scala.language.higherKinds
-
-/*
- * @Definition
- * sealed class trim extends Transformation[String]( _.trim )
- *
- * @Definition
- * sealed class nonEmpty extends Rule[String]( _.nonEmpty )
- * 
- * @Definition( trim ~> nonEmpty )
- * sealed class required
- * 
- * case class User( @obeys( required ) name: String )
- * 
- * User( "foobar" )
- * // User( "   " )
- */
 
 trait string {
-    @Definition
-    sealed class isEmpty
-        extends Rule.With[String]( _.isEmpty )
+    object nonEmpty
+        extends Condition.With[String]( _.nonEmpty )
         with Arguments.Input
 
-    @Definition
-    sealed class nonEmpty
-        extends Rule.With[String]( _.nonEmpty )
-        with Arguments.Input
+    object trim extends Transformation.With[String, String]( _.trim )
 
-    sealed class regex[T <: String: ValueOf]
-            extends Rule.With[String]( _ matches valueOf[T] ) {
-        override type Arguments = ( String, T )
-
-        override def arguments( input: Input ) = ( input, valueOf[T] )
+    final class regex[T <: String: ValueOf]
+            extends Condition.With[String]( _.matches( valueOf[T] ) )
+            with Arguments.With[String] {
+        override def arguments( input: String ) = ( input, valueOf[T] )
     }
 
-    sealed class required extends ( trim ~> nonEmpty )
+    object regex {
+        def apply( value: String ): regex[value.type] = new regex[value.type]
 
-    object required extends required {
-        implicit val error = Error.identifier[required]
+        implicit def validation[T <: String: ValueOf](
+            implicit
+            e: Error[regex[T]]
+        ): Validation[regex[T]] = {
+            Validation.instance[regex[T]] {
+                new regex[T].apply( _ )
+            }
+        }
     }
 
-    @Definition
-    sealed class toLower extends Transformation.With[String, String]( _.toLowerCase )
+    object required extends ( trim.type ~> nonEmpty.type )
 
-    @Definition
-    sealed class toUpper extends Transformation with Symmetric.With[String] {
-        override def transform( input: Input ) = input.toUpperCase
-    }
+    object toLower extends Transformation.With[String, String]( _.toLowerCase )
 
-    @Definition
-    sealed class trim extends Transformation with Symmetric.With[String] {
-        override def transform( input: String ) = input.trim
-    }
+    object toUpper extends Transformation.With[String, String]( _.toUpperCase )
 }
 
 object string extends string

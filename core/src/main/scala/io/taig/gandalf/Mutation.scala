@@ -2,7 +2,7 @@ package io.taig.gandalf
 
 import cats.data.Validated._
 
-trait Mutation extends Validatable
+trait Mutation extends Rule
 
 object Mutation {
     type Input[I] = Mutation { type Input = I }
@@ -11,24 +11,26 @@ object Mutation {
 
     type Aux[I, O] = Mutation { type Input = I; type Output = O }
 
-    trait Custom extends Mutation with Applyable {
-        override def apply( input: Input )( implicit e: Error[this.type] ) = {
-            mutate( input ) match {
-                case Some( output ) ⇒ valid( output )
-                case None ⇒
-                    val errors = e.show( arguments( input ) )
-                    invalid( errors )
-            }
+    trait Applyable[I, O]
+            extends Mutation
+            with Rule.Applyable {
+        override type Input = I
+
+        override type Output = O
+
+        override final def apply( input: I )(
+            implicit
+            e: Error[this.type]
+        ) = mutate( input ) match {
+            case Some( output ) ⇒ valid( output )
+            case None           ⇒ invalid( e.show( arguments( input ) ) )
         }
 
-        def mutate( input: Input ): Option[Output]
+        def mutate( input: I ): Option[O]
     }
 
-    object Custom {
-        type Input[I] = Custom { type Input = I }
-
-        type Output[O] = Custom { type Output = O }
-
-        type Aux[I, O] = Custom { type Input = I; type Output = O }
+    abstract class With[I, O]( f: I ⇒ Option[O], args: Any* )
+            extends Applyable[I, O] {
+        override def mutate( input: I ) = f( input )
     }
 }

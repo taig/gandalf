@@ -5,9 +5,9 @@ import io.taig.gandalf._
 import scala.language.implicitConversions
 
 trait validation {
-    implicit def validationSyntax[V <: Validatable](
-        validatable: V
-    ): operation.validation[V] = new operation.validation[V]
+    implicit def gandalfCoreRuleSyntax[R <: Rule](
+        rule: R
+    ): operation.validation[R] = new operation.validation[R]( rule )
 }
 
 object validation extends validation

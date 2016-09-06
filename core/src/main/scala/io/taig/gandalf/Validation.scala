@@ -1,16 +1,16 @@
 package io.taig.gandalf
 
-trait Validation[V <: Validatable] {
-    def validate( input: V#Input ): Result[V#Output]
+trait Validation[R <: Rule] {
+    def validate( input: R#Input ): Result[R]
 }
 
 object Validation {
     @inline
-    def apply[V <: Validatable]( implicit v: Validation[V] ): Validation[V] = v
+    def apply[R <: Rule]( implicit v: Validation[R] ): Validation[R] = v
 
-    def instance[V <: Validatable](
-        f: V#Input ⇒ Result[V#Output]
-    ): Validation[V] = new Validation[V] {
-        override def validate( input: V#Input ) = f( input )
+    def instance[R <: Rule](
+        f: R#Input ⇒ Result[R]
+    ): Validation[R] = new Validation[R] {
+        override def validate( input: R#Input ) = f( input )
     }
 }
