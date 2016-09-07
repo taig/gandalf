@@ -11,7 +11,7 @@ object mutation {
             extends Mutation.With[String, String]( _ ⇒ None )
             with Reportable.None {
         implicit val error: Error[this.type] = {
-            Error.instance( _ ⇒ "alteration" )
+            Error.one( _ ⇒ "alteration" )
         }
     }
 }

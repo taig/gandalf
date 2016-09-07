@@ -16,15 +16,17 @@ object Error {
     @inline
     def apply[R <: Reportable]( implicit e: Error[R] ): Error[R] = e
 
-    def instance[R <: Reportable]( f: R#Arguments ⇒ String ): Error[R] = {
+    def instance[R <: Reportable]( f: R#Arguments ⇒ NonEmptyList[String] ): Error[R] = {
         new Error[R] {
-            override def show( input: R#Arguments ) = {
-                NonEmptyList.of( f( input ) )
-            }
+            override def show( input: R#Arguments ) = f( input )
         }
     }
 
-    implicit def default[A <: Applyable: ClassTag]: Error[A] = instance { _ ⇒
+    def one[R <: Reportable]( f: R#Arguments ⇒ String ): Error[R] = {
+        instance( arguments ⇒ NonEmptyList.of( f( arguments ) ) )
+    }
+
+    implicit def default[A <: Applyable: ClassTag]: Error[A] = one { _ ⇒
         classTag[A].runtimeClass.getSimpleName.replace( "$", "" )
     }
 }

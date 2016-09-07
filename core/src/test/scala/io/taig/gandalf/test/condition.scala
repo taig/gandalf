@@ -10,8 +10,8 @@ object condition {
     object failure
             extends Condition.With[String]( _ ⇒ false )
             with Reportable.None {
-        implicit val error: Error[this.type] = Error.instance { _ ⇒
-            "condition"
+        implicit val error: Error[this.type] = {
+            Error.one( _ ⇒ "condition" )
         }
     }
 }
