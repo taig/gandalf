@@ -7,6 +7,14 @@ import io.taig.gandalf.test.Suite
 import io.taig.gandalf.{ not ⇒ dont }
 
 class StringTest extends Suite {
+    "ltrim" should "remove whitespace at the beginning" in {
+        ltrim.validate( "foo" ) shouldBe valid( "foo" )
+        ltrim.validate( "  foo" ) shouldBe valid( "foo" )
+        ltrim.validate( "foo   " ) shouldBe valid( "foo   " )
+        ltrim.validate( "  foo   " ) shouldBe valid( "foo   " )
+        ltrim.validate( "     " ) shouldBe valid( "" )
+    }
+
     "nonEmpty" should "check if input is empty" in {
         nonEmpty.validate( "foo" ) shouldBe valid( "foo" )
         nonEmpty.validate( " " ) shouldBe valid( " " )
@@ -35,6 +43,14 @@ class StringTest extends Suite {
         required.validate( "foo   " ) shouldBe valid( "foo" )
         required.validate( "  foo   " ) shouldBe valid( "foo" )
         required.validate( "     " ) shouldBe invalidNel( "nonEmpty" )
+    }
+
+    "rtrim" should "remove whitespace at the end" in {
+        rtrim.validate( "foo" ) shouldBe valid( "foo" )
+        rtrim.validate( "  foo" ) shouldBe valid( "  foo" )
+        rtrim.validate( "foo   " ) shouldBe valid( "foo" )
+        rtrim.validate( "  foo   " ) shouldBe valid( "  foo" )
+        rtrim.validate( "     " ) shouldBe valid( "" )
     }
 
     "toLower" should "replace all uppercase letters" in {

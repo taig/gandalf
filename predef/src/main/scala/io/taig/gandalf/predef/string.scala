@@ -4,6 +4,10 @@ import io.taig.gandalf.Rule.Applyable
 import io.taig.gandalf._
 
 trait string {
+    object ltrim extends Transformation.With[String, String](
+        _.replaceFirst( "^\\s*", "" )
+    )
+
     object nonEmpty
         extends Condition.With[String]( _.nonEmpty )
         with Reportable.Input
@@ -25,6 +29,10 @@ trait string {
     }
 
     object required extends ( trim.type ~> nonEmpty.type )
+
+    object rtrim extends Transformation.With[String, String](
+        _.replaceFirst( "\\s*$", "" )
+    )
 
     object toLower extends Transformation.With[String, String]( _.toLowerCase )
 
