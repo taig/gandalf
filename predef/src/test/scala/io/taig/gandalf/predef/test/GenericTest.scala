@@ -1,9 +1,9 @@
 package io.taig.gandalf.predef.test
 
 import cats.data.Validated._
+import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.core.test.Suite
 import io.taig.gandalf.predef.generic.{ equal ⇒ equalle }
-import io.taig.gandalf.syntax.all._
-import io.taig.gandalf.test.Suite
 
 class GenericTest extends Suite {
     "equal" should "check if two objects are equal" in {

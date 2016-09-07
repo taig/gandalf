@@ -1,9 +1,9 @@
 package io.taig.gandalf.predef.test
 
 import cats.data.Validated._
+import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.core.test.Suite
 import io.taig.gandalf.predef.string.{ regex ⇒ regexxx, _ }
-import io.taig.gandalf.syntax.all._
-import io.taig.gandalf.test.Suite
 
 class StringTest extends Suite {
     "ltrim" should "remove whitespace at the beginning" in {

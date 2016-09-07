@@ -1,7 +1,7 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.Rule.Applyable
-import io.taig.gandalf._
+import io.taig.gandalf.core.Rule.Applyable
+import io.taig.gandalf.core._
 
 trait generic {
     final class equal[T <: U: ValueOf, U]
