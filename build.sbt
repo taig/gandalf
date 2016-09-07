@@ -3,27 +3,32 @@ lazy val gandalf = project.in( file( "." ) )
     .settings(
         name := "gandalf"
     )
-    .aggregate( core, predef )
-    .dependsOn( core, predef )
+    .aggregate( core, macros, predef )
+    .dependsOn( core, macros, predef )
 
 lazy val core = project
     .settings( Settings.common )
     .settings(
-        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ),
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.2" ::
-            "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
             "org.typelevel" %% "cats-core" % "0.7.2" ::
             "org.typelevel" %% "cats-macros" % "0.7.2" ::
             "org.scalatest" %% "scalatest" % "3.0.0" % "test" ::
             Nil
     )
 
-lazy val predef = project
+lazy val macros = project
     .settings( Settings.common )
     .settings(
-        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full )
+        addCompilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ),
+        libraryDependencies ++=
+            "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
+            Nil
     )
+    .dependsOn( core % "compile->compile;test->test" )
+
+lazy val predef = project
+    .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
 //lazy val android = project
