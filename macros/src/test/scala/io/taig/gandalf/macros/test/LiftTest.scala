@@ -3,7 +3,6 @@ package io.taig.gandalf.macros.test
 import io.taig.gandalf.core.syntax.all._
 import io.taig.gandalf.core.test._
 import io.taig.gandalf.macros._
-import shapeless.test.illTyped
 
 class LiftTest extends Suite {
     it should "return the successfully validated result" in {
@@ -14,9 +13,7 @@ class LiftTest extends Suite {
     }
 
     it should "trigger a compiler error when validation fails" in {
-        illTyped {
-            """lift( "foo" )( condition.failure )"""
-        }
+        assertTypeError( """lift( "foo" )( condition.failure )""" )
     }
 
     it should "infer the input type" in {

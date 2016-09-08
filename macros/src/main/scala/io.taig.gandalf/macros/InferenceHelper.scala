@@ -2,6 +2,6 @@ package io.taig.gandalf.macros
 
 import io.taig.gandalf.core.Rule
 
-private[gandalf] class InferenceHelper[T] {
-    def infer[R <: Rule.Input[T]]( rule: R with Rule.Input[T] ): R = rule
+private[gandalf] class InferenceHelper[I] {
+    def infer[R <: Rule.Input[I]]( rule: R with Rule.Input[I] ): R = rule
 }

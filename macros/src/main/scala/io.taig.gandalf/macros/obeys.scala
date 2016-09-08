@@ -26,7 +26,8 @@ private object obeys {
                 c.typecheck( q"$retyped" )
             case _ ⇒ c.abort(
                 c.enclosingPosition,
-                "Illegal @obeys format. Can bei either @obeys[trim.type ~> nonEmpty.type] or @obeys( trim ~> nonEmpty )"
+                "Illegal @obeys format. Can bei either @obeys[trim.type ~> " +
+                    "nonEmpty.type] or @obeys( trim ~> nonEmpty )"
             )
         }
 
@@ -76,11 +77,14 @@ private object obeys {
         import c.universe._
 
         tree match {
-            case Apply( tree, args )  ⇒ Apply( retype( c )( tree, input ), args )
-            case Select( tree, name ) ⇒ Select( retype( c )( tree, input ), name )
-            case ident ⇒
+            case q"$left ~> $right" ⇒ q"${retype( c )( left, input )} ~> $right"
+            case q"$left && $right" ⇒ q"${retype( c )( left, input )} && $right"
+            case q"$left & $right"  ⇒ q"${retype( c )( left, input )} & $right"
+            case q"$left || $right" ⇒ q"${retype( c )( left, input )} || $right"
+            case rule ⇒
                 q"""
-                new _root_.io.taig.gandalf.macros.InferenceHelper[$input].infer( $ident )
+                new _root_.io.taig.gandalf.macros.InferenceHelper[$input]
+                    .infer( $rule )
                 """
         }
     }

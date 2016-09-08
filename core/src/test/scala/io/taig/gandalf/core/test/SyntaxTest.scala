@@ -3,7 +3,6 @@ package io.taig.gandalf.core.test
 import cats.data.NonEmptyList
 import cats.data.Validated._
 import io.taig.gandalf.core.syntax.all._
-import shapeless.test.illTyped
 
 class SyntaxTest extends Suite {
     "~>" should "combine Mutations" in {
@@ -45,7 +44,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Conditions on the lhs" in {
-        illTyped( "condition.success ~> alteration.success" )
+        assertTypeError( "condition.success ~> alteration.success" )
     }
 
     "&&" should "combine Conditions" in {
@@ -60,8 +59,8 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        illTyped( "condition.success && alteration.success" )
-        illTyped( "alteration.success && condition.success" )
+        assertTypeError( "condition.success && alteration.success" )
+        assertTypeError( "alteration.success && condition.success" )
     }
 
     "&" should "combine Conditions" in {
@@ -76,8 +75,8 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        illTyped( "condition.success & alteration.success" )
-        illTyped( "alteration.success & condition.success" )
+        assertTypeError( "condition.success & alteration.success" )
+        assertTypeError( "alteration.success & condition.success" )
     }
 
     "||" should "combine Conditions" in {
@@ -92,7 +91,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        illTyped( "condition.success || alteration.success" )
-        illTyped( "alteration.success || condition.success" )
+        assertTypeError( "condition.success || alteration.success" )
+        assertTypeError( "alteration.success || condition.success" )
     }
 }
