@@ -5,6 +5,7 @@ import io.taig.gandalf.core._
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
+import scala.util.{ Success, Try }
 
 object lift {
     def apply[I, R <: Rule.Input[I]]( input: I )( rule: R with Rule.Input[I] )(
@@ -41,13 +42,13 @@ object lift {
 
         val validation = reify( v.splice.validate( input.splice ) )
         val expression = c.Expr[Result[R]]( c.untypecheck( validation.tree ) )
-        def validationType = c.eval {
+        def validationType = tryN( 2, c.eval {
             c.Expr[String] {
                 c.untypecheck( reify( input.splice.toString ).tree )
             }
-        }
+        } )
 
-        c.eval( expression ) match {
+        tryN( 2, c.eval( expression ) ) match {
             case Valid( value ) ⇒ c.Expr[I Obey R](
                 q"""
                 _root_.io.taig.gandalf.macros.Obey[$wtti, $wttr](
@@ -67,5 +68,12 @@ object lift {
                  """.stripMargin.trim
             )
         }
+    }
+
+    def tryN[T]( n: Int, t: ⇒ T ): T = {
+        Stream
+            .fill( n )( Try( t ) )
+            .collectFirst { case Success( r ) ⇒ r }
+            .getOrElse( t )
     }
 }
