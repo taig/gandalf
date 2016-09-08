@@ -2,13 +2,15 @@ package io.taig.gandalf.macros.test
 
 import io.taig.gandalf.core.test.{ Suite, condition, transformation }
 import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.core.~>
 import io.taig.gandalf.macros.obeys
+import io.taig.gandalf.macros.implicits._
 
 class ObeysTest extends Suite {
     it should "work with case class fields" in {
         case class User( @obeys( transformation ~> condition.success ) name:String )
 
-        //        User( "foo" )
+        User( "foo" )
         //        assertTypeError( """User( "" )""" )
         //        assertTypeError( """User( "   " )""" )
     }

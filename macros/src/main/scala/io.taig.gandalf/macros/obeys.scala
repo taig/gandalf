@@ -72,7 +72,7 @@ private object obeys {
     /**
      * Find the first Validation in the tree and make sure that its input is inferred correctly
      */
-    private def retype( c: whitebox.Context )( tree: c.Tree, input: c.Tree ): c.Tree = {
+    def retype( c: whitebox.Context )( tree: c.Tree, input: c.Tree ): c.Tree = {
         import c.universe._
 
         tree match {

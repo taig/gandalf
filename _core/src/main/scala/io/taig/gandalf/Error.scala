@@ -12,28 +12,28 @@ trait Error[-A <: Reportable] {
 
 object Error {
     /**
-     * Error representation that only provides the input value
+     * Error representation that only provides the input input
      *
      * Intended to be primarily used with Rules.
      */
     type Input[A <: Validation with Reportable] = Record.`"input" -> A#Input`.T
 
     /**
-     * Error representation that only provides the input value
+     * Error representation that only provides the input input
      *
      * Intended to be primarily used with Rules.
      */
     def input[A <: Validation with Reportable]( input: A#Input ): Input[A] = "input" ->> input :: HNil
 
     /**
-     * Error representation that provides the input and an expected value
+     * Error representation that provides the input and an expected input
      *
      * Intended to be primarily used with Mutations.
      */
     type Expectation[A <: Validation with Reportable] = Record.`"input" -> A#Input, "expected" -> A#Output`.T
 
     /**
-     * Error representation that provides the input and an expected value
+     * Error representation that provides the input and an expected input
      *
      * Intended to be primarily used with Mutations.
      */

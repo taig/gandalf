@@ -48,7 +48,7 @@ object Macro {
 
                 c.abort(
                     c.enclosingPosition,
-                    s"Can not lift value '${show( value.tree )}' into $validationType:\n$messages"
+                    s"Can not lift input '${show( value.tree )}' into $validationType:\n$messages"
                 )
         }
     }

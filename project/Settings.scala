@@ -18,6 +18,7 @@ object Settings {
             "-deprecation" ::
             "-feature" ::
             "-Yliteral-types" ::
+            "-Ypartial-unification" ::
             Nil,
         scalaOrganization := "org.typelevel",
         scalaVersion := "2.11.8",
