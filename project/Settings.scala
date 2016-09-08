@@ -5,6 +5,7 @@ import io.taig.sbt.sonatype.SonatypeHouserulePlugin.autoImport._
 object Settings {
     val common = Def.settings(
         exportJars := true,
+        incOptions := incOptions.value.withLogRecompileOnMacro( false ),
         javacOptions ++= (
             "-source" :: "1.7" ::
             "-target" :: "1.7" ::
