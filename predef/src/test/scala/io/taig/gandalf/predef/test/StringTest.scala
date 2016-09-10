@@ -6,18 +6,18 @@ import io.taig.gandalf.core.test.Suite
 import io.taig.gandalf.predef.string.{ regex ⇒ regexxx, _ }
 
 class StringTest extends Suite {
+    "isEmpty" should "check if input is empty" in {
+        isEmpty.validate( "" ) shouldBe valid( "" )
+        isEmpty.validate( "foo" ) shouldBe invalidNel( "isEmpty" )
+        isEmpty.validate( " " ) shouldBe invalidNel( "isEmpty" )
+    }
+
     "ltrim" should "remove whitespace at the beginning" in {
         ltrim.validate( "foo" ) shouldBe valid( "foo" )
         ltrim.validate( "  foo" ) shouldBe valid( "foo" )
         ltrim.validate( "foo   " ) shouldBe valid( "foo   " )
         ltrim.validate( "  foo   " ) shouldBe valid( "foo   " )
         ltrim.validate( "     " ) shouldBe valid( "" )
-    }
-
-    "nonEmpty" should "check if input is empty" in {
-        nonEmpty.validate( "foo" ) shouldBe valid( "foo" )
-        nonEmpty.validate( " " ) shouldBe valid( " " )
-        nonEmpty.validate( "" ) shouldBe invalidNel( "nonEmpty" )
     }
 
     "regex" should "check if a given pattern equal" in {
@@ -31,7 +31,7 @@ class StringTest extends Suite {
         required.validate( "  foo" ) shouldBe valid( "foo" )
         required.validate( "foo   " ) shouldBe valid( "foo" )
         required.validate( "  foo   " ) shouldBe valid( "foo" )
-        required.validate( "     " ) shouldBe invalidNel( "nonEmpty" )
+        required.validate( "     " ) shouldBe invalidNel( "not(isEmpty)" )
     }
 
     "rtrim" should "remove whitespace at the end" in {

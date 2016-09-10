@@ -8,8 +8,8 @@ trait string {
         _.replaceFirst( "^\\s*", "" )
     )
 
-    object nonEmpty
-        extends Condition.With[String]( _.nonEmpty )
+    object isEmpty
+        extends Condition.With[String]( _.isEmpty )
         with Reportable.Input
 
     object trim extends Transformation.With[String, String]( _.trim )
@@ -28,7 +28,7 @@ trait string {
         }
     }
 
-    object required extends ( trim.type ~> nonEmpty.type )
+    object required extends ( trim.type ~> not[isEmpty.type] )
 
     object rtrim extends Transformation.With[String, String](
         _.replaceFirst( "\\s*$", "" )
