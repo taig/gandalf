@@ -1,5 +1,5 @@
 lazy val gandalf = project.in( file( "." ) )
-    .settings( Settings.common )
+    .settings( Settings.common ++ tutSettings )
     .settings(
         name := "gandalf"
     )
