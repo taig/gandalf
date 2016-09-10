@@ -3,7 +3,7 @@ package io.taig.gandalf.predef.test
 import cats.data.Validated._
 import io.taig.gandalf.core.syntax.all._
 import io.taig.gandalf.core.test.Suite
-import io.taig.gandalf.predef.string.{ regex ⇒ regexxx, _ }
+import io.taig.gandalf.predef.string._
 
 class StringTest extends Suite {
     "isEmpty" should "check if input is empty" in {
@@ -20,10 +20,10 @@ class StringTest extends Suite {
         ltrim.validate( "     " ) shouldBe valid( "" )
     }
 
-    "regex" should "check if a given pattern equal" in {
-        regexxx( ".*foo.*" ).validate( "foo" ) shouldBe valid( "foo" )
-        regexxx( ".*foo.*" ).validate( "foobar" ) shouldBe valid( "foobar" )
-        regexxx( ".*foo.*" ).validate( "bar" ) shouldBe invalidNel( "regex" )
+    "matches" should "check if a given pattern equal" in {
+        matches( ".*foo.*" ).validate( "foo" ) shouldBe valid( "foo" )
+        matches( ".*foo.*" ).validate( "foobar" ) shouldBe valid( "foobar" )
+        matches( ".*foo.*" ).validate( "bar" ) shouldBe invalidNel( "matches" )
     }
 
     "required" should "remove all whitespace and check if input is empty" in {
