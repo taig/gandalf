@@ -8,7 +8,7 @@ class ExtensionTest extends Suite {
     it should "be possible to compose a Mutation with a Mutation" in {
         object custom extends ( mutation.success.type ~> mutation.failure.type )
 
-        custom.validate( "foo" ) shouldBe invalidNel( "alteration" )
+        custom.validate( "foo" ) shouldBe invalidNel( "mutation" )
     }
 
     it should "be possible to compose a Mutation with a Condition" in {

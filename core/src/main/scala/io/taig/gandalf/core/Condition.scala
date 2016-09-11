@@ -2,7 +2,7 @@ package io.taig.gandalf.core
 
 import cats.data.Validated._
 
-trait Condition extends Rule with Reportable {
+trait Condition extends Rule {
     override final type Output = Input
 }
 

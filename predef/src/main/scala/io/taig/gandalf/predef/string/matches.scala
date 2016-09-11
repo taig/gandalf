@@ -1,12 +1,12 @@
 package io.taig.gandalf.predef.string
 
-import io.taig.gandalf.core.{ Condition, Reportable }
 import io.taig.gandalf.core.Rule.Applyable
+import io.taig.gandalf.core.{ Arguments, Condition }
 
 final class matches[T <: String: ValueOf]
         extends Condition.With[String]( _.matches( valueOf[T] ) )
-        with Reportable.With[String] {
-    override def arguments( input: String ) = ( input, valueOf[T] )
+        with Arguments.With[T] {
+    override val argument = valueOf[T]
 }
 
 object matches {

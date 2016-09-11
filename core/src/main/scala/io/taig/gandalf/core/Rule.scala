@@ -2,10 +2,14 @@ package io.taig.gandalf.core
 
 import shapeless._
 
+import scala.reflect._
+
 trait Rule {
     type Input
 
     type Output
+
+    type Arguments <: HList
 }
 
 object Rule {
@@ -15,7 +19,7 @@ object Rule {
 
     type Aux[I, O] = Rule { type Input = I; type Output = O }
 
-    trait Applyable extends Rule with Reportable {
+    trait Applyable extends Rule {
         def apply( input: Input )(
             implicit
             e: Error[this.type]
@@ -57,6 +61,12 @@ object Rule {
                     applyable.arguments( input.asInstanceOf[applyable.Input] )
                 }
             }
+        }
+    }
+
+    implicit def serialization[R <: Rule: ClassTag]: Serialization[R] = {
+        Serialization.instance {
+            classTag[R].runtimeClass.getSimpleName.replace( "$", "" )
         }
     }
 }

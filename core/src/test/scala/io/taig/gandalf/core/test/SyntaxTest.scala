@@ -5,15 +5,26 @@ import cats.data.Validated._
 import io.taig.gandalf.core.syntax.all._
 
 class SyntaxTest extends Suite {
+    it should "provide a toString representation" in {
+        ( mutation.success ~> mutation.success ).serialize shouldBe
+            "(success ~> success)"
+        ( condition.success && condition.failure ).serialize shouldBe
+            "(success && failure)"
+        ( condition.success & condition.failure ).serialize shouldBe
+            "(success & failure)"
+        ( condition.success || condition.failure ).serialize shouldBe
+            "(success || failure)"
+    }
+
     "~>" should "combine Mutations" in {
         ( mutation.success ~> mutation.success ).validate( "foo" ) shouldBe
             valid( "foo" )
         ( mutation.success ~> mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "alteration" )
+            invalidNel( "mutation" )
         ( mutation.failure ~> mutation.success ).validate( "foo" ) shouldBe
-            invalidNel( "alteration" )
+            invalidNel( "mutation" )
         ( mutation.failure ~> mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "alteration" )
+            invalidNel( "mutation" )
     }
 
     it should "combine Transformations" in {
@@ -25,11 +36,11 @@ class SyntaxTest extends Suite {
         ( mutation.success ~> transformation ).validate( "foo" ) shouldBe
             valid( "foo" )
         ( mutation.failure ~> transformation ).validate( "foo" ) shouldBe
-            invalidNel( "alteration" )
+            invalidNel( "mutation" )
         ( transformation ~> mutation.success ).validate( "foo" ) shouldBe
             valid( "foo" )
         ( transformation ~> mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "alteration" )
+            invalidNel( "mutation" )
     }
 
     it should "combine with Conditions on the rhs" in {
@@ -38,9 +49,9 @@ class SyntaxTest extends Suite {
         ( mutation.success ~> condition.failure ).validate( "foo" ) shouldBe
             invalidNel( "condition" )
         ( mutation.failure ~> condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "alteration" )
+            invalidNel( "mutation" )
         ( mutation.failure ~> condition.failure ).validate( "foo" ) shouldBe
-            invalidNel( "alteration" )
+            invalidNel( "mutation" )
     }
 
     it should "not combine with Conditions on the lhs" in {
@@ -60,7 +71,7 @@ class SyntaxTest extends Suite {
 
     it should "not combine with Mutations" in {
         assertTypeError( "condition.success && alteration.success" )
-        assertTypeError( "alteration.success && condition.success" )
+        assertTypeError( "mutation.success && condition.success" )
     }
 
     "&" should "combine Conditions" in {
@@ -76,7 +87,7 @@ class SyntaxTest extends Suite {
 
     it should "not combine with Mutations" in {
         assertTypeError( "condition.success & alteration.success" )
-        assertTypeError( "alteration.success & condition.success" )
+        assertTypeError( "mutation.success & condition.success" )
     }
 
     "||" should "combine Conditions" in {
@@ -92,6 +103,6 @@ class SyntaxTest extends Suite {
 
     it should "not combine with Mutations" in {
         assertTypeError( "condition.success || alteration.success" )
-        assertTypeError( "alteration.success || condition.success" )
+        assertTypeError( "mutation.success || condition.success" )
     }
 }

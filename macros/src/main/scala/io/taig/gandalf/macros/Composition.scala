@@ -1,4 +1,6 @@
-package io.taig.gandalf.core
+package io.taig.gandalf.macros
+
+import io.taig.gandalf.core.Rule
 
 import scala.annotation.StaticAnnotation
 import scala.language.experimental.macros

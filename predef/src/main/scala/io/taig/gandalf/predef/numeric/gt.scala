@@ -1,13 +1,14 @@
 package io.taig.gandalf.predef.numeric
 
 import io.taig.gandalf.core.Rule.Applyable
-import io.taig.gandalf.core.{ Condition, Reportable }
+import io.taig.gandalf.core.{ Arguments, Condition }
+
 import scala.Ordering.Implicits._
 
 class gt[T <: U: ValueOf, U: Numeric]
         extends Condition.With[U]( _ > valueOf[T] )
-        with Reportable.With[T] {
-    override def arguments( input: U ) = ( input, valueOf[T] )
+        with Arguments.With[T] {
+    override val argument = valueOf[T]
 }
 
 object gt {

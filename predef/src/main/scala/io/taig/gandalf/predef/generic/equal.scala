@@ -1,12 +1,12 @@
 package io.taig.gandalf.predef.generic
 
-import io.taig.gandalf.core.{ Condition, Reportable }
+import io.taig.gandalf.core.{ Arguments, Condition }
 import io.taig.gandalf.core.Rule.Applyable
 
 class equal[T <: U: ValueOf, U]
         extends Condition.With[U]( _ == valueOf[T] )
-        with Reportable.With[T] {
-    override def arguments( input: Input ) = ( input, valueOf[T] )
+        with Arguments.With[T] {
+    override val argument = valueOf[T]
 }
 
 object equal {

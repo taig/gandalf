@@ -1,6 +1,7 @@
 package io.taig.gandalf.core
 
 import cats.data.Validated._
+import shapeless.HNil
 
 class Or extends Operator.Logical
 
@@ -15,9 +16,19 @@ object Or {
         val right = r.validate( input.asInstanceOf[O#Right#Input] )
         ( left, right ) match {
             case ( Invalid( left ), Invalid( right ) ) ⇒
-                invalid( left concat right ).leftMap( e.show( input, _ ) )
+                invalid( left concat right ).leftMap { errors ⇒
+                    e.show( input :: errors :: HNil )
+                }
             case _ ⇒ valid( input )
         }
+    }
+
+    implicit def serialization[O <: Or](
+        implicit
+        l: Serialization[O#Left],
+        r: Serialization[O#Right]
+    ): Serialization[O] = {
+        Serialization.instance( s"(${l.serialize} || ${r.serialize})" )
     }
 }
 

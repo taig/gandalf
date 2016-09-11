@@ -2,7 +2,7 @@ package io.taig.gandalf.core
 
 import cats.data.Validated._
 
-trait Mutation extends Alteration with Reportable
+trait Mutation extends Alteration
 
 object Mutation {
     type Input[I] = Mutation { type Input = I }

@@ -1,6 +1,7 @@
 package io.taig.gandalf.core
 
 import cats.syntax.cartesian._
+import shapeless.HNil
 
 class EagerAnd extends Operator.Logical
 
@@ -15,7 +16,17 @@ object EagerAnd {
         val right = r.validate( input.asInstanceOf[A#Right#Input] )
         ( left |@| right )
             .map( ( _, _ ) ⇒ input )
-            .leftMap( e.show( input, _ ) )
+            .leftMap { errors ⇒
+                e.show( input :: errors :: HNil )
+            }
+    }
+
+    implicit def serialization[A <: EagerAnd](
+        implicit
+        l: Serialization[A#Left],
+        r: Serialization[A#Right]
+    ): Serialization[A] = {
+        Serialization.instance( s"(${l.serialize} & ${r.serialize})" )
     }
 }
 

@@ -1,11 +1,11 @@
 package io.taig.gandalf.predef.numeric
 
 import io.taig.gandalf.core.Rule.Applyable
-import io.taig.gandalf.core.{ Condition, Reportable }
+import io.taig.gandalf.core.{ Arguments, Condition }
 
 class isZero[T: Numeric]
     extends Condition.With[T]( _ == zero )
-    with Reportable.Input
+    with Arguments.Input
 
 object isZero {
     def apply[T: Numeric]: isZero[T] = new isZero[T]

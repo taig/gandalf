@@ -5,13 +5,13 @@ import io.taig.gandalf.core._
 object condition {
     object success
         extends Condition.With[String]( _ ⇒ true )
-        with Reportable.None
+        with Arguments.None
 
     object failure
             extends Condition.With[String]( _ ⇒ false )
-            with Reportable.None {
+            with Arguments.None {
         implicit val error: Error[this.type] = {
-            Error.one( _ ⇒ "condition" )
+            Error.static( "condition" )
         }
     }
 }

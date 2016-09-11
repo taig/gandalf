@@ -1,8 +1,9 @@
 package io.taig.gandalf.core
 
 import cats.data.NonEmptyList
+import shapeless._
 
-trait Operator extends Rule with Reportable.With[NonEmptyList[String]] {
+trait Operator extends Rule {
     type Left <: Rule
 
     type Right <: Rule.Input[Left#Output]
@@ -10,6 +11,8 @@ trait Operator extends Rule with Reportable.With[NonEmptyList[String]] {
     override type Input = Left#Input
 
     override type Output = Right#Output
+
+    override final type Arguments = Input :: NonEmptyList[String] :: HNil
 }
 
 object Operator {
@@ -25,11 +28,7 @@ object Operator {
         override type Right <: Condition.Aux[Left#Output]
     }
 
-    implicit def error[O <: Operator]: Error[O] = new Error[O] {
-        override def show( input: ( O#Input, NonEmptyList[String] ) ) = {
-            input._2
-        }
-    }
+    implicit def error[O <: Operator]: Error[O] = Error.instance( _.at( 1 ) )
 
     implicit def arguments[L <: Logical](
         implicit
@@ -41,7 +40,7 @@ object Operator {
         override def collect( input: L#Input ) = {
             val left = le.show( la.collect( input ) )
             val right = re.show( ra.collect( input.asInstanceOf[L#Right#Input] ) )
-            ( input, left concat right )
+            input :: ( left concat right ) :: HNil
         }
     }
 }

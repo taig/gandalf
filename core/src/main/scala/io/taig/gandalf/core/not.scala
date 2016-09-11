@@ -2,10 +2,10 @@ package io.taig.gandalf.core
 
 import cats.data.Validated._
 
-final class not[C <: Condition] extends Condition {
-    override type Input = C#Input
-
+class not[C <: Condition] extends Condition {
     override type Arguments = C#Arguments
+
+    override type Input = C#Input
 }
 
 object not {

@@ -1,5 +1,7 @@
 package io.taig.gandalf.core
 
+import shapeless._
+
 trait Alter
         extends Operator
         with Alteration {
@@ -17,7 +19,17 @@ object Alter {
     ): Validation[A] = Validation.instance[A] { input ⇒
         l.validate( input ) andThen { output ⇒
             r.validate( output.asInstanceOf[A#Right#Input] )
-        } leftMap { e.show( input, _ ) }
+        } leftMap { errors ⇒
+            e.show( input :: errors :: HNil )
+        }
+    }
+
+    implicit def serialization[A <: Alter](
+        implicit
+        l: Serialization[A#Left],
+        r: Serialization[A#Right]
+    ): Serialization[A] = {
+        Serialization.instance( s"(${l.serialize} ~> ${r.serialize})" )
     }
 }
 
