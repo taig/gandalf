@@ -3,7 +3,7 @@ package io.taig.gandalf.core
 import cats.data.Validated._
 import shapeless.{ HNil, Witness }
 
-trait Transformation extends Alteration {
+trait Transformation extends Mutation {
     override final type Arguments = HNil
 
     final def apply( input: Input ) = valid( transform( input ) )

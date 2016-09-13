@@ -55,7 +55,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Conditions on the lhs" in {
-        assertTypeError( "condition.success ~> alteration.success" )
+        assertTypeError( "condition.success ~> mutation.success" )
     }
 
     "&&" should "combine Conditions" in {
@@ -70,7 +70,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        assertTypeError( "condition.success && alteration.success" )
+        assertTypeError( "condition.success && mutation.success" )
         assertTypeError( "mutation.success && condition.success" )
     }
 
@@ -86,7 +86,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        assertTypeError( "condition.success & alteration.success" )
+        assertTypeError( "condition.success & mutation.success" )
         assertTypeError( "mutation.success & condition.success" )
     }
 
@@ -102,7 +102,7 @@ class SyntaxTest extends Suite {
     }
 
     it should "not combine with Mutations" in {
-        assertTypeError( "condition.success || alteration.success" )
+        assertTypeError( "condition.success || mutation.success" )
         assertTypeError( "mutation.success || condition.success" )
     }
 }

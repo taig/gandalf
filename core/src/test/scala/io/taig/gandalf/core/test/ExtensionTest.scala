@@ -35,7 +35,7 @@ class ExtensionTest extends Suite {
         custom.validate( "foo" ) shouldBe valid( "foo" )
     }
 
-    it should "be possible to create custom error messages for Alter (~>) compositions" in {
+    it should "be possible to create custom error messages for Mutate (~>) compositions" in {
         object custom extends ( mutation.success.type ~> condition.failure.type ) {
             implicit val error: Error[this.type] = Error.one( _ ⇒ "custom" )
         }

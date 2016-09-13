@@ -2,7 +2,7 @@ package io.taig.gandalf.core
 
 import cats.data.Validated._
 
-trait Mutation extends Alteration
+trait Mutation extends Rule
 
 object Mutation {
     type Input[I] = Mutation { type Input = I }

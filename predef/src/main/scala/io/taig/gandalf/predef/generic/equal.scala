@@ -1,6 +1,6 @@
 package io.taig.gandalf.predef.generic
 
-import io.taig.gandalf.core.{ Arguments, Condition }
+import io.taig.gandalf.core._
 import io.taig.gandalf.core.Rule.Applyable
 
 class equal[T <: U: ValueOf, U]
