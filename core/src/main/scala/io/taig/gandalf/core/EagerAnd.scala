@@ -12,7 +12,7 @@ object EagerAnd {
         implicit
         l: Validation[A#Left],
         r: Validation[A#Right],
-        e: Error[A]
+        e: Option[Error[A]]
     ): Validation[A] = Validation.instance[A] { input ⇒
         val left = l.validate( input )
         val right = r.validate( input.asInstanceOf[A#Right#Input] )
@@ -20,7 +20,7 @@ object EagerAnd {
         ( left |@| right )
             .map( ( _, output ) ⇒ output )
             .leftMap { errors ⇒
-                e.show( input :: errors :: HNil )
+                e.fold( errors )( _.show( input :: errors :: HNil ) )
             }
     }
 
@@ -38,3 +38,9 @@ class &[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends EagerAnd {
 
     override final type Right = R
 }
+
+//object & {
+//    implicit def errorNot[L <: Rule, R <: Rule.Aux[L#Input, L#Output]]: Error[not[L & R]] = {
+//        Error.instance[not[L & R]]( _.at( 1 ) )
+//    }
+//}

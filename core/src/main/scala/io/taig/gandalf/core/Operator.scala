@@ -4,6 +4,8 @@ import cats.data.NonEmptyList
 import cats.data.Validated._
 import shapeless._
 
+import scala.reflect._
+
 trait Operator extends Rule {
     type Left <: Rule
 
@@ -16,14 +18,20 @@ trait Operator extends Rule {
     override final type Arguments = Input :: NonEmptyList[String] :: HNil
 }
 
-object Operator {
-    implicit def error[O <: Operator]: Error[O] = {
-        Error.instance[O]( _.at( 1 ) )
+object Operator extends Operator0 {
+    implicit def errorNot[O <: Operator: ClassTag](
+        implicit
+        e: Option[Error[O]]
+    ): Error[not[O]] = Error.instance[not[O]] { arguments ⇒
+        e.fold( arguments.at( 1 ) ) { error ⇒
+            error.show( arguments ).map( error ⇒ s"not($error)" )
+        }
     }
 
-    implicit def errorNot[O <: Operator]: Error[not[O]] = {
-        Error.instance[not[O]]( _.at( 1 ) )
-    }
+    implicit def errorSome[O <: Operator](
+        implicit
+        e: Error[O]
+    ): Option[Error[O]] = Some( e )
 
     implicit def negationConditionCondition[A <: Operator { type Left <: Condition; type Right <: Condition.Aux[Left#Output] }](
         implicit
@@ -38,7 +46,8 @@ object Operator {
             case Valid( _ ) ⇒
                 val left = le.show( la.collect( input ) )
                 val right = re.show( ra.collect( input.asInstanceOf[A#Right#Input] ) )
-                invalid( e.show( input :: ( left concat right ) :: HNil ) )
+                val errors = left concat right
+                invalid( e.show( input :: errors :: HNil ) )
             case Invalid( _ ) ⇒ valid( input )
         }
     }
@@ -63,4 +72,8 @@ object Operator {
             e.show( input :: errors :: HNil )
         }
     }
+}
+
+trait Operator0 {
+    implicit def errorNone[O <: Operator]: Option[Error[O]] = None
 }

@@ -32,6 +32,15 @@ class NotTest extends Suite {
             invalidNel( "condition" )
     }
 
+    it should "support not-specific Errors" in {
+        implicit val error: Error[dont[condition.success.type]] = {
+            Error.static( "failure" )
+        }
+
+        dont( condition.success ).validate( "foo" ) shouldBe
+            invalidNel( "failure" )
+    }
+
     "&&" should "support Conditions" in {
         dont( condition.success && condition.failure ).validate( "foo" ) shouldBe
             valid( "foo" )
@@ -72,10 +81,18 @@ class NotTest extends Suite {
             invalidNel( "not(success)" )
         dont( condition.failure && transformation ).validate( "foo" ) shouldBe
             valid( "foo" )
-        dont( transformation && condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( transformation && condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
+        //        dont( transformation && condition.success ).validate( "foo" ) shouldBe
+        //            invalidNel( "not(success)" )
+        //        dont( transformation && condition.failure ).validate( "foo" ) shouldBe
+        //            valid( "foo" )
+    }
+
+    it should "support custom compositions with custom Errors" in {
+        object success extends ( condition.success.type && condition.success.type ) {
+            implicit val error: Error[this.type] = Error.static( "custom" )
+        }
+
+        dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
     }
 
     "&" should "support Conditions" in {
@@ -126,6 +143,14 @@ class NotTest extends Suite {
         //     valid( "foo" )
     }
 
+    it should "support custom compositions with custom Errors" in {
+        object success extends ( condition.success.type & condition.success.type ) {
+            implicit val error: Error[this.type] = Error.static( "custom" )
+        }
+
+        dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
+    }
+
     "||" should "support Conditions" in {
         dont( condition.success || condition.failure ).validate( "foo" ) shouldBe
             invalid( NonEmptyList.of( "not(success)", "not(condition)" ) )
@@ -172,21 +197,11 @@ class NotTest extends Suite {
             valid( "foo" )
     }
 
-    //    it should "support custom Conditions with custom Errors" in {
-    //        object success extends ( condition.success.type || condition.failure.type ) {
-    //            implicit val error: Error[this.type] = Error.one( _ ⇒ "custom" )
-    //        }
-    //
-    //        dont( success ).validate( "foo" ) shouldBe
-    //            invalid( NonEmptyList.of( "not(custom)" ) )
-    //    }
-    //
-    //    it should "support not-specific Errors" in {
-    //        implicit val error: Error[dont[condition.success.type]] = {
-    //            Error.one( _ ⇒ "failure" )
-    //        }
-    //
-    //        dont( condition.success ).validate( "foo" ) shouldBe
-    //            invalidNel( "failure" )
-    //    }
+    it should "support custom compositions with custom Errors" in {
+        object success extends ( condition.success.type || condition.failure.type ) {
+            implicit val error: Error[this.type] = Error.static( "custom" )
+        }
+
+        dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
+    }
 }

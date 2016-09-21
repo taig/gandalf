@@ -16,13 +16,6 @@ object not {
         n: Negation[R]
     ): Validation[not[R]] = Validation.instance[not[R]]( n.negate )
 
-    implicit def error[R <: Rule](
-        implicit
-        e: Error[R]
-    ): Error[not[R]] = Error.instance[not[R]] { arguments ⇒
-        e.show( arguments ).map( error ⇒ s"not($error)" )
-    }
-
     implicit def arguments[R <: Rule](
         implicit
         a: Arguments[R]

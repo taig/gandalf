@@ -50,6 +50,13 @@ object Rule {
             Error.static( name[A] )
         }
 
+        implicit def errorNot[A <: Applyable](
+            implicit
+            e: Error[A]
+        ): Error[not[A]] = Error.instance[not[A]] { arguments ⇒
+            e.show( arguments ).map( error ⇒ s"not($error)" )
+        }
+
         implicit def serialization[A <: Applyable: ClassTag]: Serialization[A] = {
             Serialization.instance( name[A] )
         }

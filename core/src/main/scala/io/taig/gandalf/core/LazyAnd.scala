@@ -12,12 +12,12 @@ object LazyAnd {
         implicit
         l: Validation[A#Left],
         r: Validation[A#Right],
-        e: Error[A]
+        e: Option[Error[A]]
     ): Validation[A] = Validation.instance[A] { input ⇒
         l.validate( input ) andThen { output ⇒
             r.validate( output.asInstanceOf[A#Right#Input] )
         } leftMap { errors ⇒
-            e.show( input :: errors :: HNil )
+            e.fold( errors )( _.show( input :: errors :: HNil ) )
         }
     }
 
@@ -35,3 +35,9 @@ class &&[L <: Rule, R <: Rule.Input[L#Output]] extends LazyAnd {
 
     override final type Right = R
 }
+
+//object && {
+//    implicit def errorNot[L <: Rule, R <: Rule.Input[L#Output]]: Error[not[L && R]] = {
+//        Error.instance[not[L && R]]( _.at( 1 ) )
+//    }
+//}

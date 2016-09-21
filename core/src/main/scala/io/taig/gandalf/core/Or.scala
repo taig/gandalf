@@ -12,7 +12,7 @@ object Or {
         implicit
         l: Validation[O#Left],
         r: Validation[O#Right],
-        e: Error[O]
+        e: Option[Error[O]]
     ): Validation[O] = Validation.instance[O] { input ⇒
         l.validate( input ) match {
             case valid @ Valid( _ ) ⇒ valid
@@ -21,7 +21,7 @@ object Or {
                     case valid @ Valid( _ ) ⇒ valid
                     case Invalid( right ) ⇒
                         invalid( left concat right ).leftMap { errors ⇒
-                            e.show( input :: errors :: HNil )
+                            e.fold( errors )( _.show( input :: errors :: HNil ) )
                         }
                 }
         }
@@ -41,3 +41,9 @@ class ||[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends Or {
 
     override final type Right = R
 }
+
+//object || {
+//    implicit def errorNot[L <: Rule, R <: Rule.Aux[L#Input, L#Output]]: Error[not[L || R]] = {
+//        Error.instance[not[L || R]]( _.at( 1 ) )
+//    }
+//}
