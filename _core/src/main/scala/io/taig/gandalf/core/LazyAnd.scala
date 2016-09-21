@@ -1,11 +1,8 @@
 package io.taig.gandalf.core
 
-import cats.data.Validated._
-import shapeless._
+import shapeless.HNil
 
-class LazyAnd extends Operator {
-    override type Right <: Rule.Input[Left#Output]
-}
+class LazyAnd extends Operator.Logical
 
 object LazyAnd {
     implicit def validation[A <: LazyAnd](
@@ -14,8 +11,8 @@ object LazyAnd {
         r: Validation[A#Right],
         e: Error[A]
     ): Validation[A] = Validation.instance[A] { input ⇒
-        l.validate( input ) andThen { output ⇒
-            r.validate( output.asInstanceOf[A#Right#Input] )
+        l.validate( input ) andThen { _ ⇒
+            r.validate( input.asInstanceOf[A#Right#Input] )
         } leftMap { errors ⇒
             e.show( input :: errors :: HNil )
         }
@@ -30,8 +27,6 @@ object LazyAnd {
     }
 }
 
-class &&[L <: Rule, R <: Rule.Input[L#Output]] extends LazyAnd {
-    override final type Left = L
-
-    override final type Right = R
-}
+class &&[L <: Condition, R <: Condition.Aux[L#Output]]
+    extends LazyAnd
+    with Operator.Aux[L, R]

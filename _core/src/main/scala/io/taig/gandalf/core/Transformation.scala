@@ -1,12 +1,12 @@
 package io.taig.gandalf.core
 
 import cats.data.Validated._
-import shapeless._
+import shapeless.{ HNil, Witness }
 
-trait Transformation extends Mutation with Arguments.None {
-    override final def mutate( input: Input ): Option[Output] = {
-        Some( transform( input ) )
-    }
+trait Transformation extends Mutation {
+    override final type Arguments = HNil
+
+    final def apply( input: Input ) = valid( transform( input ) )
 
     def transform( input: Input ): Output
 }
@@ -30,6 +30,6 @@ object Transformation {
         implicit
         w: Witness.Aux[T]
     ): Validation[T] = Validation.instance[T] { input ⇒
-        valid( w.value.transform( input.asInstanceOf[w.value.Input] ) )
+        w.value.apply( input.asInstanceOf[w.value.Input] )
     }
 }

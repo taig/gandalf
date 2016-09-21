@@ -6,6 +6,8 @@ trait Serialization[R <: Rule] {
 
 object Serialization {
     def instance[R <: Rule]( value: String ): Serialization[R] = {
-        new Serialization[R] { override def serialize = value }
+        new Serialization[R] {
+            override def serialize = value
+        }
     }
 }

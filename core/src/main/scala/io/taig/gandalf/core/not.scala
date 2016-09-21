@@ -1,35 +1,30 @@
 package io.taig.gandalf.core
 
-import cats.data.Validated._
+class not[R <: Rule]( implicit n: Negation[R] ) extends Rule {
+    override type Input = R#Input
 
-class not[C <: Condition] extends Condition {
-    override type Arguments = C#Arguments
+    override type Output = R#Output
 
-    override type Input = C#Input
+    override type Arguments = R#Arguments
 }
 
 object not {
-    implicit def validation[C <: Condition](
-        implicit
-        v: Validation[C],
-        e: Error[not[C]],
-        a: Arguments[C]
-    ): Validation[not[C]] = Validation.instance[not[C]] { input ⇒
-        v.validate( input ) match {
-            case Valid( _ ) ⇒
-                val arguments = a.collect( input )
-                val errors = e.show( arguments )
-                invalid( errors )
-            case Invalid( _ ) ⇒ valid( input )
-        }
-    }
+    def apply[R <: Rule: Negation]( Rule: R ): not[R] = new not[R]
 
-    implicit def error[C <: Condition](
+    implicit def validation[R <: Rule](
         implicit
-        e: Error[C]
-    ): Error[not[C]] = Error.instance[not[C]] { arguments ⇒
+        n: Negation[R]
+    ): Validation[not[R]] = Validation.instance[not[R]]( n.negate )
+
+    implicit def error[R <: Rule](
+        implicit
+        e: Error[R]
+    ): Error[not[R]] = Error.instance[not[R]] { arguments ⇒
         e.show( arguments ).map( error ⇒ s"not($error)" )
     }
 
-    def apply[C <: Condition]( condition: C ): not[C] = new not[C]
+    implicit def arguments[R <: Rule](
+        implicit
+        a: Arguments[R]
+    ): Arguments[not[R]] = Arguments.instance[not[R]]( a.collect )
 }

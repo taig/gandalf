@@ -1,9 +1,11 @@
 package io.taig.gandalf.core
 
 import cats.data.Validated._
-import shapeless.HNil
+import shapeless._
 
-class Or extends Operator.Logical
+class Or extends Operator {
+    override type Right <: Rule.Aux[Left#Input, Left#Output]
+}
 
 object Or {
     implicit def validation[O <: Or](
@@ -12,14 +14,16 @@ object Or {
         r: Validation[O#Right],
         e: Error[O]
     ): Validation[O] = Validation.instance[O] { input ⇒
-        val left = l.validate( input )
-        val right = r.validate( input.asInstanceOf[O#Right#Input] )
-        ( left, right ) match {
-            case ( Invalid( left ), Invalid( right ) ) ⇒
-                invalid( left concat right ).leftMap { errors ⇒
-                    e.show( input :: errors :: HNil )
+        l.validate( input ) match {
+            case valid @ Valid( _ ) ⇒ valid
+            case Invalid( left ) ⇒
+                r.validate( input.asInstanceOf[O#Right#Input] ) match {
+                    case valid @ Valid( _ ) ⇒ valid
+                    case Invalid( right ) ⇒
+                        invalid( left concat right ).leftMap { errors ⇒
+                            e.show( input :: errors :: HNil )
+                        }
                 }
-            case _ ⇒ valid( input )
         }
     }
 
@@ -32,6 +36,8 @@ object Or {
     }
 }
 
-class ||[L <: Condition, R <: Condition.Aux[L#Output]]
-    extends Or
-    with Operator.Aux[L, R]
+class ||[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends Or {
+    override final type Left = L
+
+    override final type Right = R
+}

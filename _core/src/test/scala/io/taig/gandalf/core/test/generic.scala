@@ -1,8 +1,6 @@
 package io.taig.gandalf.core.test
 
-import cats.data.Validated._
 import io.taig.gandalf.core.{ Transformation, Validation }
-import shapeless.HNil
 
 class generic[T] extends Transformation.With[T, T]( identity )
 
@@ -11,9 +9,7 @@ object generic {
 
     implicit def validation[T]: Validation[generic[T]] = {
         new Validation[generic[T]] {
-            override def validate( input: T ) = {
-                valid( instance[T].transform( input ) )
-            }
+            override def validate( input: T ) = instance[T]( input )
         }
     }
 }

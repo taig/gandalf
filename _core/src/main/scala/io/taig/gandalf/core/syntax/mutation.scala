@@ -7,7 +7,7 @@ import scala.language.implicitConversions
 trait mutation {
     implicit def gandalfCoreMutationSyntax[M <: Mutation](
         alteration: M
-    ): operation.mutation[M] = new operation.mutation[M]( alteration )
+    ): operation.container[M] = new operation.container[M]( alteration )
 }
 
-object mutation extends mutation
+object mutation extends container$

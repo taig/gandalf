@@ -1,6 +1,6 @@
 package io.taig.gandalf.core
 
-import shapeless.{ HList, Witness }
+import shapeless._
 
 import scala.reflect._
 
@@ -42,20 +42,31 @@ object Rule {
         implicit def arguments[A <: Applyable](
             implicit
             w: Witness.Aux[A]
-        ): Arguments[A] = Arguments.instance[A] { input ⇒
+        ): Arguments[A] = Arguments.instance { input ⇒
             w.value.arguments( input.asInstanceOf[w.value.Input] )
         }
 
-        implicit def error[A <: Applyable: ClassTag]: Error[A] = {
-            Error.static( name[A] )
-        }
+        def implicits[A <: Applyable]( f: ⇒ A )(
+            implicit
+            e: Error[A]
+        ): Validation[A] with Arguments[A] = {
+            val applyable = f
 
-        implicit def serialization[A <: Applyable: ClassTag]: Serialization[A] = {
-            Serialization.instance( name[A] )
-        }
+            new Validation[A] with Arguments[A] {
+                override def validate( input: A#Input ) = {
+                    applyable.apply( input.asInstanceOf[applyable.Input] )
+                }
 
-        private def name[A: ClassTag]: String = {
-            classTag[A].runtimeClass.getSimpleName.replace( "$", "" )
+                override def collect( input: A#Input ) = {
+                    applyable.arguments( input.asInstanceOf[applyable.Input] )
+                }
+            }
+        }
+    }
+
+    implicit def serialization[R <: Rule: ClassTag]: Serialization[R] = {
+        Serialization.instance {
+            classTag[R].runtimeClass.getSimpleName.replace( "$", "" )
         }
     }
 }

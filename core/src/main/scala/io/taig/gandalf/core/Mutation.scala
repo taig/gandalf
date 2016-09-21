@@ -2,7 +2,17 @@ package io.taig.gandalf.core
 
 import cats.data.Validated._
 
-trait Mutation extends Rule
+trait Mutation extends Rule.Applyable {
+    override final def apply( input: Input )(
+        implicit
+        e: Error[this.type]
+    ): Result[this.type] = mutate( input ) match {
+        case Some( output ) ⇒ valid( output )
+        case None           ⇒ invalid( e.show( arguments( input ) ) )
+    }
+
+    def mutate( input: Input ): Option[Output]
+}
 
 object Mutation {
     type Input[I] = Mutation { type Input = I }
@@ -11,26 +21,11 @@ object Mutation {
 
     type Aux[I, O] = Mutation { type Input = I; type Output = O }
 
-    trait Applyable[I, O]
-            extends Mutation
-            with Rule.Applyable {
-        override type Input = I
+    abstract class With[I, O]( f: I ⇒ Option[O] ) extends Mutation {
+        override final type Input = I
 
-        override type Output = O
+        override final type Output = O
 
-        override final def apply( input: I )(
-            implicit
-            e: Error[this.type]
-        ) = mutate( input ) match {
-            case Some( output ) ⇒ valid( output )
-            case None           ⇒ invalid( e.show( arguments( input ) ) )
-        }
-
-        def mutate( input: I ): Option[O]
-    }
-
-    abstract class With[I, O]( f: I ⇒ Option[O], args: Any* )
-            extends Applyable[I, O] {
-        override def mutate( input: I ) = f( input )
+        override final def mutate( input: I ) = f( input )
     }
 }

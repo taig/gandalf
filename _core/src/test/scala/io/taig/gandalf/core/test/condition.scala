@@ -2,16 +2,16 @@ package io.taig.gandalf.core.test
 
 import io.taig.gandalf.core._
 
-object mutation {
+object condition {
     object success
-        extends Mutation.With[String, String]( Some( _ ) )
+        extends Condition.With[String]( _ ⇒ true )
         with Arguments.None
 
     object failure
-            extends Mutation.With[String, String]( _ ⇒ None )
+            extends Condition.With[String]( _ ⇒ false )
             with Arguments.None {
         implicit val error: Error[this.type] = {
-            Error.static( "mutation" )
+            Error.static( "condition" )
         }
     }
 }

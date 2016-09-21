@@ -1,11 +1,9 @@
 package io.taig.gandalf.core
 
 import cats.syntax.cartesian._
-import shapeless._
+import shapeless.HNil
 
-class EagerAnd extends Operator {
-    override type Right <: Rule.Aux[Left#Input, Left#Output]
-}
+class EagerAnd extends Operator.Logical
 
 object EagerAnd {
     implicit def validation[A <: EagerAnd](
@@ -16,9 +14,8 @@ object EagerAnd {
     ): Validation[A] = Validation.instance[A] { input ⇒
         val left = l.validate( input )
         val right = r.validate( input.asInstanceOf[A#Right#Input] )
-
         ( left |@| right )
-            .map( ( _, output ) ⇒ output )
+            .map( ( _, _ ) ⇒ input )
             .leftMap { errors ⇒
                 e.show( input :: errors :: HNil )
             }
@@ -33,8 +30,6 @@ object EagerAnd {
     }
 }
 
-class &[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends EagerAnd {
-    override final type Left = L
-
-    override final type Right = R
-}
+class &[L <: Condition, R <: Condition.Aux[L#Output]]
+    extends EagerAnd
+    with Operator.Aux[L, R]

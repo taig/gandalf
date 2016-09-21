@@ -7,6 +7,8 @@ class RuleTest extends Suite {
     it should "provide a toString representation" in {
         condition.success.serialize shouldBe "success"
         condition.failure.serialize shouldBe "failure"
+        mutation.success.serialize shouldBe "success"
+        mutation.failure.serialize shouldBe "failure"
     }
 
     "Condition" should "verify properties" in {
@@ -16,7 +18,7 @@ class RuleTest extends Suite {
 
     "Mutation" should "mutate data" in {
         mutation.success.validate( "foo" ) shouldBe valid( "foo" )
-        mutation.failure.validate( "foo" ) shouldBe invalidNel( "mutation" )
+        mutation.failure.validate( "foo" ) shouldBe invalidNel( "container" )
     }
 
     "Transformation" should "mutate data safely" in {
