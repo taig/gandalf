@@ -64,5 +64,22 @@ object Rule {
         private def name[A: ClassTag]: String = {
             classTag[A].runtimeClass.getSimpleName.replace( "$", "" )
         }
+
+        def implicits[A <: Applyable]( f: ⇒ A )(
+            implicit
+            e: Error[A]
+        ): Validation[A] with Arguments[A] = {
+            val applyable = f
+
+            new Validation[A] with Arguments[A] {
+                override def validate( input: A#Input ) = {
+                    applyable.apply( input.asInstanceOf[applyable.Input] )
+                }
+
+                override def collect( input: A#Input ) = {
+                    applyable.arguments( input.asInstanceOf[applyable.Input] )
+                }
+            }
+        }
     }
 }

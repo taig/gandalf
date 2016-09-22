@@ -7,8 +7,8 @@ import io.taig.gandalf.macros._
 class LiftTest extends Suite {
     it should "return the successfully validated result" in {
         lift( "foo" )( condition.success ).value shouldBe "foo"
-        lift( "foo" )( transformation ~> condition.success ).value shouldBe "foo"
-        lift( "foo" )( transformation ~> mutation.success ~> condition.success )
+        lift( "foo" )( transformation && condition.success ).value shouldBe "foo"
+        lift( "foo" )( transformation && mutation.success && condition.success )
             .value shouldBe "foo"
     }
 
@@ -17,7 +17,7 @@ class LiftTest extends Suite {
     }
 
     it should "infer the input type" in {
-        lift( "foo" )( generic.instance ~> condition.success )
+        lift( "foo" )( generic.instance && condition.success )
             .value shouldBe "foo"
     }
 }

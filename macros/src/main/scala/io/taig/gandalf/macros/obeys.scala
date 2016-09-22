@@ -33,7 +33,7 @@ private object obeys {
             case _ ⇒ c.abort(
                 c.enclosingPosition,
                 "Illegal @obeys format. Can bei either @obeys[nonEmpty.type] " +
-                    "or @obeys( trim ~> nonEmpty )"
+                    "or @obeys( trim && nonEmpty )"
             )
         }
 
@@ -109,7 +109,6 @@ private object obeys {
         import c.universe._
 
         tree match {
-            case q"$left ~> $right" ⇒ q"${retype( c )( left, input )} ~> $right"
             case q"$left && $right" ⇒ q"${retype( c )( left, input )} && $right"
             case q"$left & $right"  ⇒ q"${retype( c )( left, input )} & $right"
             case q"$left || $right" ⇒ q"${retype( c )( left, input )} || $right"
