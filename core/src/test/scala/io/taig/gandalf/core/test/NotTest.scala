@@ -17,12 +17,12 @@ class NotTest extends Suite {
     }
 
     it should "not work with Mutations" in {
-        assertTypeError( "dont( mutation.success )" )
-        assertTypeError( "dont( mutation.failure )" )
+        assertTypeError( """dont( mutation.success ).validate( "foo" )""" )
+        assertTypeError( """dont( mutation.failure ).validate( "foo" )""" )
     }
 
     it should "not work with Transformations" in {
-        assertTypeError( "dont( transformation )" )
+        assertTypeError( """dont( transformation ).validate( "foo" )""" )
     }
 
     it should "even out when applied twice" in {
@@ -81,10 +81,10 @@ class NotTest extends Suite {
             invalidNel( "not(success)" )
         dont( condition.failure && transformation ).validate( "foo" ) shouldBe
             valid( "foo" )
-        //        dont( transformation && condition.success ).validate( "foo" ) shouldBe
-        //            invalidNel( "not(success)" )
-        //        dont( transformation && condition.failure ).validate( "foo" ) shouldBe
-        //            valid( "foo" )
+        dont( transformation && condition.success ).validate( "foo" ) shouldBe
+            invalidNel( "not(success)" )
+        dont( transformation && condition.failure ).validate( "foo" ) shouldBe
+            valid( "foo" )
     }
 
     it should "support custom compositions with custom Errors" in {
@@ -135,12 +135,10 @@ class NotTest extends Suite {
             invalidNel( "not(success)" )
         dont( condition.failure & transformation ).validate( "foo" ) shouldBe
             valid( "foo" )
-        // For whatever reason, this file fails to compile elsewhere if these
-        // lines are enabled ¯\_(ツ)_/¯
-        // dont( transformation & condition.success ).validate( "foo" ) shouldBe
-        //     invalidNel( "not(success)" )
-        // dont( transformation & condition.failure ).validate( "foo" ) shouldBe
-        //     valid( "foo" )
+        dont( transformation & condition.success ).validate( "foo" ) shouldBe
+            invalidNel( "not(success)" )
+        dont( transformation & condition.failure ).validate( "foo" ) shouldBe
+            valid( "foo" )
     }
 
     it should "support custom compositions with custom Errors" in {

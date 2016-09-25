@@ -1,6 +1,5 @@
 package io.taig.gandalf.core
 
-import cats.data.Validated._
 import shapeless._
 
 class LazyAnd extends Operator {
@@ -35,9 +34,3 @@ class &&[L <: Rule, R <: Rule.Input[L#Output]] extends LazyAnd {
 
     override final type Right = R
 }
-
-//object && {
-//    implicit def errorNot[L <: Rule, R <: Rule.Input[L#Output]]: Error[not[L && R]] = {
-//        Error.instance[not[L && R]]( _.at( 1 ) )
-//    }
-//}

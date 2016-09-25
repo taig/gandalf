@@ -20,7 +20,7 @@ class StringTest extends Suite {
         ltrim.validate( "     " ) shouldBe valid( "" )
     }
 
-    "matches" should "check if a given pattern equal" in {
+    "matches" should "check if a given regex pattern matches" in {
         matches( ".*foo.*" ).validate( "foo" ) shouldBe valid( "foo" )
         matches( ".*foo.*" ).validate( "foobar" ) shouldBe valid( "foobar" )
         matches( ".*foo.*" ).validate( "bar" ) shouldBe invalidNel( "matches" )
