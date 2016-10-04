@@ -95,13 +95,12 @@ class NotTest extends Suite {
         dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
     }
 
-    //    it should "support nesting" in {
-    //        // TODO difficult
-    //        dont( condition.success && dont( condition.failure ) ).validate( "foo" ) shouldBe
-    //            invalidNel( "not(success)", "condition" )
-    //        dont( condition.success && dont( condition.success ) ).validate( "foo" ) shouldBe
-    //            valid( "foo" )
-    //    }
+    it should "support nesting" in {
+        dont( condition.success && dont( condition.failure ) ).validate( "foo" ) shouldBe
+            invalid( NonEmptyList.of( "not(success)", "condition" ) )
+        dont( condition.success && dont( condition.success ) ).validate( "foo" ) shouldBe
+            valid( "foo" )
+    }
 
     "&" should "support Conditions" in {
         dont( condition.success & condition.failure ).validate( "foo" ) shouldBe

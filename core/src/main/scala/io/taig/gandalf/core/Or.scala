@@ -27,7 +27,7 @@ object Or {
         }
     }
 
-    implicit def validationNot[O <: Or { type Left <: Rule; type Right <: Condition.Aux[Left#Output] }](
+    implicit def validationNot[O <: Or { type Left <: Rule; type Right <: Rule.Aux[Left#Input, Left#Output] }](
         implicit
         v: Validation[EagerAnd { type Left = not[O#Left]; type Right = not[O#Right] }],
         e: Error[not[O]]
