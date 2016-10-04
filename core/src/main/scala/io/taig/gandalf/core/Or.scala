@@ -27,6 +27,16 @@ object Or {
         }
     }
 
+    implicit def validationNot[O <: Or { type Left <: Rule; type Right <: Condition.Aux[Left#Output] }](
+        implicit
+        v: Validation[EagerAnd { type Left = not[O#Left]; type Right = not[O#Right] }],
+        e: Error[not[O]]
+    ): Validation[not[O]] = Validation.instance[not[O]] { input ⇒
+        v.validate( input ) leftMap { errors ⇒
+            e.show( input :: errors :: HNil )
+        }
+    }
+
     implicit def serialization[O <: Or](
         implicit
         l: Serialization[O#Left],
@@ -41,9 +51,3 @@ class ||[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends Or {
 
     override final type Right = R
 }
-
-//object || {
-//    implicit def errorNot[L <: Rule, R <: Rule.Aux[L#Input, L#Output]]: Error[not[L || R]] = {
-//        Error.instance[not[L || R]]( _.at( 1 ) )
-//    }
-//}

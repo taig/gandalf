@@ -2,7 +2,7 @@ package io.taig.gandalf.core
 
 import shapeless._
 
-class LazyAnd extends Operator {
+class LazyAnd extends And {
     override type Right <: Rule.Input[Left#Output]
 }
 

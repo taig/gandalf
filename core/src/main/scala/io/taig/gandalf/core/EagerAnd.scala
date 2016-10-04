@@ -3,7 +3,7 @@ package io.taig.gandalf.core
 import cats.syntax.cartesian._
 import shapeless._
 
-class EagerAnd extends Operator {
+class EagerAnd extends And {
     override type Right <: Rule.Aux[Left#Input, Left#Output]
 }
 
@@ -38,9 +38,3 @@ class &[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends EagerAnd {
 
     override final type Right = R
 }
-
-//object & {
-//    implicit def errorNot[L <: Rule, R <: Rule.Aux[L#Input, L#Output]]: Error[not[L & R]] = {
-//        Error.instance[not[L & R]]( _.at( 1 ) )
-//    }
-//}

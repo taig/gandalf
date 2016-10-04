@@ -24,4 +24,19 @@ object Condition {
 
         override final def check( input: T ) = f( input )
     }
+
+    implicit def validationNot[C <: Condition](
+        implicit
+        v: Validation[C],
+        e: Error[not[C]],
+        a: Arguments[C]
+    ): Validation[not[C]] = Validation.instance[not[C]] { input ⇒
+        v.validate( input ) match {
+            case Valid( _ ) ⇒
+                val arguments = a.collect( input )
+                val errors = e.show( arguments )
+                invalid( errors )
+            case Invalid( _ ) ⇒ valid( input )
+        }
+    }
 }

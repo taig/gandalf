@@ -16,12 +16,12 @@ class NotTest extends Suite {
             valid( "foo" )
     }
 
-    it should "not work with Mutations" in {
+    it should "not support Mutations" in {
         assertTypeError( """dont( mutation.success ).validate( "foo" )""" )
         assertTypeError( """dont( mutation.failure ).validate( "foo" )""" )
     }
 
-    it should "not work with Transformations" in {
+    it should "not support Transformations" in {
         assertTypeError( """dont( transformation ).validate( "foo" )""" )
     }
 
@@ -95,13 +95,13 @@ class NotTest extends Suite {
         dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
     }
 
-    it should "support nesting" in {
-        // TODO difficult
-        dont( condition.success && dont( condition.failure ) ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)", "condition" )
-        dont( condition.success && dont( condition.success ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
-    }
+    //    it should "support nesting" in {
+    //        // TODO difficult
+    //        dont( condition.success && dont( condition.failure ) ).validate( "foo" ) shouldBe
+    //            invalidNel( "not(success)", "condition" )
+    //        dont( condition.success && dont( condition.success ) ).validate( "foo" ) shouldBe
+    //            valid( "foo" )
+    //    }
 
     "&" should "support Conditions" in {
         dont( condition.success & condition.failure ).validate( "foo" ) shouldBe
@@ -159,7 +159,7 @@ class NotTest extends Suite {
 
     "||" should "support Conditions" in {
         dont( condition.success || condition.failure ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "not(condition)" ) )
+            invalidNel( "not(success)" )
         dont( condition.failure || condition.failure ).validate( "foo" ) shouldBe
             valid( "foo" )
     }
