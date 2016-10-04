@@ -100,6 +100,10 @@ class NotTest extends Suite {
             invalid( NonEmptyList.of( "not(success)", "condition" ) )
         dont( condition.success && dont( condition.success ) ).validate( "foo" ) shouldBe
             valid( "foo" )
+        dont( condition.failure && dont( condition.failure ) ).validate( "foo" ) shouldBe
+            valid( "foo" )
+        dont( condition.failure && dont( condition.success ) ).validate( "foo" ) shouldBe
+            valid( "foo" )
     }
 
     "&" should "support Conditions" in {
@@ -156,6 +160,17 @@ class NotTest extends Suite {
         dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
     }
 
+    it should "support nesting" in {
+        dont( condition.success & dont( condition.failure ) ).validate( "foo" ) shouldBe
+            invalid( NonEmptyList.of( "not(success)", "condition" ) )
+        dont( condition.success & dont( condition.success ) ).validate( "foo" ) shouldBe
+            valid( "foo" )
+        dont( condition.failure & dont( condition.failure ) ).validate( "foo" ) shouldBe
+            valid( "foo" )
+        dont( condition.failure & dont( condition.success ) ).validate( "foo" ) shouldBe
+            valid( "foo" )
+    }
+
     "||" should "support Conditions" in {
         dont( condition.success || condition.failure ).validate( "foo" ) shouldBe
             invalidNel( "not(success)" )
@@ -208,5 +223,16 @@ class NotTest extends Suite {
         }
 
         dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
+    }
+
+    it should "support nesting" in {
+        dont( condition.success || dont( condition.failure ) ).validate( "foo" ) shouldBe
+            invalid( NonEmptyList.of( "not(success)", "condition" ) )
+        dont( condition.success || dont( condition.success ) ).validate( "foo" ) shouldBe
+            invalidNel( "not(success)" )
+        dont( condition.failure || dont( condition.failure ) ).validate( "foo" ) shouldBe
+            invalidNel( "condition" )
+        dont( condition.failure || dont( condition.success ) ).validate( "foo" ) shouldBe
+            valid( "foo" )
     }
 }
