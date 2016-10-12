@@ -1,7 +1,8 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.core.{ Arguments, Condition }
+import io.taig.gandalf.core.{ Arguments, Condition, || }
 import io.taig.gandalf.core.Rule.Applyable
+import io.taig.gandalf.predef.generic.equal
 
 import scala.Ordering.Implicits._
 
@@ -24,19 +25,11 @@ trait numeric {
         }
     }
 
-    class gte[T <: U: ValueOf, U: Numeric]
-            extends Condition.With[U]( _ >= valueOf[T] )
-            with Arguments.With[T] {
-        override val argument = valueOf[T]
-    }
+    class gte[T <: U: ValueOf, U: Numeric] extends ( gt[T, U] || equal[T, U] )
 
     object gte {
         def apply[T: Numeric]( value: T ): gte[value.type, T] = {
             new gte[value.type, T]
-        }
-
-        implicit def implicits[T <: U: ValueOf, U: Numeric] = {
-            Applyable.implicits[gte[T, U]]( new gte[T, U] )
         }
     }
 
@@ -68,19 +61,11 @@ trait numeric {
         }
     }
 
-    class lte[T <: U: ValueOf, U: Numeric]
-            extends Condition.With[U]( _ <= valueOf[T] )
-            with Arguments.With[T] {
-        override val argument = valueOf[T]
-    }
+    class lte[T <: U: ValueOf, U: Numeric] extends ( lt[T, U] || equal[T, U] )
 
     object lte {
         def apply[T: Numeric]( value: T ): lte[value.type, T] = {
             new lte[value.type, T]
-        }
-
-        implicit def implicits[T <: U: ValueOf, U: Numeric] = {
-            Applyable.implicits[lte[T, U]]( new lte[T, U] )
         }
     }
 

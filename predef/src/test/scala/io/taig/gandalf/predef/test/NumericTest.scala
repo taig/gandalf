@@ -1,5 +1,6 @@
 package io.taig.gandalf.predef.test
 
+import cats.data.NonEmptyList
 import cats.data.Validated._
 import io.taig.gandalf.core.syntax.all._
 import io.taig.gandalf.core.test.Suite
@@ -15,7 +16,8 @@ class NumericTest extends Suite {
     "gte" should "compare numbers with the >= operator" in {
         gte( 5 ).validate( 10 ) shouldBe valid( 10 )
         gte( 5 ).validate( 5 ) shouldBe valid( 5 )
-        gte( 5 ).validate( 0 ) shouldBe invalidNel( "gte" )
+        gte( 5 ).validate( 0 ) shouldBe
+            invalid( NonEmptyList.of( "gt", "equal" ) )
     }
 
     "isZero" should "check if a number is == 0" in {
@@ -33,7 +35,8 @@ class NumericTest extends Suite {
     "lte" should "compare numbers with the >= operator" in {
         lte( 5 ).validate( 0 ) shouldBe valid( 0 )
         lte( 5 ).validate( 5 ) shouldBe valid( 5 )
-        lte( 5 ).validate( 10 ) shouldBe invalidNel( "lte" )
+        lte( 5 ).validate( 10 ) shouldBe
+            invalid( NonEmptyList.of( "lt", "equal" ) )
     }
 
     "negative" should "check if a number is < 0" in {
