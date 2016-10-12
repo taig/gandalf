@@ -31,13 +31,6 @@ lazy val predef = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
-lazy val playground = project
-    .settings( Settings.common )
-    .settings(
-//         scalacOptions += "-Xlog-implicits"
-    )
-    .dependsOn( predef, macros )
-
 //lazy val android = project
 //    .settings( androidBuildAar ++ Settings.common )
 //    .settings(
