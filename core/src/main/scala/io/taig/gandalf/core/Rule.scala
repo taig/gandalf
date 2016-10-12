@@ -19,7 +19,7 @@ object Rule {
 
     type Aux[I, O] = Rule { type Input = I; type Output = O }
 
-    trait Applyable extends Rule {
+    trait Applyable extends Rule with Container.Id {
         def apply( input: Input )(
             implicit
             e: Error[this.type]

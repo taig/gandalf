@@ -4,20 +4,20 @@ import cats.data.Validated._
 import shapeless._
 
 class Or extends Operator {
-    override type Right <: Rule.Aux[Left#Input, Left#Output]
+    override type Right <: Container { type Kind <: Rule.Aux[Left#Kind#Input, Left#Kind#Output] }
 }
 
 object Or {
     implicit def validation[O <: Or](
         implicit
         l: Validation[O#Left],
-        r: Validation[O#Right],
+        r: Lazy[Validation[O#Right]],
         e: Option[Error[O]]
     ): Validation[O] = Validation.instance[O] { input ⇒
         l.validate( input ) match {
             case valid @ Valid( _ ) ⇒ valid
             case Invalid( left ) ⇒
-                r.validate( input.asInstanceOf[O#Right#Input] ) match {
+                r.value.validate( input.asInstanceOf[O#Right#Kind#Input] ) match {
                     case valid @ Valid( _ ) ⇒ valid
                     case Invalid( right ) ⇒
                         invalid( left concat right ).leftMap { errors ⇒
@@ -27,7 +27,7 @@ object Or {
         }
     }
 
-    implicit def validationNot[O <: Or { type Left <: Rule; type Right <: Rule.Aux[Left#Input, Left#Output] }](
+    implicit def validationNot[O <: Or { type Left <: Container; type Right <: Container { type Kind <: Rule.Aux[Left#Kind#Input, Left#Kind#Output] } }](
         implicit
         v: Validation[EagerAnd { type Left = not[O#Left]; type Right = not[O#Right] }],
         e: Error[not[O]]
@@ -46,7 +46,7 @@ object Or {
     }
 }
 
-class ||[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends Or {
+class ||[L <: Container, R <: Container { type Kind <: Rule.Aux[L#Kind#Input, L#Kind#Output] }] extends Or {
     override final type Left = L
 
     override final type Right = R

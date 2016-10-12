@@ -1,15 +1,15 @@
 package io.taig.gandalf.macros
 
-import io.taig.gandalf.core.{ Rule, Validation }
+import io.taig.gandalf.core.{ Container, Rule, Validation }
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions
 
 trait implicits {
-    implicit def valueToObey[I, R <: Rule.Input[I]]( input: I )(
+    implicit def valueToObey[I, C <: Container { type Kind <: Rule.Input[I] }]( input: I )(
         implicit
-        v: Validation[R]
-    ): I Obey R = macro lift.implementation[I, R]
+        v: Validation[C]
+    ): I Obey C = macro lift.implementation[I, C]
 }
 
 object implicits extends implicits

@@ -5,9 +5,9 @@ import io.taig.gandalf.core._
 import scala.language.implicitConversions
 
 trait container {
-    implicit def gandalfCoreRuleSyntax[R <: Rule](
-        container: R
-    ): operation.container[R] = new operation.container[R]( container )
+    implicit def gandalfCoreContainerSyntax[C <: Container](
+        container: C
+    ): operation.container[C] = new operation.container[C]( container )
 }
 
 object container extends container

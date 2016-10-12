@@ -2,46 +2,50 @@ package io.taig.gandalf.macros
 
 import cats.data.Validated.{ Invalid, Valid }
 import io.taig.gandalf.core._
+import shapeless.{ Lazy, Strict }
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 import scala.util.{ Success, Try }
 
 object lift {
-    def apply[I, R <: Rule.Input[I]]( input: I )( rule: R with Rule.Input[I] )(
+    def apply[I, C <: Container { type Kind <: Rule.Input[I] }]( input: I )(
+        rule: C with Container { type Kind <: Rule.Input[I] }
+    )(
         implicit
-        v: Validation[R]
-    ): I Obey R = macro inference[I, R]
+        v: Validation[C]
+    ): I Obey C = macro inference[I, C]
 
-    def inference[I, R <: Rule.Input[I]](
+    def inference[I, C <: Container { type Kind <: Rule.Input[I] }](
         c: blackbox.Context
     )(
         input: c.Expr[I]
     )(
-        rule: c.Expr[R with Rule.Input[I]]
+        rule: c.Expr[C with Container { type Kind <: Rule.Input[I] }]
     )(
-        v: c.Expr[Validation[R]]
+        v: c.Expr[Validation[C]]
     )(
         implicit
         wtti: c.WeakTypeTag[I],
-        wttr: c.WeakTypeTag[R]
-    ): c.Expr[I Obey R] = implementation[I, R]( c )( input )( v )
+        wttr: c.WeakTypeTag[C]
+    ): c.Expr[I Obey C] = implementation[I, C]( c )( input )( v )
 
-    def implementation[I, R <: Rule.Input[I]](
+    def implementation[I, C <: Container { type Kind <: Rule.Input[I] }](
         c: blackbox.Context
     )(
         input: c.Expr[I]
     )(
-        v: c.Expr[Validation[R]]
+        v: c.Expr[Validation[C]]
     )(
         implicit
         wtti: c.WeakTypeTag[I],
-        wttr: c.WeakTypeTag[R]
-    ): c.Expr[I Obey R] = {
+        wttr: c.WeakTypeTag[C]
+    ): c.Expr[I Obey C] = {
         import c.universe._
 
         val validation = reify( v.splice.validate( input.splice ) )
-        val expression = c.Expr[Result[R]]( c.untypecheck( validation.tree ) )
+        val expression = c.Expr[Result[C]]( c.untypecheck( validation.tree ) )
+
         def validationType = tryN( 2, c.eval {
             c.Expr[String] {
                 c.untypecheck( reify( input.splice.toString ).tree )
@@ -49,7 +53,7 @@ object lift {
         } )
 
         tryN( 2, c.eval( expression ) ) match {
-            case Valid( value ) ⇒ c.Expr[I Obey R](
+            case Valid( _ ) ⇒ c.Expr[I Obey C](
                 q"""
                 _root_.io.taig.gandalf.macros.Obey[$wtti, $wttr](
                     $expression.getOrElse {

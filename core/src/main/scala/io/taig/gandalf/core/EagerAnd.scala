@@ -4,18 +4,18 @@ import cats.syntax.cartesian._
 import shapeless._
 
 class EagerAnd extends And {
-    override type Right <: Rule.Aux[Left#Input, Left#Output]
+    override type Right <: Container { type Kind <: Rule.Aux[Left#Kind#Input, Left#Kind#Output] }
 }
 
 object EagerAnd {
     implicit def validation[A <: EagerAnd](
         implicit
         l: Validation[A#Left],
-        r: Validation[A#Right],
+        r: Lazy[Validation[A#Right]],
         e: Option[Error[A]]
     ): Validation[A] = Validation.instance[A] { input ⇒
         val left = l.validate( input )
-        val right = r.validate( input.asInstanceOf[A#Right#Input] )
+        val right = r.value.validate( input.asInstanceOf[A#Right#Kind#Input] )
 
         ( left |@| right )
             .map( ( _, output ) ⇒ output )
@@ -33,7 +33,7 @@ object EagerAnd {
     }
 }
 
-class &[L <: Rule, R <: Rule.Aux[L#Input, L#Output]] extends EagerAnd {
+class &[L <: Container, R <: Container { type Kind <: Rule.Aux[L#Kind#Input, L#Kind#Output] }] extends EagerAnd {
     override final type Left = L
 
     override final type Right = R

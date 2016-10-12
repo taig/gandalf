@@ -2,28 +2,25 @@ package io.taig.gandalf.core
 
 import cats.data.NonEmptyList
 
-trait Error[-R <: Rule] {
-    def show( arguments: R#Arguments ): NonEmptyList[String]
+trait Error[-C <: Container] {
+    def show( arguments: C#Kind#Arguments ): NonEmptyList[String]
 }
 
 object Error {
     @inline
-    def apply[R <: Rule](
-        implicit
-        e: Error[R]
-    ): Error[R] = e
+    def apply[C <: Container]( implicit e: Error[C] ): Error[C] = e
 
-    def instance[R <: Rule](
-        f: R#Arguments ⇒ NonEmptyList[String]
-    ): Error[R] = new Error[R] {
-        override def show( arguments: R#Arguments ) = f( arguments )
+    def instance[C <: Container](
+        f: C#Kind#Arguments ⇒ NonEmptyList[String]
+    ): Error[C] = new Error[C] {
+        override def show( arguments: C#Kind#Arguments ) = f( arguments )
     }
 
-    def one[R <: Rule](
-        f: R#Arguments ⇒ String
-    ): Error[R] = instance( arguments ⇒ NonEmptyList.of( f( arguments ) ) )
+    def one[C <: Container](
+        f: C#Kind#Arguments ⇒ String
+    ): Error[C] = instance( arguments ⇒ NonEmptyList.of( f( arguments ) ) )
 
-    def static[R <: Rule](
+    def static[C <: Container](
         value: String
-    ): Error[R] = instance( _ ⇒ NonEmptyList.of( value ) )
+    ): Error[C] = instance( _ ⇒ NonEmptyList.of( value ) )
 }

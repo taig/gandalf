@@ -1,11 +1,11 @@
 package io.taig.gandalf.core
 
-trait Serialization[R <: Rule] {
+trait Serialization[C <: Container] {
     def serialize: String
 }
 
 object Serialization {
-    def instance[R <: Rule]( value: String ): Serialization[R] = {
-        new Serialization[R] { override def serialize = value }
+    def instance[C <: Container]( value: String ): Serialization[C] = {
+        new Serialization[C] { override def serialize = value }
     }
 }

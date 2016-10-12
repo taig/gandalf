@@ -2,27 +2,23 @@ package io.taig.gandalf.core
 
 import shapeless._
 
-class not[R <: Rule] extends Rule {
-    override type Input = R#Input
-
-    override type Output = R#Output
-
-    override type Arguments = R#Arguments
+class not[C <: Container] extends Container {
+    override final type Kind = C#Kind
 }
 
 object not extends not0 {
-    def apply[R <: Rule]( Rule: R ): not[R] = new not[R]
+    def apply[C <: Container]( container: C ): not[C] = new not[C]
 
-    implicit def validationNotNot[R <: Rule](
+    implicit def validationNotNot[C <: Container](
         implicit
-        v: Validation[R]
-    ): Validation[not[not[R]]] = Validation.instance[not[not[R]]] {
+        v: Validation[C]
+    ): Validation[not[not[C]]] = Validation.instance[not[not[C]]] {
         v.validate
     }
 }
 
 trait not0 {
-    implicit def validationOperatorConditionMutation[O <: Operator { type Left <: Condition; type Right <: Mutation.Input[Left#Output] }](
+    implicit def validationOperatorRuleMutation[O <: Operator { type Left <: Container; type Right <: Container { type Kind <: Mutation.Input[Left#Kind#Output] } }](
         implicit
         v: Validation[O { type Left = not[O#Left] }],
         e: Error[not[O]]
@@ -32,7 +28,7 @@ trait not0 {
         }
     }
 
-    implicit def validationOperatorMutationCondition[O <: Operator { type Left <: Mutation; type Right <: Condition.Aux[Left#Output] }](
+    implicit def validationOperatorMutationRule[O <: Operator { type Left <: Container { type Kind <: Mutation }; type Right <: Container { type Kind <: Rule.Input[Left#Kind#Output] } }](
         implicit
         v: Validation[O { type Right = not[O#Right] }],
         e: Error[not[O]]

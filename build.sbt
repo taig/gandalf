@@ -34,7 +34,7 @@ lazy val predef = project
 lazy val playground = project
     .settings( Settings.common )
     .settings(
-        scalacOptions += "-Xlog-implicits"
+//         scalacOptions += "-Xlog-implicits"
     )
     .dependsOn( predef, macros )
 

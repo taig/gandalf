@@ -1,16 +1,16 @@
 package io.taig.gandalf.core
 
-trait Validation[R <: Rule] {
-    def validate( input: R#Input ): Result[R]
+trait Validation[C <: Container] {
+    def validate( input: C#Kind#Input ): Result[C]
 }
 
 object Validation {
     @inline
-    def apply[R <: Rule]( implicit v: Validation[R] ): Validation[R] = v
+    def apply[C <: Container]( implicit v: Validation[C] ): Validation[C] = v
 
-    def instance[R <: Rule](
-        f: R#Input ⇒ Result[R]
-    ): Validation[R] = new Validation[R] {
-        override def validate( input: R#Input ) = f( input )
+    def instance[C <: Container](
+        f: C#Kind#Input ⇒ Result[C]
+    ): Validation[C] = new Validation[C] {
+        override def validate( input: C#Kind#Input ) = f( input )
     }
 }

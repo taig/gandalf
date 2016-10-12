@@ -3,18 +3,18 @@ package io.taig.gandalf.core
 import shapeless._
 
 class LazyAnd extends And {
-    override type Right <: Rule.Input[Left#Output]
+    override type Right <: Container { type Kind <: Rule.Input[Left#Kind#Output] }
 }
 
 object LazyAnd {
     implicit def validation[A <: LazyAnd](
         implicit
         l: Validation[A#Left],
-        r: Validation[A#Right],
+        r: Lazy[Validation[A#Right]],
         e: Option[Error[A]]
     ): Validation[A] = Validation.instance[A] { input ⇒
         l.validate( input ) andThen { output ⇒
-            r.validate( output.asInstanceOf[A#Right#Input] )
+            r.value.validate( output.asInstanceOf[A#Right#Kind#Input] )
         } leftMap { errors ⇒
             e.fold( errors )( _.show( input :: errors :: HNil ) )
         }
@@ -29,7 +29,7 @@ object LazyAnd {
     }
 }
 
-class &&[L <: Rule, R <: Rule.Input[L#Output]] extends LazyAnd {
+class &&[L <: Container, R <: Container { type Kind <: Rule.Input[L#Kind#Output] }] extends LazyAnd {
     override final type Left = L
 
     override final type Right = R

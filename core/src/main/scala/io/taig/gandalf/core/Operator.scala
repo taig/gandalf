@@ -6,14 +6,14 @@ import shapeless._
 
 import scala.reflect._
 
-trait Operator extends Rule {
-    type Left <: Rule
+trait Operator extends Rule with Container.Id {
+    type Left <: Container
 
-    type Right <: Rule
+    type Right <: Container
 
-    override type Input = Left#Input
+    override type Input = Left#Kind#Input
 
-    override type Output = Right#Output
+    override type Output = Right#Kind#Output
 
     override final type Arguments = Input :: NonEmptyList[String] :: HNil
 }
