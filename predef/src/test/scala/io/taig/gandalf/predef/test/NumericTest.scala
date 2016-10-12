@@ -24,6 +24,18 @@ class NumericTest extends Suite {
         isZero[Int].validate( -5 ) shouldBe invalidNel( "isZero" )
     }
 
+    "lt" should "compare numbers with the > operator" in {
+        lt( 5 ).validate( 0 ) shouldBe valid( 0 )
+        lt( 5 ).validate( 5 ) shouldBe invalidNel( "lt" )
+        lt( 5 ).validate( 10 ) shouldBe invalidNel( "lt" )
+    }
+
+    "lte" should "compare numbers with the >= operator" in {
+        lte( 5 ).validate( 0 ) shouldBe valid( 0 )
+        lte( 5 ).validate( 5 ) shouldBe valid( 5 )
+        lte( 5 ).validate( 10 ) shouldBe invalidNel( "lte" )
+    }
+
     "negative" should "check if a number is < 0" in {
         negative[Int].validate( -5 ) shouldBe valid( -5 )
         negative[Int].validate( 0 ) shouldBe invalidNel( "negative" )

@@ -2,7 +2,6 @@ package io.taig.gandalf.macros
 
 import cats.data.Validated.{ Invalid, Valid }
 import io.taig.gandalf.core._
-import shapeless.{ Lazy, Strict }
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
