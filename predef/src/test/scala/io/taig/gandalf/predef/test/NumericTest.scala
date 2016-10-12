@@ -13,9 +13,9 @@ class NumericTest extends Suite {
     }
 
     "gte" should "compare numbers with the >= operator" in {
-        gt( 5 ).validate( 10 ) shouldBe valid( 10 )
-        gt( 5 ).validate( 5 ) shouldBe invalidNel( "gt" )
-        gt( 5 ).validate( 0 ) shouldBe invalidNel( "gt" )
+        gte( 5 ).validate( 10 ) shouldBe valid( 10 )
+        gte( 5 ).validate( 5 ) shouldBe valid( 5 )
+        gte( 5 ).validate( 0 ) shouldBe invalidNel( "gte" )
     }
 
     "isZero" should "check if a number is == 0" in {
