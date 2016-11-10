@@ -30,7 +30,8 @@ lazy val report = project
     .dependsOn( core )
 
 lazy val android = project
-    .settings( androidBuildAar ++ Settings.common )
+    .enablePlugins( AndroidLib )
+    .settings( Settings.common )
     .settings(
         libraryDependencies ++=
             "io.taig.android" %% "viewvalue-core" % "1.3.1" ::
