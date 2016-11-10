@@ -99,7 +99,7 @@ private object obeys {
 
     def obey( c: whitebox.Context )( lhs: c.Tree, rhs: c.Tree ) = {
         import c.universe._
-        tq"_root_.io.taig.gandalf.macros.Obey[$lhs, $rhs]"
+        tq"_root_.io.taig.gandalf.core.Obeys[$lhs, $rhs]"
     }
 
     /**

@@ -13,7 +13,7 @@ object lift {
     )(
         implicit
         v: Validation[C]
-    ): I Obey C = macro inference[I, C]
+    ): I Obeys C = macro inference[I, C]
 
     def inference[I, C <: Container { type Kind <: Rule.Input[I] }](
         c: blackbox.Context
@@ -27,7 +27,7 @@ object lift {
         implicit
         wtti: c.WeakTypeTag[I],
         wttr: c.WeakTypeTag[C]
-    ): c.Expr[I Obey C] = implementation[I, C]( c )( input )( v )
+    ): c.Expr[I Obeys C] = implementation[I, C]( c )( input )( v )
 
     def implementation[I, C <: Container { type Kind <: Rule.Input[I] }](
         c: blackbox.Context
@@ -39,7 +39,7 @@ object lift {
         implicit
         wtti: c.WeakTypeTag[I],
         wttr: c.WeakTypeTag[C]
-    ): c.Expr[I Obey C] = {
+    ): c.Expr[I Obeys C] = {
         import c.universe._
 
         val validation = reify( v.splice.validate( input.splice ) )
@@ -52,9 +52,9 @@ object lift {
         } )
 
         tryN( 2, c.eval( expression ) ) match {
-            case Valid( _ ) ⇒ c.Expr[I Obey C](
+            case Valid( _ ) ⇒ c.Expr[I Obeys C](
                 q"""
-                _root_.io.taig.gandalf.macros.Obey[$wtti, $wttr](
+                _root_.io.taig.gandalf.core.Obeys.applyUnsafe[$wtti, $wttr](
                     $expression.getOrElse {
                         throw new _root_.java.lang.IllegalStateException(
                             "Runtime-validation failed. What the heck are you doing?!"

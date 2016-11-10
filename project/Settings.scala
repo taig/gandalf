@@ -14,7 +14,13 @@ object Settings {
         githubProject := "gandalf",
         name := s"gandalf-${name.value}",
         organization := "io.taig",
-        resolvers += Resolver.sonatypeRepo( "snapshots" ),
+        resolvers ++=
+            Resolver.sonatypeRepo( "snapshots" ) ::
+            Resolver.url(
+                "scalameta",
+                url( "http://dl.bintray.com/scalameta/maven" )
+            )( Resolver.ivyStylePatterns ) ::
+            Nil,
         scalacOptions ++=
             "-deprecation" ::
             "-feature" ::

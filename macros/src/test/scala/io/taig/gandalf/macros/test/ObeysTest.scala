@@ -49,6 +49,10 @@ class ObeysTest extends Suite {
         }
     }
 
+    it should "support def parameters" in {
+        // def test( @obeys( transformation && condition.success ) yolo:String ) = "foo"
+    }
+
     it should "infer the input type" in {
         case class User( @obeys( generic.instance && condition.success ) name:String )
         User( "foo" )
