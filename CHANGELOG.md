@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.10
+
+_2016-11-10_
+
+ * Upgrade to cats 0.8.1
+ * Upgrade to scalatest 3.0.1
+ * Upgrade to sbt 0.13.13
+ * Upgrade to sbt-scalariform 1.7.1
+ * Upgrade to sbt-android 1.7.1
+ * Upgrade to sbt-scoverage 1.4.0
+ * Upgrade to Android build tools 24.0.3
+
 ## 0.3.9
 
 _2016-09-02_
