@@ -20,7 +20,7 @@ lazy val core = project
 lazy val macros = project
     .settings( Settings.common )
     .settings(
-        addCompilerPlugin( Dependencies.scalameta.paradise cross CrossVersion.full )
+        addCompilerPlugin( Dependencies.paradise cross CrossVersion.full )
     )
     .dependsOn( core % "compile->compile;test->test" )
 
@@ -31,7 +31,7 @@ lazy val predef = project
 lazy val circe = project
     .settings( Settings.common )
     .settings(
-        addCompilerPlugin( Dependencies.scalameta.paradise cross CrossVersion.full ),
+        addCompilerPlugin( Dependencies.paradise cross CrossVersion.full ),
         libraryDependencies ++=
             Dependencies.circe.core ::
             Dependencies.circe.generic % "test" ::

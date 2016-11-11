@@ -40,13 +40,9 @@ object Dependencies {
 
         val parser = scala( "parser" )
     }
-    
-    object scalameta extends Configuration( "org.scalameta", "1.3.0.522" ) {
-        val paradise = scala( "paradise", "3.0.0.122" )
 
-        val scalameta = scala( "scalameta" )
-    }
-    
+    val paradise = "org.scalamacros" % "paradise" % "2.1.0"
+
     val scalatest = "org.scalatest" %% "scalatest" % "3.0.1"
 
     val shapeless = "com.chuusai" %% "shapeless" % "2.3.2"

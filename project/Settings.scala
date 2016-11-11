@@ -16,10 +16,6 @@ object Settings {
         organization := "io.taig",
         resolvers ++=
             Resolver.sonatypeRepo( "snapshots" ) ::
-            Resolver.url(
-                "scalameta",
-                url( "http://dl.bintray.com/scalameta/maven" )
-            )( Resolver.ivyStylePatterns ) ::
             Nil,
         scalacOptions ++=
             "-deprecation" ::
