@@ -20,15 +20,7 @@ lazy val core = project
 lazy val macros = project
     .settings( Settings.common )
     .settings(
-        addCompilerPlugin( Dependencies.scalameta.paradise cross CrossVersion.full ),
-        libraryDependencies ++=
-            Dependencies.scalameta.scalameta % "provided" ::
-            Nil,
-        scalacOptions += "-Xplugin-require:macroparadise",
-        // temporary workaround for https://github.com/scalameta/paradise/issues/10
-        scalacOptions in (Compile, console) += "-Yrepl-class-based", // necessary to use console
-        // temporary workaround for https://github.com/scalameta/paradise/issues/55
-        sources in (Compile, doc) := Nil
+        addCompilerPlugin( Dependencies.scalameta.paradise cross CrossVersion.full )
     )
     .dependsOn( core % "compile->compile;test->test" )
 
@@ -42,15 +34,9 @@ lazy val circe = project
         addCompilerPlugin( Dependencies.scalameta.paradise cross CrossVersion.full ),
         libraryDependencies ++=
             Dependencies.circe.core ::
-            Dependencies.scalameta.scalameta % "provided" ::
             Dependencies.circe.generic % "test" ::
             Dependencies.circe.parser % "test" ::
-            Nil,
-        scalacOptions += "-Xplugin-require:macroparadise",
-        // temporary workaround for https://github.com/scalameta/paradise/issues/10
-        scalacOptions in (Compile, console) += "-Yrepl-class-based", // necessary to use console
-        // temporary workaround for https://github.com/scalameta/paradise/issues/55
-        sources in (Compile, doc) := Nil
+            Nil
     )
     .dependsOn(
         core % "compile->compile;test->test",

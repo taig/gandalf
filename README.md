@@ -7,10 +7,10 @@
 
 > Flexible data validation
 
-````scala
+```scala
 libraryDependencies ++=
     "io.taig" %% "gandalf-core" % "0.4.0-SNAPSHOT" ::
     "io.taig" %% "gandalf-predef" % "0.4.0-SNAPSHOT" ::
     "io.taig" %% "gandalf-android" % "0.4.0-SNAPSHOT" ::
     Nil
-````
+```
