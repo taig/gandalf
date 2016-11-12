@@ -41,6 +41,8 @@ object Dependencies {
         val parser = scala( "parser" )
     }
 
+    val doobie = "org.tpolecat" %% "doobie-core-cats" % "0.3.1-M1"
+
     val paradise = "org.scalamacros" % "paradise" % "2.1.0"
 
     val scalatest = "org.scalatest" %% "scalatest" % "3.0.1"

@@ -3,8 +3,8 @@ lazy val gandalf = project.in( file( "." ) )
     .settings(
         name := "gandalf"
     )
-    .aggregate( core, macros, predef, circe )
-    .dependsOn( core, macros, predef, circe )
+    .aggregate( core, macros, predef, circe, doobie )
+    .dependsOn( core, macros, predef, circe, doobie )
 
 lazy val core = project
     .settings( Settings.common )
@@ -31,11 +31,23 @@ lazy val predef = project
 lazy val circe = project
     .settings( Settings.common )
     .settings(
-        addCompilerPlugin( Dependencies.paradise cross CrossVersion.full ),
         libraryDependencies ++=
             Dependencies.circe.core ::
             Dependencies.circe.generic % "test" ::
             Dependencies.circe.parser % "test" ::
+            Nil
+    )
+    .dependsOn(
+        core % "compile->compile;test->test",
+        macros % "compile->test",
+        predef % "compile->test"
+    )
+
+lazy val doobie = project
+    .settings( Settings.common )
+    .settings(
+        libraryDependencies ++=
+            Dependencies.doobie ::
             Nil
     )
     .dependsOn(
