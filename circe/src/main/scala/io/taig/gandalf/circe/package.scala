@@ -1,12 +1,13 @@
 package io.taig.gandalf
 
+import cats.data.NonEmptyList
 import cats.syntax.either._
 import cats.data.Validated.{ Invalid, Valid }
 import io.circe.CursorOp.DownField
 import io.circe.Decoder.Result
+import io.circe.{ Decoder, DecodingFailure, Encoder, Error, Json, ParsingFailure }
 import io.circe.parser._
 import io.circe.syntax._
-import io.circe.{ Decoder, DecodingFailure, Encoder, Json }
 import io.taig.gandalf.core.{ Container, Obeys, Validation }
 
 package object circe {
@@ -21,6 +22,24 @@ package object circe {
                 .foldLeft( message ) {
                     case ( json, field ) ⇒ Json.obj( field → json )
                 }
+        }
+    }
+
+    implicit val gandalfCirceEncoderParsingFailure: Encoder[ParsingFailure] = {
+        Encoder[String].contramap( _.message )
+    }
+
+    implicit val gandalfCirceEncoderNonEmptyListError: Encoder[NonEmptyList[Error]] = {
+        val empty = Json.obj()
+        Encoder.instance( _.foldLeft( empty ) { _ deepMerge _.asJson } )
+    }
+
+    implicit val gandalfCirceEncoderError: Encoder[Error] = {
+        Encoder.instance {
+            case decoding: DecodingFailure ⇒
+                gandalfCirceEncoderDecodingFailure( decoding )
+            case parsing: ParsingFailure ⇒
+                gandalfCirceEncoderParsingFailure( parsing )
         }
     }
 
