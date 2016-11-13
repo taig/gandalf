@@ -31,10 +31,11 @@ lazy val predef = project
 lazy val circe = project
     .settings( Settings.common )
     .settings(
+        addCompilerPlugin( Dependencies.paradise % "test" cross CrossVersion.full ),
         libraryDependencies ++=
             Dependencies.circe.core ::
+            Dependencies.circe.parser ::
             Dependencies.circe.generic % "test" ::
-            Dependencies.circe.parser % "test" ::
             Nil
     )
     .dependsOn(

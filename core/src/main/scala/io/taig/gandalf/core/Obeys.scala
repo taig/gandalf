@@ -7,9 +7,9 @@ class Obeys[L, C <: Container] private ( val value: C#Kind#Output )
 }
 
 object Obeys {
-    private[gandalf] def applyUnsafe[L, C <: Container](
-        value: C#Kind#Output
-    ): L Obeys C = new Obeys( value )
+    def applyUnsafe[L, C <: Container]( value: C#Kind#Output ): L Obeys C = {
+        new Obeys( value )
+    }
 
     def unapply[L, C <: Container](
         obeys: L Obeys C
