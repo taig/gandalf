@@ -24,6 +24,15 @@ lazy val macros = project
     )
     .dependsOn( core % "compile->compile;test->test" )
 
+lazy val task = project
+    .settings( Settings.common )
+    .settings(
+        libraryDependencies ++=
+            Dependencies.monix.eval ::
+            Nil
+    )
+    .dependsOn( core % "compile->compile;test->test" )
+
 lazy val predef = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )

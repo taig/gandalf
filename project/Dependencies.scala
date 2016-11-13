@@ -43,6 +43,10 @@ object Dependencies {
 
     val doobie = "org.tpolecat" %% "doobie-core-cats" % "0.3.1-M1"
 
+    object monix extends Configuration( "io.monix", "monix", "2.1.0" ) {
+        val eval = scala( "eval" )
+    }
+
     val paradise = "org.scalamacros" % "paradise" % "2.1.0"
 
     val scalatest = "org.scalatest" %% "scalatest" % "3.0.1"
