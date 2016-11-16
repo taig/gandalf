@@ -34,7 +34,7 @@ lazy val android = project
     .settings( Settings.common )
     .settings(
         libraryDependencies ++=
-            "io.taig.android" %% "viewvalue-core" % "1.3.1" ::
+            "io.taig.android" %% "viewvalue-core" % "1.4.0" ::
             Nil,
         minSdkVersion := "9",
         platformTarget := "android-24",

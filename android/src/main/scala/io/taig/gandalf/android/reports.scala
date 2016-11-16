@@ -1,7 +1,6 @@
 package io.taig.gandalf.android
 
 import android.content.Context
-import io.taig.gandalf.android.resource.R
 import io.taig.gandalf.report.Report
 import io.taig.gandalf.predef.all._
 import io.taig.gandalf.{ Error, Term }
