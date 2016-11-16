@@ -20,7 +20,7 @@ trait string {
         }
     }
 
-    object email extends contains["@"]
+    object email extends matches["^[^@]+@[^@]+\\.[^@]+$"]
 
     object empty
         extends Condition.With[String]( _.isEmpty )
