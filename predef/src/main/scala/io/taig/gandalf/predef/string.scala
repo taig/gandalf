@@ -4,7 +4,25 @@ import io.taig.gandalf.core.Rule.Applyable
 import io.taig.gandalf.core._
 
 trait string {
-    object isEmpty
+    class contains[T <: String: ValueOf]
+        extends Condition.With[String]( _.contains( valueOf[T] ) )
+        with Arguments.With[T] {
+        override val argument = valueOf[T]
+    }
+
+    object contains {
+        def apply( value: String ): contains[value.type] = {
+            new contains[value.type]
+        }
+
+        implicit def implicits[T <: String: ValueOf] = {
+            Applyable.implicits[contains[T]]( new contains[T] )
+        }
+    }
+
+    object email extends contains["@"]
+
+    object empty
         extends Condition.With[String]( _.isEmpty )
         with Arguments.Input
 
@@ -19,14 +37,16 @@ trait string {
     }
 
     object matches {
-        def apply( value: String ): matches[value.type] = new matches[value.type]
+        def apply( value: String ): matches[value.type] = {
+            new matches[value.type]
+        }
 
         implicit def implicits[T <: String: ValueOf] = {
             Applyable.implicits[matches[T]]( new matches[T] )
         }
     }
 
-    object required extends ( trim.type && not[isEmpty.type] )
+    object required extends ( trim.type && not[empty.type] )
 
     object rtrim extends Transformation.With[String, String](
         _.replaceFirst( "\\s*$", "" )

@@ -10,9 +10,9 @@ lazy val core = project
     .settings( Settings.common )
     .settings(
         libraryDependencies ++=
-            Dependencies.shapeless ::
             Dependencies.cats.core ::
             Dependencies.cats.macros ::
+            Dependencies.shapeless ::
             Dependencies.scalatest % "test" ::
             Nil
     )
@@ -21,15 +21,6 @@ lazy val macros = project
     .settings( Settings.common )
     .settings(
         addCompilerPlugin( Dependencies.paradise cross CrossVersion.full )
-    )
-    .dependsOn( core % "compile->compile;test->test" )
-
-lazy val task = project
-    .settings( Settings.common )
-    .settings(
-        libraryDependencies ++=
-            Dependencies.monix.eval ::
-            Nil
     )
     .dependsOn( core % "compile->compile;test->test" )
 
