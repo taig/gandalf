@@ -3,7 +3,7 @@ lazy val gandalf = project.in( file( "." ) )
     .settings(
         name := "gandalf"
     )
-    .aggregate( core, macros, predef, circe, doobie )
+    .aggregate( core, macros, predef, circe, doobie, android )
     .dependsOn( core, macros, predef, circe, doobie )
 
 lazy val core = project
@@ -57,15 +57,15 @@ lazy val doobie = project
         predef % "compile->test"
     )
 
-//lazy val android = project
-//    .settings( androidBuildAar ++ Settings.common )
-//    .settings(
-//        libraryDependencies ++=
-//            "io.taig.android" %% "viewvalue-core" % "1.2.4" ::
-//            Nil,
-//        minSdkVersion := "1",
-//        platformTarget := "android-23",
-//        targetSdkVersion := "23",
-//        typedResources := false
-//    )
-//    .dependsOn( core, predef, show )
+lazy val android = project
+    .enablePlugins( AndroidLib )
+    .settings( Settings.common )
+    .settings(
+        libraryDependencies ++=
+            Nil,
+        minSdkVersion := "1",
+        platformTarget := "android-24",
+        targetSdkVersion := "24",
+        typedResources := false
+    )
+    .dependsOn( core % "compile->compile;test->test" )
