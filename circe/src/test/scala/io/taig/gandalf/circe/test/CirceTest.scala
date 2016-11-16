@@ -31,7 +31,7 @@ class CirceTest extends Suite {
 
         failure.asJson shouldBe Json.obj(
             "b" → Json.obj(
-                "value" → List( "not(isEmpty)" ).asJson
+                "value" → List( "not(empty)" ).asJson
             )
         )
     }
@@ -42,7 +42,7 @@ class CirceTest extends Suite {
 
         failures.asJson shouldBe Json.obj(
             "b" → Json.obj(
-                "value" → List( "not(isEmpty)" ).asJson
+                "value" → List( "not(empty)" ).asJson
             ),
             "c" → Json.obj(
                 "value" → List( "gt" ).asJson

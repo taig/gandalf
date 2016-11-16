@@ -4,12 +4,13 @@ import cats.data.Validated._
 import io.taig.gandalf.core.syntax.all._
 import io.taig.gandalf.core.test.Suite
 import io.taig.gandalf.predef.string._
+import io.taig.gandalf.predef.string.{ empty ⇒ isEmpty }
 
 class StringTest extends Suite {
-    "isEmpty" should "check if input is empty" in {
+    "empty" should "check if input is empty" in {
         isEmpty.validate( "" ) shouldBe valid( "" )
-        isEmpty.validate( "foo" ) shouldBe invalidNel( "isEmpty" )
-        isEmpty.validate( " " ) shouldBe invalidNel( "isEmpty" )
+        isEmpty.validate( "foo" ) shouldBe invalidNel( "empty" )
+        isEmpty.validate( " " ) shouldBe invalidNel( "empty" )
     }
 
     "ltrim" should "remove whitespace at the beginning" in {
@@ -31,7 +32,7 @@ class StringTest extends Suite {
         required.validate( "  foo" ) shouldBe valid( "foo" )
         required.validate( "foo   " ) shouldBe valid( "foo" )
         required.validate( "  foo   " ) shouldBe valid( "foo" )
-        required.validate( "     " ) shouldBe invalidNel( "not(isEmpty)" )
+        required.validate( "     " ) shouldBe invalidNel( "not(empty)" )
     }
 
     "rtrim" should "remove whitespace at the end" in {
