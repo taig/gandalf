@@ -3,9 +3,9 @@ package io.taig.gandalf.android.ops
 import android.view.View
 import cats.data.Validated.{ Invalid, Valid }
 import cats.data.{ NonEmptyList, Validated }
-import io.taig.android.viewvalue.core.syntax.error._
-import io.taig.android.viewvalue.core.syntax.value._
-import io.taig.android.viewvalue.core.{ Extraction, Injection }
+import io.taig.android.viewvalue.syntax.error._
+import io.taig.android.viewvalue.syntax.value._
+import io.taig.android.viewvalue.{ Extraction, Injection }
 import io.taig.gandalf.Validation
 import io.taig.gandalf.report.Report
 import shapeless.HList
