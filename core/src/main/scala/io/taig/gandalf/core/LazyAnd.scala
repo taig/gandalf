@@ -11,7 +11,7 @@ object LazyAnd {
         implicit
         l: Validation[A#Left],
         r: Lazy[Validation[A#Right]],
-        e: Option[Error[A]]
+        e: Option[Report[A]]
     ): Validation[A] = Validation.instance[A] { input ⇒
         l.validate( input ) andThen { output ⇒
             r.value.validate( output.asInstanceOf[A#Right#Kind#Input] )

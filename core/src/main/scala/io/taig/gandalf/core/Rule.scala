@@ -22,7 +22,7 @@ object Rule {
     trait Applyable extends Rule with Container.Id {
         def apply( input: Input )(
             implicit
-            e: Error[this.type]
+            r: Report[this.type]
         ): Result[this.type]
 
         def arguments( input: Input ): Arguments
@@ -32,11 +32,11 @@ object Rule {
         implicit def validation[A <: Applyable](
             implicit
             w: Witness.Aux[A],
-            e: Error[A]
+            r: Report[A]
         ): Validation[A] = Validation.instance[A] { input ⇒
             w.value.apply(
                 input.asInstanceOf[w.value.Input]
-            )( e.asInstanceOf[Error[w.value.type]] )
+            )( r.asInstanceOf[Report[w.value.type]] )
         }
 
         implicit def arguments[A <: Applyable](
@@ -46,15 +46,15 @@ object Rule {
             w.value.arguments( input.asInstanceOf[w.value.Input] )
         }
 
-        implicit def error[A <: Applyable: ClassTag]: Error[A] = {
-            Error.static( name[A] )
+        implicit def error[A <: Applyable: ClassTag]: Report[A] = {
+            Report.static( name[A] )
         }
 
         implicit def errorNot[A <: Applyable](
             implicit
-            e: Error[A]
-        ): Error[not[A]] = Error.instance[not[A]] { arguments ⇒
-            e.show( arguments ).map( error ⇒ s"not($error)" )
+            r: Report[A]
+        ): Report[not[A]] = Report.instance[not[A]] { arguments ⇒
+            r.show( arguments ).map( error ⇒ s"not($error)" )
         }
 
         implicit def serialization[A <: Applyable: ClassTag]: Serialization[A] = {
@@ -67,7 +67,7 @@ object Rule {
 
         def implicits[A <: Applyable]( f: ⇒ A )(
             implicit
-            e: Error[A]
+            r: Report[A]
         ): Validation[A] with Arguments[A] = {
             val applyable = f
 

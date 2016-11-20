@@ -25,7 +25,7 @@ class ExtensionTest extends Suite {
 
     it should "be possible to create custom error messages for EagerAnd (&) compositions" in {
         object custom extends ( condition.success.type & condition.failure.type ) {
-            implicit val error: Error[this.type] = Error.static( "custom" )
+            implicit val error: Report[this.type] = Report.static( "custom" )
         }
 
         custom.validate( "foo" ) shouldBe invalidNel( "custom" )
@@ -33,7 +33,7 @@ class ExtensionTest extends Suite {
 
     it should "be possible to create custom error messages for LazyAnd (&&) compositions" in {
         object custom extends ( condition.success.type && condition.failure.type ) {
-            implicit val error: Error[this.type] = Error.static( "custom" )
+            implicit val error: Report[this.type] = Report.static( "custom" )
         }
 
         custom.validate( "foo" ) shouldBe invalidNel( "custom" )
@@ -41,7 +41,7 @@ class ExtensionTest extends Suite {
 
     it should "be possible to create custom error messages for Or (||) compositions" in {
         object custom extends ( condition.failure.type || condition.failure.type ) {
-            implicit val error: Error[this.type] = Error.static( "custom" )
+            implicit val error: Report[this.type] = Report.static( "custom" )
         }
 
         custom.validate( "foo" ) shouldBe invalidNel( "custom" )

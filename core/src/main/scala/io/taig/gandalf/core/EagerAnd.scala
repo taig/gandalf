@@ -12,7 +12,7 @@ object EagerAnd {
         implicit
         l: Validation[A#Left],
         r: Lazy[Validation[A#Right]],
-        e: Option[Error[A]]
+        e: Option[Report[A]]
     ): Validation[A] = Validation.instance[A] { input ⇒
         val left = l.validate( input )
         val right = r.value.validate( input.asInstanceOf[A#Right#Kind#Input] )

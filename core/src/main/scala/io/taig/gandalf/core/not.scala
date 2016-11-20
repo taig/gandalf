@@ -21,21 +21,21 @@ trait not0 {
     implicit def validationOperatorRuleMutation[O <: Operator { type Left <: Container; type Right <: Container { type Kind <: Mutation.Input[Left#Kind#Output] } }](
         implicit
         v: Validation[O { type Left = not[O#Left] }],
-        e: Error[not[O]]
+        r: Report[not[O]]
     ): Validation[not[O]] = Validation.instance[not[O]] { input ⇒
         v.validate( input ) leftMap { errors ⇒
-            e.show( input :: errors :: HNil )
+            r.show( input :: errors :: HNil )
         }
     }
 
     implicit def validationOperatorMutationRule[O <: Operator { type Left <: Container { type Kind <: Mutation }; type Right <: Container { type Kind <: Rule.Input[Left#Kind#Output] } }](
         implicit
         v: Validation[O { type Right = not[O#Right] }],
-        e: Error[not[O]]
+        r: Report[not[O]]
     ): Validation[not[O]] = Validation.instance[not[O]] { input ⇒
         val cast = input.asInstanceOf[( O { type Right = not[O#Right] } )#Input]
         v.validate( cast ) leftMap { errors ⇒
-            e.show( input :: errors :: HNil )
+            r.show( input :: errors :: HNil )
         }
     }
 }

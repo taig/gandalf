@@ -21,8 +21,8 @@ trait Operator extends Rule with Container.Id {
 object Operator extends Operator0 {
     implicit def errorNot[O <: Operator: ClassTag](
         implicit
-        e: Option[Error[O]]
-    ): Error[not[O]] = Error.instance[not[O]] { arguments ⇒
+        e: Option[Report[O]]
+    ): Report[not[O]] = Report.instance[not[O]] { arguments ⇒
         e.fold( arguments.at( 1 ) ) { error ⇒
             error.show( arguments ).map( error ⇒ s"not($error)" )
         }
@@ -30,10 +30,10 @@ object Operator extends Operator0 {
 
     implicit def errorSome[O <: Operator](
         implicit
-        e: Error[O]
-    ): Option[Error[O]] = Some( e )
+        r: Report[O]
+    ): Option[Report[O]] = Some( r )
 }
 
 trait Operator0 {
-    implicit def errorNone[O <: Operator]: Option[Error[O]] = None
+    implicit def errorNone[O <: Operator]: Option[Report[O]] = None
 }

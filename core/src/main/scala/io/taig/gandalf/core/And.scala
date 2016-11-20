@@ -8,10 +8,10 @@ object And {
     implicit def validationNot[A <: And { type Left <: Container; type Right <: Container { type Kind <: Rule.Aux[Left#Kind#Input, Left#Kind#Output] } }](
         implicit
         v: Validation[Or { type Left = not[A#Left]; type Right = not[A#Right] }],
-        e: Error[not[A]]
+        r: Report[not[A]]
     ): Validation[not[A]] = Validation.instance[not[A]] { input ⇒
         v.validate( input ) leftMap { errors ⇒
-            e.show( input :: errors :: HNil )
+            r.show( input :: errors :: HNil )
         }
     }
 }

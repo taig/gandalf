@@ -4,7 +4,7 @@ lazy val gandalf = project.in( file( "." ) )
         name := "gandalf"
     )
     .aggregate( core, macros, predef, circe, doobie, android )
-    .dependsOn( core, macros, predef, circe, doobie )
+    .dependsOn( core, macros, predef )
 
 lazy val core = project
     .settings( Settings.common )
@@ -61,8 +61,6 @@ lazy val android = project
     .enablePlugins( AndroidLib )
     .settings( Settings.common )
     .settings(
-        libraryDependencies ++=
-            Nil,
         minSdkVersion := "1",
         platformTarget := "android-24",
         targetSdkVersion := "24",

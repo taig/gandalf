@@ -5,10 +5,10 @@ import cats.data.Validated._
 trait Mutation extends Rule.Applyable {
     override final def apply( input: Input )(
         implicit
-        e: Error[this.type]
+        r: Report[this.type]
     ): Result[this.type] = mutate( input ) match {
         case Some( output ) ⇒ valid( output )
-        case None           ⇒ invalid( e.show( arguments( input ) ) )
+        case None           ⇒ invalid( r.show( arguments( input ) ) )
     }
 
     def mutate( input: Input ): Option[Output]

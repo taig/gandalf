@@ -12,7 +12,7 @@ object Or {
         implicit
         l: Validation[O#Left],
         r: Lazy[Validation[O#Right]],
-        e: Option[Error[O]]
+        e: Option[Report[O]]
     ): Validation[O] = Validation.instance[O] { input ⇒
         l.validate( input ) match {
             case valid @ Valid( _ ) ⇒ valid
@@ -30,10 +30,10 @@ object Or {
     implicit def validationNot[O <: Or { type Left <: Container; type Right <: Container { type Kind <: Rule.Aux[Left#Kind#Input, Left#Kind#Output] } }](
         implicit
         v: Validation[EagerAnd { type Left = not[O#Left]; type Right = not[O#Right] }],
-        e: Error[not[O]]
+        r: Report[not[O]]
     ): Validation[not[O]] = Validation.instance[not[O]] { input ⇒
         v.validate( input ) leftMap { errors ⇒
-            e.show( input :: errors :: HNil )
+            r.show( input :: errors :: HNil )
         }
     }
 

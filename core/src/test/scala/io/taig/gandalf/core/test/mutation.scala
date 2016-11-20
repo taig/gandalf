@@ -10,8 +10,8 @@ object mutation {
     object failure
             extends Mutation.With[String, String]( _ ⇒ None )
             with Arguments.None {
-        implicit val error: Error[this.type] = {
-            Error.static( "mutation" )
+        implicit val error: Report[this.type] = {
+            Report.static( "mutation" )
         }
     }
 }

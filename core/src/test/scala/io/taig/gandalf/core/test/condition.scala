@@ -10,8 +10,8 @@ object condition {
     object failure
             extends Condition.With[String]( _ ⇒ false )
             with Arguments.None {
-        implicit val error: Error[this.type] = {
-            Error.static( "condition" )
+        implicit val error: Report[this.type] = {
+            Report.static( "condition" )
         }
     }
 }

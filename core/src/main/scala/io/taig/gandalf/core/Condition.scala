@@ -7,10 +7,10 @@ trait Condition extends Rule.Applyable {
 
     override final def apply( input: Input )(
         implicit
-        e: Error[this.type]
+        r: Report[this.type]
     ): Result[this.type] = check( input ) match {
         case true  ⇒ valid( input )
-        case false ⇒ invalid( e.show( arguments( input ) ) )
+        case false ⇒ invalid( r.show( arguments( input ) ) )
     }
 
     def check( input: Input ): Boolean
@@ -28,14 +28,14 @@ object Condition {
     implicit def validationNot[C <: Condition](
         implicit
         v: Validation[C],
-        e: Error[not[C]],
+        r: Report[not[C]],
         a: Arguments[C]
     ): Validation[not[C]] = Validation.instance[not[C]] { input ⇒
         v.validate( input ) match {
             case Valid( _ ) ⇒
                 val arguments = a.collect( input )
-                val errors = e.show( arguments )
-                invalid( errors )
+                val report = r.show( arguments )
+                invalid( report )
             case Invalid( _ ) ⇒ valid( input )
         }
     }
