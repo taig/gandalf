@@ -9,14 +9,14 @@ trait string {
     implicit def reportEmail(
         implicit
         c: Context
-    ): Report[required.type] = {
+    ): Report[email.type] = {
         Report.static( c.getString( R.string.gandalf_string_email ) )
     }
 
     implicit def reportMatches(
         implicit
         c: Context
-    ): Report[required.type] = {
+    ): Report[matches[_]] = {
         Report.static( c.getString( R.string.gandalf_string_matches ) )
     }
 
