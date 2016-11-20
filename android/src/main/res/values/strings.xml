@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="gandalf_string_email">Not a valid email address</string>
+    <string name="gandalf_string_matches">Invalid format</string>
+    <string name="gandalf_string_required">Required</string>
+
+</resources>

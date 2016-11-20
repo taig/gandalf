@@ -66,4 +66,4 @@ lazy val android = project
         targetSdkVersion := "24",
         typedResources := false
     )
-    .dependsOn( core % "compile->compile;test->test" )
+    .dependsOn( core, predef )
