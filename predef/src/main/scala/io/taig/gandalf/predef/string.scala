@@ -57,6 +57,8 @@ trait string {
     object toUpper extends Transformation.With[String, String]( _.toUpperCase )
 
     object trim extends Transformation.With[String, String]( _.trim )
+
+    object url extends matches["^(https?:\\/\\/)?.+\\..+"]
 }
 
 object string extends string

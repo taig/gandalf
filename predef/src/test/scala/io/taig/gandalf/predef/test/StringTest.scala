@@ -7,7 +7,7 @@ import io.taig.gandalf.predef.string._
 import io.taig.gandalf.predef.string.{ empty ⇒ isEmpty }
 
 class StringTest extends Suite {
-    "email" should "check if input has major formatting flaws" in {
+    "email" should "check if input has valid format" in {
         email.validate( "hello@taig.io" ) shouldBe valid( "hello@taig.io" )
         email.validate( "" ) shouldBe invalidNel( "email" )
         email.validate( "hello" ) shouldBe invalidNel( "email" )
@@ -70,5 +70,13 @@ class StringTest extends Suite {
         trim.validate( "foo   " ) shouldBe valid( "foo" )
         trim.validate( "  foo   " ) shouldBe valid( "foo" )
         trim.validate( "     " ) shouldBe valid( "" )
+    }
+
+    "url" should "check if input has valid format" in {
+        url.validate( "http://taig.io/" ) shouldBe valid( "http://taig.io/" )
+        url.validate( "taig.io" ) shouldBe valid( "taig.io" )
+        url.validate( "http://taig.io#foobar" ) shouldBe valid( "http://taig.io#foobar" )
+        url.validate( "http://taig" ) shouldBe invalidNel( "url" )
+        url.validate( "taig" ) shouldBe invalidNel( "url" )
     }
 }
