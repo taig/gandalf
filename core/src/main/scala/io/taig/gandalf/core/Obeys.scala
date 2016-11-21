@@ -4,6 +4,13 @@ import scala.language.implicitConversions
 
 class Obeys[L, C <: Container] private ( val value: C#Kind#Output )
         extends Serializable {
+    override def hashCode() = value.hashCode
+
+    override def equals( obj: Any ) = obj match {
+        case Obeys( value ) ⇒ this.value == value
+        case _              ⇒ false
+    }
+
     override def toString = value.toString
 }
 
