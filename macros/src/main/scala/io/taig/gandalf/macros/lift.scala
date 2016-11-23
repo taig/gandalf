@@ -57,7 +57,7 @@ object lift {
                 _root_.io.taig.gandalf.core.Obeys.applyUnsafe[$wtti, $wttr](
                     $expression.getOrElse {
                         throw new _root_.java.lang.IllegalStateException(
-                            "Runtime-validation failed. What the heck are you doing?!"
+                            "Runtime-rule failed. What the heck are you doing?!"
                         )
                     }
                 )

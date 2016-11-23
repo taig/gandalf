@@ -1,53 +1,67 @@
 package io.taig.gandalf.core
 
-import cats.data.Validated._
-import shapeless._
+import io.taig.gandalf.core.Validation._
 
-class Or extends Operator {
-    override type Right <: Container { type Kind <: Rule.Aux[Left#Kind#Input, Left#Kind#Output] }
-}
+class Or[L, R]
 
 object Or {
-    implicit def validation[O <: Or](
+    implicit def conditions[L, R, T](
         implicit
-        l: Validation[O#Left],
-        r: Lazy[Validation[O#Right]],
-        e: Option[Report[O]]
-    ): Validation[O] = Validation.instance[O] { input ⇒
-        l.validate( input ) match {
-            case valid @ Valid( _ ) ⇒ valid
-            case Invalid( left ) ⇒
-                r.value.validate( input.asInstanceOf[O#Right#Kind#Input] ) match {
-                    case valid @ Valid( _ ) ⇒ valid
-                    case Invalid( right ) ⇒
-                        invalid( left concat right ).leftMap { errors ⇒
-                            e.fold( errors )( _.show( input :: errors :: HNil ) )
-                        }
-                }
-        }
+        l: Condition[L, T],
+        r: Condition[R, T]
+    ): Condition[L || R, T] = Condition.instance { input ⇒
+        l.check( input ) || r.check( input )
     }
 
-    implicit def validationNot[O <: Or { type Left <: Container; type Right <: Container { type Kind <: Rule.Aux[Left#Kind#Input, Left#Kind#Output] } }](
+    implicit def conditionMutation[L, R, T](
         implicit
-        v: Validation[EagerAnd { type Left = not[O#Left]; type Right = not[O#Right] }],
-        r: Report[not[O]]
-    ): Validation[not[O]] = Validation.instance[not[O]] { input ⇒
-        v.validate( input ) leftMap { errors ⇒
-            r.show( input :: errors :: HNil )
-        }
+        l: Condition[L, T],
+        r: Mutation[R, T, T]
+    ): Mutation[L || R, T, T] = Mutation.instance { input ⇒
+        l( input ) orElse r.mutate( input )
     }
 
-    implicit def serialization[O <: Or](
+    implicit def mutations[L, R, I, O](
         implicit
-        l: Serialization[O#Left],
-        r: Serialization[O#Right]
-    ): Serialization[O] = {
+        l: Mutation[L, I, O],
+        r: Mutation[R, I, O]
+    ): Mutation[L || R, I, O] = Mutation.instance { input ⇒
+        l( input ) orElse r( input )
+    }
+
+    implicit def mutationCondition[L, R, T](
+        implicit
+        l: Mutation[L, T, T],
+        r: Condition[R, T]
+    ): Mutation[L || R, T, T] = Mutation.instance { input ⇒
+        l( input ) orElse r( input )
+    }
+
+    /**
+     * not( condition && mutation )
+     */
+    implicit def notConditionMutation[L, R, T](
+        implicit
+        l: Condition[not[L], T],
+        r: Mutation[R, T, T],
+        v: Validation[not[L] || R, T, T]
+    ): Mutation[not[L || R], T, T] = Mutation.instance( v.apply )
+
+    /**
+     * not( mutation && condition )
+     */
+    implicit def notMutationCondition[L, R, T](
+        implicit
+        l: Mutation[L, T, T],
+        r: Condition[not[R], T],
+        v: Validation[L || not[R], T, T]
+    ): Mutation[not[L || R], T, T] = Mutation.instance( v.apply )
+
+    implicit def serialization[L, R](
+        implicit
+        l: Serialization[L],
+        r: Serialization[R]
+    ): Serialization[L || R] = {
         Serialization.instance( s"(${l.serialize} || ${r.serialize})" )
     }
-}
-
-class ||[L <: Container, R <: Container { type Kind <: Rule.Aux[L#Kind#Input, L#Kind#Output] }] extends Or {
-    override final type Left = L
-
-    override final type Right = R
 }

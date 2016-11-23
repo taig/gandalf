@@ -1,238 +1,140 @@
 package io.taig.gandalf.core.test
 
-import cats.data.NonEmptyList
-import cats.data.Validated._
-import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.core.syntax.validation._
 import io.taig.gandalf.core.{ not ⇒ dont, _ }
 
 class NotTest extends Suite {
     it should "fail validation when the underlying Condition succeeds" in {
-        dont( condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
+        "foo".confirm( dont( condition.success ) ) shouldBe
+            None
     }
 
     it should "succeed validation when the underlying Condition fails" in {
-        dont( condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
+        "foo".confirm( dont( condition.failure ) ) shouldBe
+            Some( "foo" )
     }
 
     it should "not support Mutations" in {
-        assertTypeError( """dont( mutation.success ).validate( "foo" )""" )
-        assertTypeError( """dont( mutation.failure ).validate( "foo" )""" )
+        assertTypeError( """"foo".confirm( dont( mutation.success ) )""" )
+        assertTypeError( """"foo".confirm( dont( mutation.failure ) )""" )
     }
 
     it should "not support Transformations" in {
-        assertTypeError( """dont( transformation ).validate( "foo" )""" )
+        assertTypeError( """"foo".confirm( dont( transformation ) )""" )
     }
 
-    it should "even out when applied twice" in {
-        dont( dont( condition.success ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( dont( condition.failure ) ).validate( "foo" ) shouldBe
-            invalidNel( "condition" )
-    }
-
-    it should "support not-specific Errors" in {
-        implicit val error: Report[dont[condition.success.type]] = {
-            Report.static( "failure" )
-        }
-
-        dont( condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "failure" )
+    it should "have no effect when applied twice" in {
+        "foo".confirm( dont( dont( condition.success ) ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( dont( condition.failure ) ) ) shouldBe
+            None
     }
 
     "&&" should "support Conditions" in {
-        dont( condition.success && condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.success && condition.success ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "not(success)" ) )
+        "foo".confirm( dont( condition.success && condition.failure ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( condition.success && condition.success ) ) shouldBe
+            None
     }
 
     it should "support custom Conditions" in {
-        object success extends ( condition.success.type && condition.success.type )
-        dont( success ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "not(success)" ) )
+        object success extends ( condition.success && condition.success )
+        "foo".confirm( dont( success ) ) shouldBe
+            None
 
-        object failure extends ( condition.success.type && condition.failure.type )
-        dont( failure ).validate( "foo" ) shouldBe valid( "foo" )
+        object failure extends ( condition.success && condition.failure )
+        "foo".confirm( dont( failure ) ) shouldBe Some( "foo" )
     }
 
     it should "support Mutations with Conditions" in {
-        dont( condition.success && mutation.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( condition.failure && mutation.success ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( mutation.success && condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( mutation.success && condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.success && mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( condition.failure && mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
-        dont( mutation.failure && condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
-        dont( mutation.failure && condition.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
+        "foo".confirm( dont( condition.success && mutation.success ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.failure && mutation.success ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( mutation.success && condition.success ) ) shouldBe
+            None
+        "foo".confirm( dont( mutation.success && condition.failure ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( condition.success && mutation.failure ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.failure && mutation.failure ) ) shouldBe
+            None
+        "foo".confirm( dont( mutation.failure && condition.success ) ) shouldBe
+            None
+        "foo".confirm( dont( mutation.failure && condition.failure ) ) shouldBe
+            None
     }
 
     it should "support Transformations with Conditions" in {
-        dont( condition.success && transformation ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( condition.failure && transformation ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( transformation && condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( transformation && condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-    }
-
-    it should "support custom compositions with custom Errors" in {
-        object success extends ( condition.success.type && condition.success.type ) {
-            implicit val error: Report[this.type] = Report.static( "custom" )
-        }
-
-        dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
+        "foo".confirm( dont( condition.success && transformation ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.failure && transformation ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( transformation && condition.success ) ) shouldBe
+            None
+        "foo".confirm( dont( transformation && condition.failure ) ) shouldBe
+            Some( "foo" )
     }
 
     it should "support nesting" in {
-        dont( condition.success && dont( condition.failure ) ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "condition" ) )
-        dont( condition.success && dont( condition.success ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.failure && dont( condition.failure ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.failure && dont( condition.success ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
-    }
-
-    "&" should "support Conditions" in {
-        dont( condition.success & condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.success & condition.success ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "not(success)" ) )
-    }
-
-    it should "support custom Conditions" in {
-        object success extends ( condition.success.type & condition.success.type )
-        dont( success ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "not(success)" ) )
-
-        object failure extends ( condition.success.type & condition.failure.type )
-        dont( failure ).validate( "foo" ) shouldBe valid( "foo" )
-    }
-
-    it should "support Mutations with Conditions" in {
-        dont( condition.success & mutation.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( condition.failure & mutation.success ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( mutation.success & condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( mutation.success & condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.success & mutation.failure ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "mutation" ) )
-        dont( condition.failure & mutation.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
-        dont( mutation.failure & condition.success ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "mutation", "not(success)" ) )
-        dont( mutation.failure & condition.failure ).validate( "foo" ) shouldBe
-            invalidNel( "mutation" )
-    }
-
-    it should "support Transformations with Conditions" in {
-        dont( condition.success & transformation ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( condition.failure & transformation ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( transformation & condition.success ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( transformation & condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-    }
-
-    it should "support custom compositions with custom Errors" in {
-        object success extends ( condition.success.type & condition.success.type ) {
-            implicit val error: Report[this.type] = Report.static( "custom" )
-        }
-
-        dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
-    }
-
-    it should "support nesting" in {
-        dont( condition.success & dont( condition.failure ) ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "condition" ) )
-        dont( condition.success & dont( condition.success ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.failure & dont( condition.failure ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.failure & dont( condition.success ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
+        "foo".confirm( dont( condition.success && dont( condition.failure ) ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.success && dont( condition.success ) ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( condition.failure && dont( condition.failure ) ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( condition.failure && dont( condition.success ) ) ) shouldBe
+            Some( "foo" )
     }
 
     "||" should "support Conditions" in {
-        dont( condition.success || condition.failure ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( condition.failure || condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
+        "foo".confirm( dont( condition.success || condition.failure ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.failure || condition.failure ) ) shouldBe
+            Some( "foo" )
     }
 
     it should "support custom Conditions" in {
         object success extends ( condition.success.type || condition.success.type )
-        dont( success ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "not(success)" ) )
+        "foo".confirm( dont( success ) ) shouldBe
+            None
 
         object failure extends ( condition.failure.type || condition.failure.type )
-        dont( failure ).validate( "foo" ) shouldBe valid( "foo" )
+        "foo".confirm( dont( failure ) ) shouldBe Some( "foo" )
     }
 
     it should "support Mutations with Conditions" in {
-        dont( condition.success || mutation.success ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.failure || mutation.success ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( mutation.success || condition.success ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( mutation.success || condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.success || mutation.failure ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "mutation" ) )
-        dont( condition.failure || mutation.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( mutation.failure || condition.success ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "mutation", "not(success)" ) )
-        dont( mutation.failure || condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
+        "foo".confirm( dont( condition.success || mutation.success ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( condition.failure || mutation.success ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( mutation.success || condition.success ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( mutation.success || condition.failure ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( condition.success || mutation.failure ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.failure || mutation.failure ) ) shouldBe
+            Some( "foo" )
+        "foo".confirm( dont( mutation.failure || condition.success ) ) shouldBe
+            None
+        "foo".confirm( dont( mutation.failure || condition.failure ) ) shouldBe
+            Some( "foo" )
     }
 
-    it should "support Transformations with Conditions" in {
-        dont( condition.success || transformation ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( condition.failure || transformation ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( transformation || condition.success ).validate( "foo" ) shouldBe
-            valid( "foo" )
-        dont( transformation || condition.failure ).validate( "foo" ) shouldBe
-            valid( "foo" )
-    }
-
-    it should "support custom compositions with custom Errors" in {
-        object success extends ( condition.success.type || condition.failure.type ) {
-            implicit val error: Report[this.type] = Report.static( "custom" )
-        }
-
-        dont( success ).validate( "foo" ) shouldBe invalidNel( "not(custom)" )
+    it should "not support Transformations with Conditions" in {
+        assertTypeError( """"foo".confirm( dont( condition.success || transformation ) )""" )
+        assertTypeError( """"foo".confirm( dont( transformation || condition.success ) )""" )
     }
 
     it should "support nesting" in {
-        dont( condition.success || dont( condition.failure ) ).validate( "foo" ) shouldBe
-            invalid( NonEmptyList.of( "not(success)", "condition" ) )
-        dont( condition.success || dont( condition.success ) ).validate( "foo" ) shouldBe
-            invalidNel( "not(success)" )
-        dont( condition.failure || dont( condition.failure ) ).validate( "foo" ) shouldBe
-            invalidNel( "condition" )
-        dont( condition.failure || dont( condition.success ) ).validate( "foo" ) shouldBe
-            valid( "foo" )
+        "foo".confirm( dont( condition.success || dont( condition.failure ) ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.success || dont( condition.success ) ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.failure || dont( condition.failure ) ) ) shouldBe
+            None
+        "foo".confirm( dont( condition.failure || dont( condition.success ) ) ) shouldBe
+            Some( "foo" )
     }
 }

@@ -1,11 +1,22 @@
 package io.taig.gandalf.core
 
-trait Serialization[C <: Container] {
+import scala.reflect.{ ClassTag, classTag }
+
+trait Serialization[R] {
     def serialize: String
 }
 
 object Serialization {
-    def instance[C <: Container]( value: String ): Serialization[C] = {
-        new Serialization[C] { override def serialize = value }
+    @inline
+    def apply[R]( implicit s: Serialization[R] ): Serialization[R] = s
+
+    def instance[R]( value: String ): Serialization[R] = {
+        new Serialization[R] { override def serialize = value }
+    }
+
+    implicit def serialization[R: ClassTag]: Serialization[R] = {
+        Serialization.instance {
+            classTag[R].runtimeClass.getSimpleName.replace( "$", "" )
+        }
     }
 }

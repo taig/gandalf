@@ -1,25 +1,24 @@
 package io.taig.gandalf.core.test
 
-import cats.data.Validated._
-import io.taig.gandalf.core.implicits._
+import io.taig.gandalf.core.syntax.validation._
 
 class RuleTest extends Suite {
-    it should "provide a toString representation" in {
+    it should "provide a String representation" in {
         condition.success.serialize shouldBe "success"
         condition.failure.serialize shouldBe "failure"
     }
 
-    "Condition" should "verify properties" in {
-        condition.success.validate( "foo" ) shouldBe valid( "foo" )
-        condition.failure.validate( "foo" ) shouldBe invalidNel( "condition" )
+    "Condition" should "confirm input based on Rules" in {
+        "foo".confirm( condition.success ) shouldBe Some( "foo" )
+        "foo".confirm( condition.failure ) shouldBe None
     }
 
-    "Mutation" should "mutate data" in {
-        mutation.success.validate( "foo" ) shouldBe valid( "foo" )
-        mutation.failure.validate( "foo" ) shouldBe invalidNel( "mutation" )
+    "Mutation" should "mutate input based on Rules" in {
+        "foo".confirm( mutation.success ) shouldBe Some( "foo" )
+        "foo".confirm( mutation.failure ) shouldBe None
     }
 
-    "Transformation" should "mutate data safely" in {
-        transformation.validate( "foo" ) shouldBe valid( "foo" )
+    "Transformation" should "transform (mutate safely) input based on Rules" in {
+        "foo".confirm( transformation ) shouldBe Some( "foo" )
     }
 }

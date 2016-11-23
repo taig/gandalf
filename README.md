@@ -5,7 +5,7 @@
 [![Maven](https://img.shields.io/maven-central/v/io.taig/gandalf_2.11.svg)](http://search.maven.org/#artifactdetails%7Cio.taig%7Cgandalf_2.11%7C0.4.0%7Cjar)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Taig/Gandalf/master/LICENSE)
 
-> Flexible data validation
+> Flexible data rule
 
 ```scala
 libraryDependencies ++=

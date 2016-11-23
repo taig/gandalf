@@ -36,7 +36,7 @@ class CirceTest extends Suite {
         )
     }
 
-    it should "allow to accumulate validation errors" in {
+    it should "allow to accumulate rule errors" in {
         val raw = """{"b":{"value":""},"c":{"value":1}}"""
         val Invalid( failures ) = decodeAccumulating[A]( raw )
 

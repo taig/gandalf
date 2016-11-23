@@ -1,49 +1,18 @@
 package io.taig.gandalf.core.test
 
-import cats.data.Validated._
 import io.taig.gandalf.core._
-import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.core.syntax.validation._
 
 class ExtensionTest extends Suite {
-    it should "be possible to compose Conditions with an EagerAnd" in {
-        object custom extends ( condition.success.type & condition.failure.type )
+    it should "be possible to compose Conditions with a And" in {
+        object custom extends ( condition.success && condition.failure )
 
-        custom.validate( "foo" ) shouldBe invalidNel( "condition" )
-    }
-
-    it should "be possible to compose Conditions with a LazyAnd" in {
-        object custom extends ( condition.success.type && condition.failure.type )
-
-        custom.validate( "foo" ) shouldBe invalidNel( "condition" )
+        "foo".confirm( custom ) shouldBe None
     }
 
     it should "be possible to compose Conditions with an Or" in {
-        object custom extends ( condition.success.type || condition.failure.type )
+        object custom extends ( condition.success || condition.failure )
 
-        custom.validate( "foo" ) shouldBe valid( "foo" )
-    }
-
-    it should "be possible to create custom error messages for EagerAnd (&) compositions" in {
-        object custom extends ( condition.success.type & condition.failure.type ) {
-            implicit val error: Report[this.type] = Report.static( "custom" )
-        }
-
-        custom.validate( "foo" ) shouldBe invalidNel( "custom" )
-    }
-
-    it should "be possible to create custom error messages for LazyAnd (&&) compositions" in {
-        object custom extends ( condition.success.type && condition.failure.type ) {
-            implicit val error: Report[this.type] = Report.static( "custom" )
-        }
-
-        custom.validate( "foo" ) shouldBe invalidNel( "custom" )
-    }
-
-    it should "be possible to create custom error messages for Or (||) compositions" in {
-        object custom extends ( condition.failure.type || condition.failure.type ) {
-            implicit val error: Report[this.type] = Report.static( "custom" )
-        }
-
-        custom.validate( "foo" ) shouldBe invalidNel( "custom" )
+        "foo".confirm( custom ) shouldBe Some( "foo" )
     }
 }
