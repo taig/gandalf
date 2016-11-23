@@ -9,11 +9,11 @@ trait validation {
         new operation.generic[I]( input )
     }
 
-    implicit def gandalfCoreOperation[R, I, O](
+    implicit def gandalfCoreOperation[R <: Rule, I, O](
         rule: R
     ): operation.operation[R, I, O] = new operation.operation[R, I, O]( rule )
 
-    implicit def gandalfCoreRule[R](
+    implicit def gandalfCoreRule[R <: Rule](
         rule: R
     ): operation.rule[R] = new operation.rule[R]( rule )
 }

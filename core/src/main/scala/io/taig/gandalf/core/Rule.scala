@@ -5,7 +5,7 @@ trait Rule {
 }
 
 object Rule {
-    trait Operator extends Rule
+    trait Operator[L <: Rule, R <: Rule] extends Rule
 
     trait Entity extends Rule {
         override final type Out = this.type
