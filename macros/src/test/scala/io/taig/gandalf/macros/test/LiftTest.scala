@@ -1,6 +1,6 @@
 package io.taig.gandalf.macros.test
 
-import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.core.goaway.syntax.all._
 import io.taig.gandalf.core.test._
 import io.taig.gandalf.macros._
 

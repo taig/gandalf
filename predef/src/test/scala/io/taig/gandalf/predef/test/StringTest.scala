@@ -1,7 +1,7 @@
 package io.taig.gandalf.predef.test
 
 import cats.data.Validated._
-import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.core.goaway.syntax.all._
 import io.taig.gandalf.core.test.Suite
 import io.taig.gandalf.predef.string._
 import io.taig.gandalf.predef.string.{ empty ⇒ isEmpty }

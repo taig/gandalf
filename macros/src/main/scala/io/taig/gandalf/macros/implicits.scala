@@ -1,6 +1,7 @@
 package io.taig.gandalf.macros
 
-import io.taig.gandalf.core.{ Container, Obeys, Rule, Validation }
+import io.taig.gandalf.core.goaway.{Rule, Validation}
+import io.taig.gandalf.core.{Container, Obeys, Validation}
 
 import scala.language.experimental.macros
 import scala.language.implicitConversions

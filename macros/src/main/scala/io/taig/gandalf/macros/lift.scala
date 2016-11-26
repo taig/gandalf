@@ -1,11 +1,12 @@
 package io.taig.gandalf.macros
 
-import cats.data.Validated.{ Invalid, Valid }
+import cats.data.Validated.{Invalid, Valid}
 import io.taig.gandalf.core._
+import io.taig.gandalf.core.goaway.{Rule, Validation}
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
-import scala.util.{ Success, Try }
+import scala.util.{Success, Try}
 
 object lift {
     def apply[I, C <: Container { type Kind <: Rule.Input[I] }]( input: I )(

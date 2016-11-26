@@ -1,69 +1,46 @@
 package io.taig.gandalf.core
 
-import io.taig.gandalf.core.Validation._
+class Or[L <: Rule, R <: Rule] extends Rule.Operator
 
-class Or[L <: Rule, R <: Rule] extends Rule.Operator[L, R]
-
-object Or {
-    type Aux[L <: Rule, R <: Rule, Out0 <: Rule] = Or[L, R] { type Out = Out0 }
-
-    //    implicit def conditions[L, R, T](
-    //        implicit
-    //        l: Condition[L, T],
-    //        r: Condition[R, T]
-    //    ): Condition[L || R, T] = Condition.instance { input ⇒
-    //        l.check( input ) || r.check( input )
-    //    }
-    //
-    //    implicit def conditionMutation[L, R, T](
-    //        implicit
-    //        l: Condition[L, T],
-    //        r: Mutation[R, T, T]
-    //    ): Mutation[L || R, T, T] = Mutation.instance { input ⇒
-    //        l( input ) orElse r.mutate( input )
-    //    }
-    //
-    //    implicit def mutations[L, R, I, O](
-    //        implicit
-    //        l: Mutation[L, I, O],
-    //        r: Mutation[R, I, O]
-    //    ): Mutation[L || R, I, O] = Mutation.instance { input ⇒
-    //        l( input ) orElse r( input )
-    //    }
-    //
-    //    implicit def mutationCondition[L, R, T](
-    //        implicit
-    //        l: Mutation[L, T, T],
-    //        r: Condition[R, T]
-    //    ): Mutation[L || R, T, T] = Mutation.instance { input ⇒
-    //        l( input ) orElse r( input )
-    //    }
-    //
-    //    /**
-    //     * not( condition && mutation )
-    //     */
-    //    implicit def notConditionMutation[L, R, T](
-    //        implicit
-    //        l: Condition[not[L], T],
-    //        r: Mutation[R, T, T],
-    //        v: Validation[not[L] || R, T, T]
-    //    ): Mutation[not[L || R], T, T] = Mutation.instance( v.apply )
-    //
-    //    /**
-    //     * not( mutation && condition )
-    //     */
-    //    implicit def notMutationCondition[L, R, T](
-    //        implicit
-    //        l: Mutation[L, T, T],
-    //        r: Condition[not[R], T],
-    //        v: Validation[L || not[R], T, T]
-    //    ): Mutation[not[L || R], T, T] = Mutation.instance( v.apply )
+object Or extends OrResolvers {
+    implicit def validation[L <: Rule, R <: Rule, I, O](
+        implicit
+        l:  Validation[L, I, O],
+        r:  Validation[R, I, O],
+        rs: Resolver[L || R]
+    ): Validation[L || R, I, O] = Validation.instance { input ⇒
+        l( input ) match {
+            case Some( output ) ⇒ Some( output )
+            case None ⇒ r( input ) match {
+                case Some( output ) ⇒ Some( output )
+                case None           ⇒ None
+            }
+        }
+    }
 
     implicit def serialization[L <: Rule, R <: Rule](
         implicit
         l: Serialization[L],
         r: Serialization[R]
-    ): Serialization[L || R] = {
-        Serialization.instance( s"(${l.serialize} || ${r.serialize})" )
-    }
+    ): Serialization[L || R] = Serialization.instance( s"($l || $r)" )
+}
+
+trait OrResolvers {
+    /**
+     * condition[T] || condition[T] -> condition[T]
+     */
+    implicit def conditions[L <: Rule.Condition, R <: Rule.Condition, T](
+        implicit
+        l: Validation[L, T, T],
+        r: Validation[R, T, T]
+    ): Resolver.Aux[L || R, Rule.Condition] = Resolver.instance
+
+    /**
+     * mutation[I, O] || mutation[I, O] -> mutation[I, O]
+     */
+    implicit def mutations[L <: Rule.Mutation, R <: Rule.Mutation, I, O](
+        implicit
+        l: Validation[L, I, O],
+        r: Validation[R, I, O]
+    ): Resolver.Aux[L || R, Rule.Mutation] = Resolver.instance
 }

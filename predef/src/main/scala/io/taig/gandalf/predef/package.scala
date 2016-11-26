@@ -1,6 +1,7 @@
 package io.taig.gandalf
 
 import io.taig.gandalf.core._
+import io.taig.gandalf.core.goaway.not
 
 package object predef {
     trait trim

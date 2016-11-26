@@ -1,6 +1,6 @@
 package io.taig.gandalf.core.test
 
-import io.taig.gandalf.core.syntax.validation._
+import io.taig.gandalf.core.syntax.all._
 
 class RuleTest extends Suite {
     it should "provide a String representation" in {
@@ -18,7 +18,7 @@ class RuleTest extends Suite {
         "foo".confirm( mutation.failure ) shouldBe None
     }
 
-    "Transformation" should "transform (mutate safely) input based on Rules" in {
-        "foo".confirm( transformation ) shouldBe Some( "foo" )
+    "Transition" should "transform (mutate safely) input based on Rules" in {
+        "foo".confirm( transition.string ) shouldBe Some( "foo" )
     }
 }

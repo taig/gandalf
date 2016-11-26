@@ -1,17 +1,23 @@
 package io.taig.gandalf.core
 
-import io.taig.gandalf.core.Validation._
-
-class not[R <: Rule] extends Rule {
-    override final type Out = R#Out
-}
+class not[R <: Rule] extends Rule
 
 object not {
     @inline
-    def apply( rule: Rule ): not[rule.type] = new not[rule.type]
+    def apply[R <: Rule]( rule: R ): not[R] = new not[R]
 
-    implicit def condition[C <: Rule.Entity.Condition, T](
+    implicit def condition[C <: Rule.Condition, T](
         implicit
-        c: Condition[C, T]
-    ): Condition[not[C], T] = Condition.instance( !c.check( _ ) )
+        v: Validation[C, T, T]
+    ): Validation[not[C], T, T] = Validation.instance { input ⇒
+        v( input ) match {
+            case Some( _ ) ⇒ None
+            case None      ⇒ Some( input )
+        }
+    }
+
+    implicit def serialization[R <: Rule](
+        implicit
+        s: Serialization[R]
+    ): Serialization[not[R]] = Serialization.instance( s"not($s)" )
 }

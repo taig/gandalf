@@ -1,47 +1,108 @@
 package io.taig.gandalf.core.test
 
-import io.taig.gandalf.core.Validation._
+import io.taig.gandalf.core.Rule
+import io.taig.gandalf.core.Validation
+
+import scala.util.Try
 
 object condition {
-    trait success
+    trait success extends Rule.Condition
 
     object success extends success {
-        implicit def generic[T]: Condition[success, T] = {
-            Condition.instance( _ ⇒ true )
+        implicit val validation: Validation[success, String, String] = {
+            Validation.condition( _ ⇒ true )
         }
     }
 
-    trait failure
+    trait failure extends Rule.Condition
 
     object failure extends failure {
-        implicit def generic[T]: Condition[failure, T] = {
-            Condition.instance( _ ⇒ false )
+        implicit val validation: Validation[failure, String, String] = {
+            Validation.condition( _ ⇒ false )
+        }
+    }
+
+    trait int extends Rule.Condition
+
+    object int extends int {
+        implicit val validation: Validation[int, Int, Int] = {
+            Validation.condition( _ ⇒ true )
         }
     }
 }
 
 object mutation {
-    trait success
+    trait success extends Rule.Mutation
 
     object success extends success {
-        implicit def generic[T]: Mutation[success, T, T] = {
-            Mutation.instance( Some( _ ) )
+        implicit val validation: Validation[success, String, String] = {
+            Validation.mutation( Some( _ ) )
         }
     }
 
-    trait failure
+    trait failure extends Rule.Mutation
 
     object failure extends failure {
-        implicit def generic[T]: Mutation[failure, T, T] = {
-            Mutation.instance( _ ⇒ None )
+        implicit val validation: Validation[failure, String, String] = {
+            Validation.mutation( _ ⇒ None )
+        }
+    }
+
+    trait int extends Rule.Mutation
+
+    object int extends int {
+        implicit val validation: Validation[int, Int, Int] = {
+            Validation.mutation( Some( _ ) )
+        }
+    }
+
+    trait intString extends Rule.Mutation
+
+    object intString extends intString {
+        implicit val validation: Validation[intString, Int, String] = {
+            Validation.mutation( int ⇒ Some( int.toString ) )
+        }
+    }
+
+    trait stringInt extends Rule.Mutation
+
+    object stringInt extends stringInt {
+        implicit val validation: Validation[stringInt, String, Int] = {
+            Validation.mutation( string ⇒ Try( string.toInt ).toOption )
         }
     }
 }
 
-trait transformation
+object transition {
+    trait string extends Rule.Transition
 
-object transformation extends transformation {
-    implicit def generic[T]: Transformation[transformation, T, T] = {
-        Transformation.instance( identity )
+    object string extends string {
+        implicit val validation: Validation[string, String, String] = {
+            Validation.transition( identity )
+        }
+    }
+
+    trait int extends Rule.Transition
+
+    object int extends int {
+        implicit val validation: Validation[int, Int, Int] = {
+            Validation.transition( identity )
+        }
+    }
+
+    trait intString extends Rule.Transition
+
+    object intString extends intString {
+        implicit val validation: Validation[intString, Int, String] = {
+            Validation.transition( _.toString )
+        }
+    }
+
+    trait stringInt extends Rule.Transition
+
+    object stringInt extends stringInt {
+        implicit val validation: Validation[stringInt, String, Int] = {
+            Validation.transition( _.toInt )
+        }
     }
 }

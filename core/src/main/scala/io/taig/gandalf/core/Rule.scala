@@ -1,19 +1,18 @@
 package io.taig.gandalf.core
 
-trait Rule {
-    type Out <: Rule
-}
+trait Rule
 
 object Rule {
-    trait Operator[L <: Rule, R <: Rule] extends Rule
+    trait Operator extends Rule
 
-    trait Entity extends Rule {
-        override final type Out = this.type
-    }
+    sealed trait Entity extends Rule
 
-    object Entity {
-        trait Condition extends Entity
-        trait Mutation extends Entity
-        trait Transformation extends Entity
-    }
+    object Entity
+
+    trait Condition extends Entity
+
+    sealed trait Transformation extends Entity
+
+    trait Mutation extends Transformation
+    trait Transition extends Transformation
 }

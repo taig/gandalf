@@ -26,7 +26,7 @@
 //        extends Condition.With[String]( _.isEmpty )
 //        with Arguments.Input
 //
-//    object ltrim extends Transformation.With[String, String](
+//    object ltrim extends Transition.With[String, String](
 //        _.replaceFirst( "^\\s*", "" )
 //    )
 //
@@ -48,15 +48,15 @@
 //
 //    object required extends ( trim.type && not[empty.type] )
 //
-//    object rtrim extends Transformation.With[String, String](
+//    object rtrim extends Transition.With[String, String](
 //        _.replaceFirst( "\\s*$", "" )
 //    )
 //
-//    object toLower extends Transformation.With[String, String]( _.toLowerCase )
+//    object toLower extends Transition.With[String, String]( _.toLowerCase )
 //
-//    object toUpper extends Transformation.With[String, String]( _.toUpperCase )
+//    object toUpper extends Transition.With[String, String]( _.toUpperCase )
 //
-//    object trim extends Transformation.With[String, String]( _.trim )
+//    object trim extends Transition.With[String, String]( _.trim )
 //
 //    object url extends matches["^(https?:\\/\\/)?.+\\..+"]
 //}

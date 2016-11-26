@@ -1,21 +1,12 @@
 package io.taig.gandalf.core.syntax
 
-import io.taig.gandalf.core._
+import io.taig.gandalf.core.operation
 
 import scala.language.implicitConversions
 
 trait validation {
-    implicit def gandalfCoreGeneric[I]( input: I ): operation.generic[I] = {
-        new operation.generic[I]( input )
-    }
-
-    implicit def gandalfCoreOperation[R <: Rule, I, O](
-        rule: R
-    ): operation.operation[R, I, O] = new operation.operation[R, I, O]( rule )
-
-    implicit def gandalfCoreRule[R <: Rule](
-        rule: R
-    ): operation.rule[R] = new operation.rule[R]( rule )
+    implicit def gandalfCoreValidation[I]( input: I ): operation.validation[I] =
+        new operation.validation[I]( input )
 }
 
 object validation extends validation

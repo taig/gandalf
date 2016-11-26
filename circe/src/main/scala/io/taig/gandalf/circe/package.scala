@@ -2,13 +2,14 @@ package io.taig.gandalf
 
 import cats.data.NonEmptyList
 import cats.syntax.either._
-import cats.data.Validated.{ Invalid, Valid }
+import cats.data.Validated.{Invalid, Valid}
 import io.circe.CursorOp.DownField
 import io.circe.Decoder.Result
-import io.circe.{ Decoder, DecodingFailure, Encoder, Error, Json, ParsingFailure }
+import io.circe.{Decoder, DecodingFailure, Encoder, Error, Json, ParsingFailure}
 import io.circe.parser._
 import io.circe.syntax._
-import io.taig.gandalf.core.{ Container, Obeys, Validation }
+import io.taig.gandalf.core.goaway.Validation
+import io.taig.gandalf.core.{Container, Obeys}
 
 package object circe {
     implicit val gandalfCirceEncoderDecodingFailure: Encoder[DecodingFailure] = {
