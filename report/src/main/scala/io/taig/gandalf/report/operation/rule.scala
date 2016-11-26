@@ -1,14 +1,12 @@
 package io.taig.gandalf.report.operation
 
 import cats.data.NonEmptyList
+import io.taig.gandalf.core._
 import io.taig.gandalf.report.Report
 
-final class rule[V, I, O]( val value: V ) extends AnyVal {
-    /**
-     * Generate the Report of the Rule
-     */
+final class rule[R <: Rule, I]( val rule: R ) extends AnyVal {
     def report( input: I )(
         implicit
-        r: Report[V, I]
+        r: Report[R, I]
     ): NonEmptyList[String] = r.show( input )
 }

@@ -1,28 +1,29 @@
 package io.taig.gandalf.report
 
 import cats.data.NonEmptyList
+import io.taig.gandalf.core.Rule
 
 import scala.language.existentials
 
-trait Report[-V, I] {
+trait Report[-R <: Rule, I] {
     def show( input: I ): NonEmptyList[String]
 }
 
 object Report {
     @inline
-    def apply[V, I]( implicit r: Report[V, I] ): Report[V, I] = r
+    def apply[R <: Rule, I]( implicit r: Report[R, I] ): Report[R, I] = r
 
-    def instance[V, I]( f: I ⇒ NonEmptyList[String] ): Report[V, I] = {
-        new Report[V, I] {
+    def instance[R <: Rule, I]( f: I ⇒ NonEmptyList[String] ): Report[R, I] = {
+        new Report[R, I] {
             override def show( input: I ): NonEmptyList[String] = f( input )
         }
     }
 
-    def single[V, I]( f: I ⇒ String ): Report[V, I] = {
+    def single[R <: Rule, I]( f: I ⇒ String ): Report[R, I] = {
         instance( f.andThen( NonEmptyList.of( _ ) ) )
     }
 
-    def static[V](
+    def static[R <: Rule](
         message: String
-    ): Report[V, I forSome { type I }] = single( _ ⇒ message )
+    ): Report[R, I forSome { type I }] = single( _ ⇒ message )
 }

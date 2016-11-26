@@ -6,12 +6,12 @@ import scala.annotation.implicitNotFound
 import scala.language.higherKinds
 
 @implicitNotFound( "Invalid operation" )
-trait Resolver[R <: Rule] {
+trait Resolver[-R <: Rule] {
     type Out <: Rule
 }
 
 object Resolver {
-    type Aux[R <: Rule, Out0 <: Rule] = Resolver[R] {
+    type Aux[-R <: Rule, Out0 <: Rule] = Resolver[R] {
         type Out = Out0
     }
 

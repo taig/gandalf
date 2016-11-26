@@ -7,9 +7,7 @@ trait Validation[-R <: Rule, I, O] {
 }
 
 object Validation {
-    private[gandalf] def instance[R <: Rule, I, O](
-        f: I ⇒ Option[O]
-    ): Validation[R, I, O] = {
+    def instance[R <: Rule, I, O]( f: I ⇒ Option[O] ): Validation[R, I, O] = {
         new Validation[R, I, O] {
             override def apply( input: I ): Option[O] = f( input )
         }
