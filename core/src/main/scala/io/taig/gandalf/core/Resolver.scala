@@ -15,16 +15,8 @@ object Resolver {
         type Out = Out0
     }
 
-    def instance[R <: Rule, Out0 <: Rule]: Aux[R, Out0] = new Resolver[R] {
-        override type Out = Out0
-    }
+    def instance[R <: Rule, Out0 <: Rule]: Aux[R, Out0] =
+        new Resolver[R] { override type Out = Out0 }
 
-    implicit def condition[C <: Condition]: Resolver.Aux[C, Condition] =
-        instance
-
-    implicit def mutation[M <: Mutation]: Resolver.Aux[M, Mutation] =
-        instance
-
-    implicit def transitions[T <: Transition]: Resolver.Aux[T, Transition] =
-        instance
+    implicit def entities[E <: Entity]: Resolver.Aux[E, E] = instance
 }

@@ -4,7 +4,7 @@ import scala.language.higherKinds
 
 class not[R <: Rule] extends Rule
 
-object not {
+object not extends not0 {
     @inline
     def apply[R <: Rule]( rule: R )(
         implicit
@@ -46,4 +46,11 @@ object not {
         implicit
         s: Serialization[R]
     ): Serialization[not[R]] = Serialization.instance( s"not($s)" )
+}
+
+trait not0 {
+    implicit def resolverCondition[R <: Rule](
+        implicit
+        r: Resolver.Aux[R, _ <: Rule.Condition]
+    ): Resolver.Aux[not[R], r.Out] = Resolver.instance
 }

@@ -18,18 +18,42 @@ object And extends AndResolvers {
 }
 
 trait AndResolvers {
-    /**
-     * condition[T] && condition[T] -> condition[T]
-     * mutation[I, O] && mutation[O, P] -> mutation[I, P]
-     * transition[I, O] && transition[O, P] -> transition[I, P]
-     */
-    implicit def conditions[L <: Rule, R <: Rule, E <: Rule.Entity, I, O, P](
+    //    /**
+    //     * condition[T] && condition[T] -> condition[T]
+    //     * mutation[I, O] && mutation[O, P] -> mutation[I, P]
+    //     * transition[I, O] && transition[O, P] -> transition[I, P]
+    //     */
+    //    implicit def entities[L <: Rule, R <: Rule, E <: Rule.Entity, I, O, P](
+    //        implicit
+    //        lr: Resolver.Aux[L, E],
+    //        lv: Validation[L, I, O],
+    //        rr: Resolver.Aux[R, E],
+    //        rv: Validation[R, O, P]
+    //    ): Resolver.Aux[L && R, E] = Resolver.instance
+
+    implicit def conditions[L <: Rule, R <: Rule, T](
         implicit
-        lr: Resolver.Aux[L, E],
+        lr: Resolver.Aux[L, _ <: Rule.Condition],
+        lv: Validation[L, T, T],
+        rr: Resolver.Aux[R, _ <: Rule.Condition],
+        rv: Validation[R, T, T]
+    ): Resolver.Aux[L && R, Rule.Condition] = Resolver.instance
+
+    implicit def mutations[L <: Rule, R <: Rule, I, O, P](
+        implicit
+        lr: Resolver.Aux[L, _ <: Rule.Mutation],
         lv: Validation[L, I, O],
-        rr: Resolver.Aux[R, E],
+        rr: Resolver.Aux[R, _ <: Rule.Mutation],
         rv: Validation[R, O, P]
-    ): Resolver.Aux[L && R, E] = Resolver.instance
+    ): Resolver.Aux[L && R, Rule.Mutation] = Resolver.instance
+
+    implicit def transitions[L <: Rule, R <: Rule, I, O, P](
+        implicit
+        lr: Resolver.Aux[L, _ <: Rule.Transition],
+        lv: Validation[L, I, O],
+        rr: Resolver.Aux[R, _ <: Rule.Transition],
+        rv: Validation[R, O, P]
+    ): Resolver.Aux[L && R, Rule.Transition] = Resolver.instance
 
     /**
      * condition[I] && mutation[I, O] -> mutation[I, O]
@@ -37,7 +61,7 @@ trait AndResolvers {
      */
     implicit def conditionTransformation[L <: Rule, R <: Rule, I, O](
         implicit
-        lr: Resolver.Aux[L, Rule.Condition],
+        lr: Resolver.Aux[L, _ <: Rule.Condition],
         lv: Validation[L, I, I],
         rr: Resolver.Aux[R, _ <: Rule.Transformation],
         rv: Validation[R, I, O]
@@ -51,7 +75,7 @@ trait AndResolvers {
         implicit
         lr: Resolver.Aux[L, _ <: Rule.Transformation],
         lv: Validation[L, I, O],
-        rr: Resolver.Aux[R, Rule.Condition],
+        rr: Resolver.Aux[R, _ <: Rule.Condition],
         rv: Validation[R, O, O]
     ): Resolver.Aux[L && R, Rule.Mutation] = Resolver.instance
 }

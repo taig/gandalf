@@ -3,6 +3,8 @@ package io.taig.gandalf.core
 import scala.PartialFunction.condOpt
 
 trait Validation[-R <: Rule, I, O] {
+    type Out <: Rule
+
     def apply( input: I ): Option[O]
 }
 

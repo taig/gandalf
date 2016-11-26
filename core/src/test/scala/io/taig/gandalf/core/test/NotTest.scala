@@ -61,15 +61,6 @@ class NotTest extends Suite {
             Some( "foo" )
     }
 
-    it should "support negated custom Conditions" in {
-        object success extends ( condition.success && condition.success )
-        "foo".confirm( dont( success ) ) shouldBe
-            None
-
-        object failure extends ( condition.success && condition.failure )
-        "foo".confirm( dont( failure ) ) shouldBe Some( "foo" )
-    }
-
     it should "support Mutations with Conditions" in {
         "foo".confirm( dont( condition.success && mutation.success ) ) shouldBe
             None

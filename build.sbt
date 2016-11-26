@@ -3,8 +3,8 @@ lazy val gandalf = project.in( file( "." ) )
     .settings(
         name := "gandalf"
     )
-    .aggregate( core, report )
-    .dependsOn( core, report )
+    .aggregate( core, report, predef )
+    .dependsOn( core, report, predef )
 
 lazy val core = project
     .settings( Settings.common )
