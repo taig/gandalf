@@ -12,6 +12,13 @@ class ExtensionTest extends Suite {
         "foo".confirm( custom2 ) shouldBe None
     }
 
+    it should "support nested compositions" in {
+        object custom1 extends ( condition.success && condition.success )
+        object custom2 extends ( condition.success && condition.failure )
+
+        "foo".confirm( custom1 && custom2 ) shouldBe None
+    }
+
     it should "support negating compose" in {
         object custom1 extends ( condition.success && condition.success )
         object custom2 extends ( condition.success && condition.failure )
@@ -36,6 +43,13 @@ class ExtensionTest extends Suite {
 
         "foo".confirm( custom1 ) shouldBe Some( "foo" )
         "foo".confirm( custom2 ) shouldBe None
+    }
+
+    it should "support nested compositions" in {
+        object custom1 extends ( condition.success || condition.success )
+        object custom2 extends ( condition.failure || condition.failure )
+
+        "foo".confirm( custom1 && custom2 ) shouldBe None
     }
 
     it should "support negating compose" in {
