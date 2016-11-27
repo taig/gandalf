@@ -5,17 +5,10 @@ class Or[L <: Rule, R <: Rule] extends Rule.Operator
 object Or extends OrResolvers {
     implicit def validation[L <: Rule, R <: Rule, I, O](
         implicit
-        l:  Validation[L, I, O],
-        r:  Validation[R, I, O],
-        rs: Resolver[L || R]
+        l: Validation[L, I, O],
+        r: Validation[R, I, O]
     ): Validation[L || R, I, O] = Validation.instance { input ⇒
-        l( input ) match {
-            case Some( output ) ⇒ Some( output )
-            case None ⇒ r( input ) match {
-                case Some( output ) ⇒ Some( output )
-                case None           ⇒ None
-            }
-        }
+        l( input ) orElse r( input )
     }
 
     implicit def serialization[L <: Rule, R <: Rule](

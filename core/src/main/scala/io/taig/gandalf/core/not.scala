@@ -11,11 +11,8 @@ object not extends not0 {
         r: Resolver[not[R]]
     ): not[R] = new not[R]
 
-    implicit def resolver[R <: Rule, I, O](
-        implicit
-        r: Resolver[R],
-        v: Validation[not[R], I, O]
-    ): Resolver.Aux[not[R], r.Out] = Resolver.instance
+    implicit def resolverCondition[R <: Rule.Condition]: Resolver.Aux[not[R], R] =
+        Resolver.instance
 
     implicit def validation[R <: Rule, T](
         implicit
@@ -49,8 +46,9 @@ object not extends not0 {
 }
 
 trait not0 {
-    implicit def resolverCondition[R <: Rule](
+    implicit def resolver[R <: Rule, I, O](
         implicit
-        r: Resolver.Aux[R, _ <: Rule.Condition]
+        r: Resolver[R],
+        v: Validation[not[R], I, O]
     ): Resolver.Aux[not[R], r.Out] = Resolver.instance
 }
