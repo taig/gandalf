@@ -1,4 +1,5 @@
 import sbt._
+import sbt.Keys._
 
 object Dependencies {
     abstract class Configuration(
@@ -40,7 +41,7 @@ object Dependencies {
 
         val parser = scala( "parser" )
     }
-
+    
     val doobie = "org.tpolecat" %% "doobie-core-cats" % "0.3.1-M1"
 
     object monix extends Configuration( "io.monix", "monix", "2.1.0" ) {

@@ -4,6 +4,7 @@ import io.taig.sbt.sonatype.SonatypeHouserulePlugin.autoImport._
 
 object Settings {
     val common = Def.settings(
+        crossScalaVersions := Seq( "2.11.8", "2.12.0" ),
         exportJars := true,
         incOptions := incOptions.value.withLogRecompileOnMacro( false ),
         javacOptions ++= (
@@ -24,7 +25,7 @@ object Settings {
             "-Ypartial-unification" ::
             Nil,
         scalaOrganization := "org.typelevel",
-        scalaVersion := "2.11.8",
-        testOptions in ThisBuild += Tests.Argument( "-oDF" )
+        scalaVersion := "2.11.8"/*,
+        testOptions in ThisBuild += Tests.Argument( "-oDF" )*/
     )
 }

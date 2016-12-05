@@ -2,8 +2,13 @@ package io.taig.gandalf.core
 
 import scala.reflect.{ ClassTag, classTag }
 
-trait Serialization[R <: Rule] {
+trait Serialization[-R <: Rule] {
     def serialize: String
+
+    override def equals( obj: Any ): Boolean = obj match {
+        case s: Serialization[_] ⇒ this.serialize == s.serialize
+        case _                   ⇒ false
+    }
 
     @inline
     override def toString = serialize

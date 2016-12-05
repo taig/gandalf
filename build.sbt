@@ -3,8 +3,8 @@ lazy val gandalf = project.in( file( "." ) )
     .settings(
         name := "gandalf"
     )
-    .aggregate( core, report, predef )
-    .dependsOn( core, report, predef )
+    .aggregate( core, report, macros, predef )
+    .dependsOn( core, report, macros, predef )
 
 lazy val core = project
     .settings( Settings.common )
@@ -21,12 +21,12 @@ lazy val report = project
     .settings( Settings.common )
     .dependsOn( core % "compile->compile;test->test" )
 
-//lazy val macros = project
-//    .settings( Settings.common )
-//    .settings(
-//        addCompilerPlugin( Dependencies.paradise cross CrossVersion.full )
-//    )
-//    .dependsOn( core % "compile->compile;test->test" )
+lazy val macros = project
+    .settings( Settings.common )
+    .settings(
+        addCompilerPlugin( Dependencies.paradise cross CrossVersion.full )
+    )
+    .dependsOn( core % "compile->compile;test->test" )
 
 lazy val predef = project
     .settings( Settings.common )

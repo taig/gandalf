@@ -1,8 +1,6 @@
 package io.taig.gandalf.core.test
 
-import io.taig.gandalf.core.Rule
-import io.taig.gandalf.core.Validation
-
+import io.taig.gandalf.core._
 import scala.util.Try
 
 object condition {
@@ -12,12 +10,20 @@ object condition {
         implicit val validation: Validation[success, String, String] = {
             Validation.condition( _ ⇒ true )
         }
+
+        implicit def option[T]: Validation[success, Option[T], Option[T]] = {
+            Validation.condition( _ ⇒ true )
+        }
     }
 
     trait failure extends Rule.Condition
 
     object failure extends failure {
         implicit val validation: Validation[failure, String, String] = {
+            Validation.condition( _ ⇒ false )
+        }
+
+        implicit def option[T]: Validation[failure, Option[T], Option[T]] = {
             Validation.condition( _ ⇒ false )
         }
     }
@@ -104,5 +110,35 @@ object transition {
         implicit val validation: Validation[stringInt, String, Int] = {
             Validation.transition( _.toInt )
         }
+    }
+}
+
+object composition {
+    object and {
+        class success extends ( condition.success && condition.success )
+        object success extends success
+
+        class failure extends ( condition.success && condition.failure )
+        object failure extends failure
+
+        class notL extends ( not[condition.failure] && condition.success )
+        object notL extends notL
+
+        class notR extends ( condition.success && not[condition.failure] )
+        object notR extends notR
+    }
+
+    object or {
+        class success extends ( condition.failure || condition.success )
+        object success extends success
+
+        class failure extends ( condition.failure || condition.failure )
+        object failure extends failure
+
+        class notL extends ( not[condition.failure] || condition.failure )
+        object notL extends notL
+
+        class notR extends ( condition.failure || not[condition.failure] )
+        object notR extends notR
     }
 }

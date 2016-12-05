@@ -6,5 +6,5 @@ final class validation[I]( val input: I ) extends AnyVal {
     def confirm[R <: Rule, O]( right: R )(
         implicit
         v: Validation[R, I, O]
-    ): Option[O] = v( input )
+    ): Option[O] = v.confirm( input )
 }

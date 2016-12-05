@@ -5,50 +5,51 @@ import scala.language.higherKinds
 class not[R <: Rule] extends Rule
 
 object not extends not0 {
-    @inline
-    def apply[R <: Rule]( rule: R )(
-        implicit
-        r: Resolver[not[R]]
-    ): not[R] = new not[R]
-
-    implicit def resolverCondition[R <: Rule.Condition]: Resolver.Aux[not[R], R] =
-        Resolver.instance
+    def apply[R <: Rule]( rule: R ): not[R] = new not[R]
 
     implicit def validation[R <: Rule, T](
         implicit
-        r: Resolver.Aux[R, _ <: Rule.Condition],
+        r: Resolver.Aux[R, Rule.Condition],
         v: Validation[R, T, T]
-    ): Validation[not[R], T, T] = Validation.instance { input ⇒
-        v( input ) match {
-            case Some( _ ) ⇒ None
-            case None      ⇒ Some( input )
-        }
+    ): Validation[not[R], T, T] = Validation.instance[not[R], T, T] { input ⇒
+        v.confirm( input ).fold[Option[T]]( Some( input ) )( _ ⇒ None )
     }
 
-    implicit def validationConditionTransformation[L <: Rule, R <: Rule, OP[_ <: Rule, _ <: Rule] <: Rule.Operator, I, O](
+    implicit def condition[R <: Rule: Serialization](
         implicit
-        lr: Resolver.Aux[L, _ <: Rule.Condition],
-        rr: Resolver.Aux[R, _ <: Rule.Transformation],
-        v:  Validation[not[L] OP R, I, O]
-    ): Validation[not[L OP R], I, O] = Validation.instance( v( _ ) )
+        r: Resolver.Aux[R, Rule.Condition]
+    ): Resolver.Aux[not[R], Rule.Condition] =
+        Resolver.instance[not[R], Rule.Condition]
 
-    implicit def validationTransformationCondition[L <: Rule, R <: Rule, OP[_ <: Rule, _ <: Rule] <: Rule.Operator, I, O](
+    implicit def conditionTransformation[L <: Rule, R <: Rule, O <: Rule, OP[_ <: Rule, _ <: Rule] <: Operator](
         implicit
-        lr: Resolver.Aux[L, _ <: Rule.Transformation],
-        rr: Resolver.Aux[R, _ <: Rule.Condition],
-        v:  Validation[L OP not[R], I, O]
-    ): Validation[not[L OP R], I, O] = Validation.instance( v( _ ) )
+        l:  Resolver.Aux[L, Rule.Condition],
+        r:  Resolver.Aux[R, _ <: Rule.Transformation],
+        rs: Resolver.Aux[not[L] OP R, O],
+        sr: Serialization[L OP R],
+        so: Serialization[O]
+    ): Resolver.Aux[not[L OP R], O] = Resolver.instance[not[L OP R], O]
+
+    implicit def transformationCondition[L <: Rule, R <: Rule, O <: Rule, OP[_ <: Rule, _ <: Rule] <: Operator](
+        implicit
+        l:  Resolver.Aux[L, _ <: Rule.Transformation],
+        r:  Resolver.Aux[R, Rule.Condition],
+        rs: Resolver.Aux[L OP not[R], O],
+        sr: Serialization[L OP R],
+        so: Serialization[O]
+    ): Resolver.Aux[not[L OP R], O] = Resolver.instance[not[L OP R], O]
 
     implicit def serialization[R <: Rule](
         implicit
         s: Serialization[R]
-    ): Serialization[not[R]] = Serialization.instance( s"not($s)" )
+    ): Serialization[not[R]] = Serialization.instance[not[R]]( s"not($s)" )
 }
 
 trait not0 {
-    implicit def resolver[R <: Rule, I, O](
-        implicit
-        r: Resolver[R],
-        v: Validation[not[R], I, O]
-    ): Resolver.Aux[not[R], r.Out] = Resolver.instance
+    //    implicit def resolver[R <: Rule: Serialization, I, O, X <: Rule](
+    //        implicit
+    //        r: Resolver.Aux[R, X],
+    //        v: Validation[not[R], I, O],
+    //        s: Serialization[X]
+    //    ): Resolver.Aux[not[R], X] = Resolver.instance[not[R], X]
 }

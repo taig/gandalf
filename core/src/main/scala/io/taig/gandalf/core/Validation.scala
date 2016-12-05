@@ -3,15 +3,19 @@ package io.taig.gandalf.core
 import scala.PartialFunction.condOpt
 
 trait Validation[-R <: Rule, I, O] {
-    type Out <: Rule
-
-    def apply( input: I ): Option[O]
+    def confirm( input: I ): Option[O]
 }
 
 object Validation {
+    @inline
+    def apply[R <: Rule, I, O](
+        implicit
+        v: Validation[R, I, O]
+    ): Validation[R, I, O] = v
+
     def instance[R <: Rule, I, O]( f: I ⇒ Option[O] ): Validation[R, I, O] = {
         new Validation[R, I, O] {
-            override def apply( input: I ): Option[O] = f( input )
+            override def confirm( input: I ): Option[O] = f( input )
         }
     }
 

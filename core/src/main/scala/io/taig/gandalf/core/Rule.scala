@@ -3,16 +3,11 @@ package io.taig.gandalf.core
 trait Rule
 
 object Rule {
-    trait Operator extends Rule
-
     sealed trait Entity extends Rule
-
-    object Entity
-
-    trait Condition extends Entity
-
+    sealed trait Unsafe extends Entity
     sealed trait Transformation extends Entity
 
-    trait Mutation extends Transformation
+    trait Condition extends Unsafe
+    trait Mutation extends Unsafe with Transformation
     trait Transition extends Transformation
 }

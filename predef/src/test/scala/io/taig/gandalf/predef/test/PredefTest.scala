@@ -1,5 +1,6 @@
 package io.taig.gandalf.predef.test
 
+import io.taig.gandalf.core.And
 import io.taig.gandalf.core.syntax.all._
 import io.taig.gandalf.core.test.Suite
 import io.taig.gandalf.predef
@@ -11,6 +12,25 @@ class PredefTest extends Suite {
         "FOO".confirm( predef.capitalize ) shouldBe Some( "FOO" )
         "foo bar".confirm( predef.capitalize ) shouldBe Some( "Foo bar" )
         "".confirm( predef.capitalize ) shouldBe Some( "" )
+    }
+
+    "contains" should "check if a String for a substring" in {
+        "foobar".confirm( predef.contains( "foo" ) ) shouldBe Some( "foobar" )
+        "foo".confirm( predef.contains( "foo" ) ) shouldBe Some( "foo" )
+        "bar".confirm( predef.contains( "foo" ) ) shouldBe None
+    }
+
+    it should "check if a SeqLike has a certain element" in {
+        Seq( 1, 2, 3 ).confirm( predef.contains( 1 ) ) shouldBe Some( Seq( 1, 2, 3 ) )
+        List( 1, 2, 3 ).confirm( predef.contains( 1 ) ) shouldBe Some( List( 1, 2, 3 ) )
+        Seq( 1, 2, 3 ).confirm( predef.contains( 4 ) ) shouldBe None
+        List( 1, 2, 3 ).confirm( predef.contains( 4 ) ) shouldBe None
+    }
+
+    it should "check if an Array has a certain element" in {
+        val array = Array( 1, 2, 3 )
+        array.confirm( predef.contains( 1 ) ) shouldBe Some( array )
+        array.confirm( predef.contains( 4 ) ) shouldBe None
     }
 
     "email" should "check if input has valid format" in {
@@ -110,7 +130,7 @@ class PredefTest extends Suite {
     }
 
     "required" should "remove all whitespace and check if String is empty" in {
-        "foo".confirm( predef.required ) shouldBe Some( "foo" )
+        "foo".confirm( predef.required )( And.validation ) shouldBe Some( "foo" )
         "foo".confirm( predef.required ) shouldBe Some( "foo" )
         "  foo".confirm( predef.required ) shouldBe Some( "foo" )
         "foo   ".confirm( predef.required ) shouldBe Some( "foo" )
@@ -124,6 +144,22 @@ class PredefTest extends Suite {
         "foo   ".confirm( predef.trim ) shouldBe Some( "foo" )
         "  foo   ".confirm( predef.trim ) shouldBe Some( "foo" )
         "     ".confirm( predef.trim ) shouldBe Some( "" )
+    }
+
+    "trim.left" should "remove whitespace at the beginning" in {
+        "foo".confirm( predef.trim.left ) shouldBe Some( "foo" )
+        "  foo".confirm( predef.trim.left ) shouldBe Some( "foo" )
+        "foo   ".confirm( predef.trim.left ) shouldBe Some( "foo   " )
+        "  foo   ".confirm( predef.trim.left ) shouldBe Some( "foo   " )
+        "     ".confirm( predef.trim.left ) shouldBe Some( "" )
+    }
+
+    "trim.right" should "remove whitespace at the end" in {
+        "foo".confirm( predef.trim.right ) shouldBe Some( "foo" )
+        "  foo".confirm( predef.trim.right ) shouldBe Some( "  foo" )
+        "foo   ".confirm( predef.trim.right ) shouldBe Some( "foo" )
+        "  foo   ".confirm( predef.trim.right ) shouldBe Some( "  foo" )
+        "     ".confirm( predef.trim.right ) shouldBe Some( "" )
     }
 
     "uppercase" should "replace all lowercase letters" in {
