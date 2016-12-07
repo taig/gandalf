@@ -66,6 +66,18 @@ class PredefTest extends Suite {
         21.confirm( predef.equal( 42 ) ) shouldBe None
     }
 
+    "gt" should "compare numbers with the > operator" in {
+        10.confirm( predef.gt( 5 ) ) shouldBe Some( 10 )
+        5.confirm( predef.gt( 5 ) ) shouldBe None
+        0.confirm( predef.gt( 5 ) ) shouldBe None
+    }
+
+    "gte" should "compare numbers with the >= operator" in {
+        10.confirm( predef.gte( 5 ) ) shouldBe Some( 10 )
+        5.confirm( predef.gte( 5 ) ) shouldBe Some( 5 )
+        0.confirm( predef.gte( 5 ) ) shouldBe None
+    }
+
     "length.max" should "check if a String has a maximum length" in {
         "foo".confirm( predef.length.max( 5 ) ) shouldBe Some( "foo" )
         "foo".confirm( predef.length.max( 3 ) ) shouldBe Some( "foo" )
@@ -121,6 +133,18 @@ class PredefTest extends Suite {
         "Foo".confirm( predef.lowercase ) shouldBe Some( "foo" )
         "FooBar".confirm( predef.lowercase ) shouldBe Some( "foobar" )
         "".confirm( predef.lowercase ) shouldBe Some( "" )
+    }
+
+    "lt" should "compare numbers with the < operator" in {
+        0.confirm( predef.lt( 5 ) ) shouldBe Some( 0 )
+        5.confirm( predef.lt( 5 ) ) shouldBe None
+        10.confirm( predef.lt( 5 ) ) shouldBe None
+    }
+
+    "lte" should "compare numbers with the <= operator" in {
+        0.confirm( predef.lte( 5 ) ) shouldBe Some( 0 )
+        5.confirm( predef.lte( 5 ) ) shouldBe Some( 5 )
+        10.confirm( predef.lte( 5 ) ) shouldBe None
     }
 
     "matches" should "check if a regex pattern matches a String" in {
