@@ -24,6 +24,6 @@ package object predef {
     object required extends ( trim && not[empty] )
 
     object url extends matches["^(https?:\\/\\/)?.+\\..+"]
-    
+
     object zero extends equal[0]
 }

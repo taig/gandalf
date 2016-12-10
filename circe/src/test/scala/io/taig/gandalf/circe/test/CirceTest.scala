@@ -6,7 +6,6 @@ import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
 import io.taig.gandalf.circe._
-import io.taig.gandalf.core.test.Suite
 import io.taig.gandalf.macros.obeys
 import io.taig.gandalf.predef.string.required
 import io.taig.gandalf.predef.numeric.gt

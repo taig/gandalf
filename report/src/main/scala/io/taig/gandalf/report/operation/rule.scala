@@ -4,8 +4,8 @@ import cats.data.NonEmptyList
 import io.taig.gandalf.core._
 import io.taig.gandalf.report.Report
 
-final class rule[R <: Rule, I, O]( val rule: R ) extends AnyVal {
-    def report( input: I )(
+final class rule[R <: Rule, I]( val rule: R ) extends AnyVal {
+    def report[O]( input: I )(
         implicit
         r: Report[R, I, O]
     ): NonEmptyList[String] = r.show( input )

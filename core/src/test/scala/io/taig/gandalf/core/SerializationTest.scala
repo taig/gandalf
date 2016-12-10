@@ -1,4 +1,4 @@
-package io.taig.gandalf.core.test
+package io.taig.gandalf.core
 
 import io.taig.gandalf.core._
 import io.taig.gandalf.core.syntax.all._
