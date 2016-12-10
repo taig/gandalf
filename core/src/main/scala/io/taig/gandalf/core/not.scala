@@ -4,7 +4,7 @@ import scala.language.higherKinds
 
 class not[R <: Rule] extends Rule
 
-object not extends not0 {
+object not {
     def apply[R <: Rule]( rule: R ): not[R] = new not[R]
 
     implicit def validation[R <: Rule, T](
@@ -43,13 +43,4 @@ object not extends not0 {
         implicit
         s: Serialization[R]
     ): Serialization[not[R]] = Serialization.instance[not[R]]( s"not($s)" )
-}
-
-trait not0 {
-    //    implicit def resolver[R <: Rule: Serialization, I, O, X <: Rule](
-    //        implicit
-    //        r: Resolver.Aux[R, X],
-    //        v: Validation[not[R], I, O],
-    //        s: Serialization[X]
-    //    ): Resolver.Aux[not[R], X] = Resolver.instance[not[R], X]
 }
