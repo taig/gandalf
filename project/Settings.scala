@@ -25,7 +25,7 @@ object Settings {
             "-Ypartial-unification" ::
             Nil,
         scalaOrganization := "org.typelevel",
-        scalaVersion := "2.11.8"/*,
-        testOptions in ThisBuild += Tests.Argument( "-oDF" )*/
+        scalaVersion := "2.12.0",
+        testOptions in ThisBuild += Tests.Argument( "-oDF" )
     )
 }
