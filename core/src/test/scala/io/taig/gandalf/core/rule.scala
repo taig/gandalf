@@ -1,6 +1,5 @@
 package io.taig.gandalf.core
 
-import io.taig.gandalf.core._
 import scala.util.Try
 
 object condition {
