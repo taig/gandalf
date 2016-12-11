@@ -1,9 +1,12 @@
 package io.taig.gandalf
 
-import io.taig.gandalf.core.{&&, not, ||}
+import io.taig.gandalf.macros._
+import io.taig.gandalf.core._
+import io.taig.gandalf.core.syntax.dsl._
 
 package object predef {
-    object email extends matches["^[^@]+@[^@]+\\.[^@]+$"]
+    @rule( matches( "^[^@]+@[^@]+\\.[^@]+$" ) )
+    class email
 
     class gte[T: ValueOf] extends ( equal[T] || gt[T] )
 
@@ -17,13 +20,18 @@ package object predef {
         def apply[T]( value: T ): lte[value.type] = new lte[value.type]
     }
 
-    object negative extends lt[0]
+    @rule( lt( 0 ) )
+    class negative
 
-    object positive extends gt[0]
+    @rule( gt( 0 ) )
+    class positive
 
-    object required extends ( trim && not[empty] )
+    @rule( trim && not( empty ) )
+    class required
 
-    object url extends matches["^(https?:\\/\\/)?.+\\..+"]
+    @rule( matches( "^(https?:\\/\\/)?.+\\..+" ) )
+    class url
 
-    object zero extends equal[0]
+    @rule( equal( 0 ) )
+    class zero
 }

@@ -30,7 +30,10 @@ lazy val macros = project
 
 lazy val predef = project
     .settings( Settings.common )
-    .dependsOn( core % "compile->compile;test->test" )
+    .settings(
+        addCompilerPlugin( Dependencies.paradise cross CrossVersion.full )
+    )
+    .dependsOn( macros % "compile->compile;test->test" )
 
 //lazy val circe = project
 //    .settings( Settings.common )
