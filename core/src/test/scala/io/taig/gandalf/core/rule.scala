@@ -6,11 +6,11 @@ object condition {
     trait success extends Rule.Condition
 
     object success extends success {
-        implicit val validation: Validation[success, String, String] = {
+        implicit val validation: Validation.Aux[success, String, String] = {
             Validation.condition( _ ⇒ true )
         }
 
-        implicit def option[T]: Validation[success, Option[T], Option[T]] = {
+        implicit def option[T]: Validation.Aux[success, Option[T], Option[T]] = {
             Validation.condition( _ ⇒ true )
         }
     }
@@ -18,11 +18,11 @@ object condition {
     trait failure extends Rule.Condition
 
     object failure extends failure {
-        implicit val validation: Validation[failure, String, String] = {
+        implicit val validation: Validation.Aux[failure, String, String] = {
             Validation.condition( _ ⇒ false )
         }
 
-        implicit def option[T]: Validation[failure, Option[T], Option[T]] = {
+        implicit def option[T]: Validation.Aux[failure, Option[T], Option[T]] = {
             Validation.condition( _ ⇒ false )
         }
     }
@@ -30,7 +30,7 @@ object condition {
     trait int extends Rule.Condition
 
     object int extends int {
-        implicit val validation: Validation[int, Int, Int] = {
+        implicit val validation: Validation.Aux[int, Int, Int] = {
             Validation.condition( _ ⇒ true )
         }
     }
@@ -40,7 +40,7 @@ object mutation {
     trait success extends Rule.Mutation
 
     object success extends success {
-        implicit val validation: Validation[success, String, String] = {
+        implicit val validation: Validation.Aux[success, String, String] = {
             Validation.mutation( Some( _ ) )
         }
     }
@@ -48,7 +48,7 @@ object mutation {
     trait failure extends Rule.Mutation
 
     object failure extends failure {
-        implicit val validation: Validation[failure, String, String] = {
+        implicit val validation: Validation.Aux[failure, String, String] = {
             Validation.mutation( _ ⇒ None )
         }
     }
@@ -56,7 +56,7 @@ object mutation {
     trait int extends Rule.Mutation
 
     object int extends int {
-        implicit val validation: Validation[int, Int, Int] = {
+        implicit val validation: Validation.Aux[int, Int, Int] = {
             Validation.mutation( Some( _ ) )
         }
     }
@@ -64,7 +64,7 @@ object mutation {
     trait intString extends Rule.Mutation
 
     object intString extends intString {
-        implicit val validation: Validation[intString, Int, String] = {
+        implicit val validation: Validation.Aux[intString, Int, String] = {
             Validation.mutation( int ⇒ Some( int.toString ) )
         }
     }
@@ -72,7 +72,7 @@ object mutation {
     trait stringInt extends Rule.Mutation
 
     object stringInt extends stringInt {
-        implicit val validation: Validation[stringInt, String, Int] = {
+        implicit val validation: Validation.Aux[stringInt, String, Int] = {
             Validation.mutation( string ⇒ Try( string.toInt ).toOption )
         }
     }
@@ -82,7 +82,7 @@ object transition {
     trait string extends Rule.Transition
 
     object string extends string {
-        implicit val validation: Validation[string, String, String] = {
+        implicit val validation: Validation.Aux[string, String, String] = {
             Validation.transition( identity )
         }
     }
@@ -90,7 +90,7 @@ object transition {
     trait int extends Rule.Transition
 
     object int extends int {
-        implicit val validation: Validation[int, Int, Int] = {
+        implicit val validation: Validation.Aux[int, Int, Int] = {
             Validation.transition( identity )
         }
     }
@@ -98,7 +98,7 @@ object transition {
     trait intString extends Rule.Transition
 
     object intString extends intString {
-        implicit val validation: Validation[intString, Int, String] = {
+        implicit val validation: Validation.Aux[intString, Int, String] = {
             Validation.transition( _.toString )
         }
     }
@@ -106,7 +106,7 @@ object transition {
     trait stringInt extends Rule.Transition
 
     object stringInt extends stringInt {
-        implicit val validation: Validation[stringInt, String, Int] = {
+        implicit val validation: Validation.Aux[stringInt, String, Int] = {
             Validation.transition( _.toInt )
         }
     }

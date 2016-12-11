@@ -3,8 +3,8 @@ package io.taig.gandalf.core.operation
 import io.taig.gandalf.core.{ Rule, Validation }
 
 final class confirmation[I]( val input: I ) extends AnyVal {
-    def confirm[R <: Rule, O]( rule: R )(
+    def confirm[R <: Rule]( rule: R )(
         implicit
-        v: Validation[R, I, O]
-    ): Option[O] = v.confirm( input )
+        v: Validation[R, I]
+    ): Option[v.Out] = v.confirm( input )
 }

@@ -5,6 +5,6 @@ import io.taig.gandalf.core.{ Rule, Validation }
 class uppercase extends Rule.Transition
 
 object uppercase extends uppercase {
-    implicit val string: Validation[uppercase, String, String] =
+    implicit val string: Validation.Aux[uppercase, String, String] =
         Validation.transition( _.toUpperCase )
 }

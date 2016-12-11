@@ -7,10 +7,10 @@ object Or extends Operator.Implicits[Or, Rule.Unsafe, Rule.Mutation] {
 
     implicit def validation[L <: Rule, R <: Rule, I, O](
         implicit
-        l:  Validation[L, I, O],
-        r:  Validation[R, I, O],
+        l:  Validation.Aux[L, I, O],
+        r:  Validation.Aux[R, I, O],
         rs: Resolver[L || R]
-    ): Validation[L || R, I, O] = Validation.instance[L || R, I, O] { input ⇒
+    ): Validation.Aux[L || R, I, O] = Validation.instance[L || R, I, O] { input ⇒
         l.confirm( input ) orElse r.confirm( input )
     }
 }

@@ -8,6 +8,6 @@ object matches {
     def apply[T <: String]( value: T ): matches[value.type] =
         new matches[value.type]
 
-    implicit def string[T <: String: ValueOf]: Validation[matches[T], String, String] =
+    implicit def string[T <: String: ValueOf]: Validation.Aux[matches[T], String, String] =
         Validation.condition( _ matches valueOf[T] )
 }

@@ -10,8 +10,8 @@ object not {
     implicit def validation[R <: Rule, T](
         implicit
         r: Resolver.Aux[R, Rule.Condition],
-        v: Validation[R, T, T]
-    ): Validation[not[R], T, T] = Validation.instance[not[R], T, T] { input ⇒
+        v: Validation.Aux[R, T, T]
+    ): Validation.Aux[not[R], T, T] = Validation.instance[not[R], T, T] { input ⇒
         v.confirm( input ).fold[Option[T]]( Some( input ) )( _ ⇒ None )
     }
 

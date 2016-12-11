@@ -10,21 +10,15 @@ final class rule( composition: Rule ) extends StaticAnnotation {
     def macroTransform( annottees: Any* ): Any = macro rule.apply
 }
 
-object rule {
+private object rule {
     def apply( c: blackbox.Context )( annottees: c.Expr[Any]* ): c.Expr[Any] = {
         import c.universe._
 
-        val tree = annottees.head.tree
-
         val q"new rule( $rule )" = c.prefix.tree
-        val typechecked = c.typecheck {
-            q"""
-            $rule
-            """
-        }
+        val typechecked = c.typecheck( q"$rule" )
 
-        val ClassDef( mods, name, tparams, Template( _, self, body ) ) =
-            tree
+        val tree = annottees.head.tree
+        val ClassDef( mods, name, tparams, Template( _, self, body ) ) = tree
 
         c.Expr {
             q"""

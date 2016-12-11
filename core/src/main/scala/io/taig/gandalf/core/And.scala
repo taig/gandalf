@@ -9,8 +9,8 @@ object And extends Operator.Implicits[And, Rule.Entity, Rule.Transformation] {
 
     implicit def validation[L <: Rule, R <: Rule, I, O, P](
         implicit
-        l: Validation[L, I, O],
-        r: Validation[R, O, P]
-    ): Validation[L && R, I, P] =
+        l: Validation.Aux[L, I, O],
+        r: Validation.Aux[R, O, P]
+    ): Validation.Aux[L && R, I, P] =
         Validation.instance[L && R, I, P]( l.confirm( _ ) flatMap r.confirm )
 }

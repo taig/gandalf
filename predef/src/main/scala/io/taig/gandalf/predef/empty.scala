@@ -5,12 +5,12 @@ import io.taig.gandalf.core.{ Rule, Validation }
 class empty extends Rule.Condition
 
 object empty extends empty {
-    implicit val string: Validation[empty, String, String] =
+    implicit val string: Validation.Aux[empty, String, String] =
         Validation.condition( _.isEmpty )
 
-    implicit def traversable[T <: Traversable[_]]: Validation[empty, T, T] =
+    implicit def traversable[T <: Traversable[_]]: Validation.Aux[empty, T, T] =
         Validation.condition( _.isEmpty )
 
-    implicit def array[T]: Validation[empty, Array[T], Array[T]] =
+    implicit def array[T]: Validation.Aux[empty, Array[T], Array[T]] =
         Validation.condition( _.length == 0 )
 }
