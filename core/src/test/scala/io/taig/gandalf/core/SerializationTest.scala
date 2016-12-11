@@ -1,6 +1,5 @@
 package io.taig.gandalf.core
 
-import io.taig.gandalf.core._
 import io.taig.gandalf.core.syntax.all._
 
 class SerializationTest extends Suite {
@@ -9,6 +8,15 @@ class SerializationTest extends Suite {
             condition.success.serialize
         Serialization[condition.failure].serialize shouldBe
             condition.failure.serialize
+    }
+
+    it should "have a an equals implementation" in {
+        Serialization[condition.success] == Serialization[condition.success] shouldBe
+            true
+        Serialization[condition.success] == Serialization[condition.failure] shouldBe
+            false
+        Serialization[condition.success] == 0 shouldBe
+            false
     }
 
     "Condition" should "have a String representation" in {

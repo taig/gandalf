@@ -10,6 +10,15 @@ class ResolverTest extends Suite {
             "Resolver(success ~> Condition)"
     }
 
+    it should "have a an equals implementation" in {
+        Resolver[condition.success, Rule.Condition] == Resolver[condition.success, Rule.Condition] shouldBe
+            true
+        Resolver[condition.success, Rule.Condition] == Resolver[condition.failure, Rule.Condition] shouldBe
+            false
+        Resolver[condition.success, Rule.Condition] == 0 shouldBe
+            false
+    }
+
     it should "resolve to Condition" in {
         type A = condition.success
         implicitly[Resolver[A]] shouldBe Resolver.instance[A, Rule.Condition]
