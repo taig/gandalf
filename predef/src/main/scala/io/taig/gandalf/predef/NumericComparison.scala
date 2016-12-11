@@ -11,21 +11,24 @@ abstract class NumericComparison[R[_] <: Rule.Condition](
     private def lhs[U: Numeric]( input: U ): Double =
         implicitly[Numeric[U]].toDouble( input )
 
+    private def instance[T, U: Numeric]( value: Double ): Validation[R[T], U, U] =
+        Validation.condition( input ⇒ f( lhs( input ), value ) )
+
     implicit def byte[T <: Byte: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        Validation.condition( input ⇒ f( lhs( input ), valueOf[T] ) )
+        instance( valueOf[T] )
 
     implicit def double[T <: Double: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        Validation.condition( input ⇒ f( lhs( input ), valueOf[T] ) )
+        instance( valueOf[T] )
 
     implicit def float[T <: Float: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        Validation.condition( input ⇒ f( lhs( input ), valueOf[T] ) )
+        instance( valueOf[T] )
 
     implicit def int[T <: Int: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        Validation.condition( input ⇒ f( lhs( input ), valueOf[T] ) )
+        instance( valueOf[T] )
 
     implicit def long[T <: Long: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        Validation.condition( input ⇒ f( lhs( input ), valueOf[T] ) )
+        instance( valueOf[T] )
 
     implicit def short[T <: Short: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        Validation.condition( input ⇒ f( lhs( input ), valueOf[T] ) )
+        instance( valueOf[T] )
 }
