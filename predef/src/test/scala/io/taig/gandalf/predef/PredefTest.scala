@@ -72,12 +72,13 @@ class PredefTest extends Suite {
     }
 
     it should "compare numbers of different types" in {
-        10.toByte.confirm( predef.gt( 5 ) ) shouldBe Some( 10 )
-        10.toChar.confirm( predef.gt( 5 ) ) shouldBe Some( 10 )
-        10.toDouble.confirm( predef.gt( 5 ) ) shouldBe Some( 10 )
-        10.toFloat.confirm( predef.gt( 5 ) ) shouldBe Some( 10 )
-        10.toLong.confirm( predef.gt( 5 ) ) shouldBe Some( 10 )
-        10.toShort.confirm( predef.gt( 5 ) ) shouldBe Some( 10 )
+        val byte = 5.toByte
+        val short = 5.toShort
+        10.confirm( predef.gt( byte ) ) shouldBe Some( 10 )
+        10.confirm( predef.gt( 5d ) ) shouldBe Some( 10 )
+        10.confirm( predef.gt( 5f ) ) shouldBe Some( 10 )
+        10.confirm( predef.gt( 5l ) ) shouldBe Some( 10 )
+        10.confirm( predef.gt( short ) ) shouldBe Some( 10 )
     }
 
     "gte" should "compare numbers with the >= operator" in {
@@ -87,12 +88,13 @@ class PredefTest extends Suite {
     }
 
     it should "compare numbers of different types" in {
-        10.toByte.confirm( predef.gte( 5 ) ) shouldBe Some( 10 )
-        10.toChar.confirm( predef.gte( 5 ) ) shouldBe Some( 10 )
-        10.toDouble.confirm( predef.gte( 5 ) ) shouldBe Some( 10 )
-        10.toFloat.confirm( predef.gte( 5 ) ) shouldBe Some( 10 )
-        10.toLong.confirm( predef.gte( 5 ) ) shouldBe Some( 10 )
-        10.toShort.confirm( predef.gte( 5 ) ) shouldBe Some( 10 )
+        val byte = 5.toByte
+        val short = 5.toShort
+        10.confirm( predef.gte( byte ) ) shouldBe Some( 10 )
+        10.confirm( predef.gte( 5d ) ) shouldBe Some( 10 )
+        10.confirm( predef.gte( 5f ) ) shouldBe Some( 10 )
+        10.confirm( predef.gte( 5l ) ) shouldBe Some( 10 )
+        10.confirm( predef.gte( short ) ) shouldBe Some( 10 )
     }
 
     "length.max" should "check if a String has a maximum length" in {
@@ -159,11 +161,13 @@ class PredefTest extends Suite {
     }
 
     it should "compare numbers of different types" in {
-        0.toByte.confirm( predef.lt( 5 ) ) shouldBe Some( 0 )
-        0.toDouble.confirm( predef.lt( 5 ) ) shouldBe Some( 0 )
-        0.toFloat.confirm( predef.lt( 5 ) ) shouldBe Some( 0 )
-        0.toLong.confirm( predef.lt( 5 ) ) shouldBe Some( 0 )
-        0.toShort.confirm( predef.lt( 5 ) ) shouldBe Some( 0 )
+        val byte = 5.toByte
+        val short = 5.toShort
+        0.confirm( predef.lt( byte ) ) shouldBe Some( 0 )
+        0.confirm( predef.lt( 5d ) ) shouldBe Some( 0 )
+        0.confirm( predef.lt( 5f ) ) shouldBe Some( 0 )
+        0.confirm( predef.lt( 5l ) ) shouldBe Some( 0 )
+        0.confirm( predef.lt( short ) ) shouldBe Some( 0 )
     }
 
     "lte" should "compare numbers with the <= operator" in {
@@ -173,11 +177,13 @@ class PredefTest extends Suite {
     }
 
     it should "compare numbers of different types" in {
-        0.toByte.confirm( predef.lte( 5 ) ) shouldBe Some( 0 )
-        0.toDouble.confirm( predef.lte( 5 ) ) shouldBe Some( 0 )
-        0.toFloat.confirm( predef.lte( 5 ) ) shouldBe Some( 0 )
-        0.toLong.confirm( predef.lte( 5 ) ) shouldBe Some( 0 )
-        0.toShort.confirm( predef.lte( 5 ) ) shouldBe Some( 0 )
+        val byte = 5.toByte
+        val short = 5.toShort
+        0.confirm( predef.lte( byte ) ) shouldBe Some( 0 )
+        0.confirm( predef.lte( 5d ) ) shouldBe Some( 0 )
+        0.confirm( predef.lte( 5f ) ) shouldBe Some( 0 )
+        0.confirm( predef.lte( 5l ) ) shouldBe Some( 0 )
+        0.confirm( predef.lte( short ) ) shouldBe Some( 0 )
     }
 
     "matches" should "check if a regex pattern matches a String" in {
@@ -192,26 +198,10 @@ class PredefTest extends Suite {
         5.confirm( predef.negative ) shouldBe None
     }
 
-    it should "compare numbers of different types" in {
-        -5.toByte.confirm( predef.negative ) shouldBe Some( -5 )
-        -5.toDouble.confirm( predef.negative ) shouldBe Some( -5 )
-        -5.toFloat.confirm( predef.negative ) shouldBe Some( -5 )
-        -5.toLong.confirm( predef.negative ) shouldBe Some( -5 )
-        -5.toShort.confirm( predef.negative ) shouldBe Some( -5 )
-    }
-
     "positive" should "check if a number is > 0" in {
         5.confirm( predef.positive ) shouldBe Some( 5 )
         0.confirm( predef.positive ) shouldBe None
         -5.confirm( predef.positive ) shouldBe None
-    }
-
-    it should "compare numbers of different types" in {
-        5.toByte.confirm( predef.positive ) shouldBe Some( 5 )
-        5.toDouble.confirm( predef.positive ) shouldBe Some( 5 )
-        5.toFloat.confirm( predef.positive ) shouldBe Some( 5 )
-        5.toLong.confirm( predef.positive ) shouldBe Some( 5 )
-        5.toShort.confirm( predef.positive ) shouldBe Some( 5 )
     }
 
     "required" should "remove all whitespace and check if String is empty" in {
@@ -265,8 +255,8 @@ class PredefTest extends Suite {
 
     "zero" should "check if a number is 0" in {
         0.confirm( predef.zero ) shouldBe Some( 0 )
-        //        0f.confirm( predef.zero ) shouldBe Some( 0f )
-        //        0l.confirm( predef.zero ) shouldBe Some( 0l )
-        //        0d.confirm( predef.zero ) shouldBe Some( 0d )
+        0f.confirm( predef.zero ) shouldBe Some( 0 )
+        0l.confirm( predef.zero ) shouldBe Some( 0 )
+        0d.confirm( predef.zero ) shouldBe Some( 0 )
     }
 }
