@@ -1,8 +1,7 @@
 package io.taig.gandalf
 
-import io.taig.gandalf.core._
-import io.taig.gandalf.core.syntax.dsl._
 import io.taig.gandalf.macros._
+import io.taig.gandalf.syntax.dsl._
 
 import scala.language.existentials
 

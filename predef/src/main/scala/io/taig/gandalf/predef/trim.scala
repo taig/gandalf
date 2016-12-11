@@ -1,24 +1,24 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.core.{ Rule, Validation }
+import io.taig.gandalf._
 
 class trim extends Rule.Transition
 
 object trim extends trim {
-    implicit val string: Validation.Aux[trim, String, String] =
+    implicit val string: Validation[trim, String, String] =
         Validation.transition( _.trim )
 
     class left extends Rule.Transition
 
     object left extends left {
-        implicit val string: Validation.Aux[trim.left, String, String] =
+        implicit val string: Validation[trim.left, String, String] =
             Validation.transition( _.replaceFirst( "^\\s*", "" ) )
     }
 
     class right extends Rule.Transition
 
     object right extends right {
-        implicit val string: Validation.Aux[trim.right, String, String] =
+        implicit val string: Validation[trim.right, String, String] =
             Validation.transition( _.replaceFirst( "\\s*$", "" ) )
     }
 }

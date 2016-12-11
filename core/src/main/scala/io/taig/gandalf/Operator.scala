@@ -1,11 +1,11 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
 import scala.language.higherKinds
 
 trait Operator extends Rule
 
 object Operator {
-    private[core] trait Implicits[O[L <: Rule, R <: Rule] <: Operator, A <: Rule, B <: Rule] {
+    private[gandalf] trait Implicits[O[L <: Rule, R <: Rule] <: Operator, A <: Rule, B <: Rule] {
         def symbol: String
 
         implicit def entities[L <: Rule, R <: Rule, E <: A](

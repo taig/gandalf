@@ -1,6 +1,6 @@
 package io.taig.gandalf.macros
 
-import io.taig.gandalf.core._
+import io.taig.gandalf._
 import shapeless.test.illTyped
 
 class ObeysTest extends Suite {

@@ -1,4 +1,4 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
 trait implicits extends syntax.all
 

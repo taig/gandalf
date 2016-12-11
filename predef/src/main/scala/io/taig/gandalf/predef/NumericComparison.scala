@@ -1,6 +1,6 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.core.{ Rule, Validation }
+import io.taig.gandalf._
 
 import scala.language.higherKinds
 
@@ -11,24 +11,24 @@ abstract class NumericComparison[R[_] <: Rule.Condition](
     private def lhs[U: Numeric]( input: U ): Double =
         implicitly[Numeric[U]].toDouble( input )
 
-    private def instance[T, U: Numeric]( value: Double ): Validation.Aux[R[T], U, U] =
+    private def instance[T, U: Numeric]( value: Double ): Validation[R[T], U, U] =
         Validation.condition( input ⇒ f( lhs( input ), value ) )
 
-    implicit def byte[T <: Byte: ValueOf, U: Numeric]: Validation.Aux[R[T], U, U] =
+    implicit def byte[T <: Byte: ValueOf, U: Numeric]: Validation[R[T], U, U] =
         instance( valueOf[T] )
 
-    implicit def double[T <: Double: ValueOf, U: Numeric]: Validation.Aux[R[T], U, U] =
+    implicit def double[T <: Double: ValueOf, U: Numeric]: Validation[R[T], U, U] =
         instance( valueOf[T] )
 
-    implicit def float[T <: Float: ValueOf, U: Numeric]: Validation.Aux[R[T], U, U] =
+    implicit def float[T <: Float: ValueOf, U: Numeric]: Validation[R[T], U, U] =
         instance( valueOf[T] )
 
-    implicit def int[T <: Int: ValueOf, U: Numeric]: Validation.Aux[R[T], U, U] =
+    implicit def int[T <: Int: ValueOf, U: Numeric]: Validation[R[T], U, U] =
         instance( valueOf[T] )
 
-    implicit def long[T <: Long: ValueOf, U: Numeric]: Validation.Aux[R[T], U, U] =
+    implicit def long[T <: Long: ValueOf, U: Numeric]: Validation[R[T], U, U] =
         instance( valueOf[T] )
 
-    implicit def short[T <: Short: ValueOf, U: Numeric]: Validation.Aux[R[T], U, U] =
+    implicit def short[T <: Short: ValueOf, U: Numeric]: Validation[R[T], U, U] =
         instance( valueOf[T] )
 }

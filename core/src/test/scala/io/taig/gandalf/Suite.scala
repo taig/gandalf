@@ -1,4 +1,4 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
 import org.scalatest.{ FlatSpec, Matchers }
 

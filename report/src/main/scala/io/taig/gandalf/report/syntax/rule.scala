@@ -1,6 +1,6 @@
 package io.taig.gandalf.report.syntax
 
-import io.taig.gandalf.core.Rule
+import io.taig.gandalf.Rule
 import io.taig.gandalf.report._
 
 import scala.language.implicitConversions

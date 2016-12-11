@@ -1,7 +1,6 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
-import io.taig.gandalf.core
-import io.taig.gandalf.core._
+import io.taig.gandalf._
 import shapeless.test.illTyped
 
 class ResolverTest extends Suite {

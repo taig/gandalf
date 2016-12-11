@@ -1,6 +1,6 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
-import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf.syntax.all._
 
 class SerializationTest extends Suite {
     it should "have a Rule extension method" in {

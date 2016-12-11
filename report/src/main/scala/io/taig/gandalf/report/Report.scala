@@ -1,7 +1,7 @@
 package io.taig.gandalf.report
 
 import cats.data.NonEmptyList
-import io.taig.gandalf.core.Rule
+import io.taig.gandalf._
 
 import scala.language.existentials
 

@@ -1,6 +1,6 @@
 package io.taig.gandalf.macros
 
-import io.taig.gandalf.core.Rule
+import io.taig.gandalf.Rule
 
 import scala.annotation.StaticAnnotation
 import scala.language.experimental.macros

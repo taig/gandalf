@@ -1,7 +1,7 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
-import io.taig.gandalf.core._
-import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf._
+import io.taig.gandalf.syntax.all._
 import shapeless.test.illTyped
 
 class ValidationTest extends Suite {

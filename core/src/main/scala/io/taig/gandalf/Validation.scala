@@ -1,42 +1,36 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
 import scala.PartialFunction.condOpt
 
-trait Validation[-R <: Rule, I] {
-    type Out
-
-    def confirm( input: I ): Option[Out]
+trait Validation[-R <: Rule, I, O] {
+    def confirm( input: I ): Option[O]
 }
 
 object Validation {
-    type Aux[-R <: Rule, I, O] = Validation[R, I] { type Out = O }
-
     @inline
     def apply[R <: Rule, I, O](
         implicit
-        v: Validation.Aux[R, I, O]
-    ): Validation.Aux[R, I, O] = v
+        v: Validation[R, I, O]
+    ): Validation[R, I, O] = v
 
     def instance[R <: Rule, I, O](
         f: I ⇒ Option[O]
-    ): Validation.Aux[R, I, O] = new Validation[R, I] {
-        override type Out = O
-
+    ): Validation[R, I, O] = new Validation[R, I, O] {
         override def confirm( input: I ): Option[O] = f( input )
     }
 
     def condition[C <: Rule.Condition, T](
         f: T ⇒ Boolean
-    ): Validation.Aux[C, T, T] = instance { input ⇒
+    ): Validation[C, T, T] = instance { input ⇒
         condOpt( f( input ) ) { case true ⇒ input }
     }
 
     @inline
     def mutation[M <: Rule.Mutation, I, O](
         f: I ⇒ Option[O]
-    ): Validation.Aux[M, I, O] = instance( f )
+    ): Validation[M, I, O] = instance( f )
 
     def transition[T <: Rule.Transition, I, O](
         f: I ⇒ O
-    ): Validation.Aux[T, I, O] = instance( f andThen Some.apply )
+    ): Validation[T, I, O] = instance( f andThen Some.apply )
 }

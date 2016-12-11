@@ -1,6 +1,6 @@
 package io.taig.gandalf
 
-import io.taig.gandalf.core.condition
+import io.taig.gandalf.condition
 
 package object report {
     implicit def reportConditionFailure[I, O] =

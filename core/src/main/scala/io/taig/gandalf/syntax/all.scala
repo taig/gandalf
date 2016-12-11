@@ -1,4 +1,4 @@
-package io.taig.gandalf.core.syntax
+package io.taig.gandalf.syntax
 
 trait all
     extends confirmation

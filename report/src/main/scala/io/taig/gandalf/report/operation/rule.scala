@@ -1,7 +1,7 @@
 package io.taig.gandalf.report.operation
 
 import cats.data.NonEmptyList
-import io.taig.gandalf.core._
+import io.taig.gandalf._
 import io.taig.gandalf.report.Report
 
 final class rule[R <: Rule, I]( val rule: R ) extends AnyVal {

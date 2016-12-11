@@ -1,6 +1,6 @@
-package io.taig.gandalf.core.syntax
+package io.taig.gandalf.syntax
 
-import io.taig.gandalf.core._
+import io.taig.gandalf._
 
 import scala.language.implicitConversions
 

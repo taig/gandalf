@@ -1,6 +1,6 @@
-package io.taig.gandalf
+package io.taig
 
-package object core {
+package object gandalf {
     type &&[L <: Rule, R <: Rule] = And[L, R]
 
     type ||[L <: Rule, R <: Rule] = Or[L, R]

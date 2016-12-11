@@ -1,8 +1,8 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
-import io.taig.gandalf.core.{ not ⇒ dont }
-import io.taig.gandalf.core.syntax.dsl._
-import io.taig.gandalf.core.syntax.rule._
+import io.taig.gandalf.{ not ⇒ dont }
+import io.taig.gandalf.syntax.dsl._
+import io.taig.gandalf.syntax.rule._
 
 class DslTest extends Suite {
     it should "support &&" in {

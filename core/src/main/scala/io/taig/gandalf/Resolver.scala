@@ -1,4 +1,4 @@
-package io.taig.gandalf.core
+package io.taig.gandalf
 
 trait Resolver[-R <: Rule] {
     type Out <: Rule

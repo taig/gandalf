@@ -1,7 +1,7 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.core.{ And, Suite }
-import io.taig.gandalf.core.syntax.all._
+import io.taig.gandalf._
+import io.taig.gandalf.syntax.all._
 import io.taig.gandalf.predef
 
 class PredefTest extends Suite {

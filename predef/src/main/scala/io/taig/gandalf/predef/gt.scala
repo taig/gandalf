@@ -1,6 +1,6 @@
 package io.taig.gandalf.predef
 
-import io.taig.gandalf.core.Rule
+import io.taig.gandalf._
 
 class gt[T: ValueOf] extends Rule.Condition
 

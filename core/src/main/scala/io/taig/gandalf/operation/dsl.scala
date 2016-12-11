@@ -1,6 +1,6 @@
-package io.taig.gandalf.core.operation
+package io.taig.gandalf.operation
 
-import io.taig.gandalf.core._
+import io.taig.gandalf._
 
 final class dsl[L <: Rule]( val left: L ) extends AnyVal {
     def &&[R <: Rule, I, O]( right: R ): L && R = new And[L, R]

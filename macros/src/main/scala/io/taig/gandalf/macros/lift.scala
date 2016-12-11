@@ -1,6 +1,6 @@
 package io.taig.gandalf.macros
 
-import io.taig.gandalf.core.{ Rule, Serialization, Validation }
+import io.taig.gandalf._
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
@@ -11,7 +11,7 @@ object lift {
         rule: R
     )(
         implicit
-        v: Validation.Aux[R, I, O],
+        v: Validation[R, I, O],
         s: Serialization[R]
     ): Obey[R, I, O] = macro inference[R, I, O]
 
@@ -22,7 +22,7 @@ object lift {
     )(
         rule: c.Expr[R]
     )(
-        v: c.Expr[Validation.Aux[R, I, O]],
+        v: c.Expr[Validation[R, I, O]],
         s: c.Expr[Serialization[R]]
     )(
         implicit
@@ -36,7 +36,7 @@ object lift {
     )(
         input: c.Expr[I]
     )(
-        v: c.Expr[Validation.Aux[R, I, O]],
+        v: c.Expr[Validation[R, I, O]],
         s: c.Expr[Serialization[R]]
     )(
         implicit
