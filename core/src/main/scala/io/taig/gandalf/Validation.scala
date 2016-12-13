@@ -13,6 +13,14 @@ object Validation {
         v: Validation[R, I, O]
     ): Validation[R, I, O] = v
 
+    implicit def option[R <: Rule, I, O](
+        implicit
+        v: Validation[R, I, O]
+    ): Validation[R, Option[I], Option[O]] = instance {
+        case Some( input ) ⇒ v.confirm( input ).map( Some( _ ) )
+        case None          ⇒ Some( None )
+    }
+
     def instance[R <: Rule, I, O](
         f: I ⇒ Option[O]
     ): Validation[R, I, O] = new Validation[R, I, O] {

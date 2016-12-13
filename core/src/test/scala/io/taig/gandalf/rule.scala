@@ -9,20 +9,12 @@ object condition {
         implicit val validation: Validation[success, String, String] = {
             Validation.condition( _ ⇒ true )
         }
-
-        implicit def option[T]: Validation[success, Option[T], Option[T]] = {
-            Validation.condition( _ ⇒ true )
-        }
     }
 
     trait failure extends Rule.Condition
 
     object failure extends failure {
         implicit val validation: Validation[failure, String, String] = {
-            Validation.condition( _ ⇒ false )
-        }
-
-        implicit def option[T]: Validation[failure, Option[T], Option[T]] = {
             Validation.condition( _ ⇒ false )
         }
     }

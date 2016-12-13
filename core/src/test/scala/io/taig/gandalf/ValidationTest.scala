@@ -1,6 +1,5 @@
 package io.taig.gandalf
 
-import io.taig.gandalf._
 import io.taig.gandalf.syntax.all._
 import shapeless.test.illTyped
 
@@ -12,6 +11,13 @@ class ValidationTest extends Suite {
             None
     }
 
+    it should "validate Option" in {
+        Validation[condition.success, Option[String], Option[String]].confirm( Some( "foo" ) ) shouldBe
+            Some( Some( "foo" ) )
+        Validation[condition.success, Option[String], Option[String]].confirm( None ) shouldBe
+            Some( None )
+    }
+
     "Mutation" should "validate" in {
         Validation[mutation.success, String, String].confirm( "foo" ) shouldBe
             Some( "foo" )
@@ -19,9 +25,27 @@ class ValidationTest extends Suite {
             None
     }
 
+    it should "validate Option" in {
+        Validation[mutation.success, Option[String], Option[String]].confirm( Some( "foo" ) ) shouldBe
+            Some( Some( "foo" ) )
+        Validation[mutation.success, Option[String], Option[String]].confirm( None ) shouldBe
+            Some( None )
+        Validation[mutation.failure, Option[String], Option[String]].confirm( Some( "foo" ) ) shouldBe
+            None
+        Validation[mutation.failure, Option[String], Option[String]].confirm( None ) shouldBe
+            Some( None )
+    }
+
     "Transition" should "validate" in {
         Validation[transition.string, String, String].confirm( "foo" ) shouldBe
             Some( "foo" )
+    }
+
+    it should "validate Option" in {
+        Validation[transition.string, Option[String], Option[String]].confirm( Some( "foo" ) ) shouldBe
+            Some( Some( "foo" ) )
+        Validation[transition.string, Option[String], Option[String]].confirm( None ) shouldBe
+            Some( None )
     }
 
     "&&" should "validate Conditions" in {
