@@ -4,9 +4,9 @@ import cats.data.NonEmptyList
 import cats.syntax.either._
 import io.circe.CursorOp.DownField
 import io.circe.Decoder.Result
-import io.circe.{ Decoder, DecodingFailure, Encoder, Error, Json, ParsingFailure }
 import io.circe.parser._
 import io.circe.syntax._
+import io.circe.{ Decoder, DecodingFailure, Encoder, Error, Json, ParsingFailure }
 import io.taig.gandalf.report._
 
 package object circe {
