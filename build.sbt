@@ -3,7 +3,7 @@ lazy val gandalf = project.in( file( "." ) )
     .settings(
         name := "gandalf"
     )
-    .aggregate( core, report, macros, predef )
+    .aggregate( core, report, macros, predef, circe, doobie )
     .dependsOn( core, report, macros, predef )
 
 lazy val core = project
@@ -35,35 +35,36 @@ lazy val predef = project
     )
     .dependsOn( macros % "compile->compile;test->test" )
 
-//lazy val circe = project
-//    .settings( Settings.common )
-//    .settings(
-//        addCompilerPlugin( Dependencies.paradise % "test" cross CrossVersion.full ),
-//        libraryDependencies ++=
-//            Dependencies.circe.core ::
-//            Dependencies.circe.parser ::
-//            Dependencies.circe.generic % "test" ::
-//            Nil
-//    )
-//    .dependsOn(
-//        core % "compile->compile;test->test",
-//        macros % "compile->test",
-//        predef % "compile->test"
-//    )
-//
-//lazy val doobie = project
-//    .settings( Settings.common )
-//    .settings(
-//        libraryDependencies ++=
-//            Dependencies.doobie ::
-//            Nil
-//    )
-//    .dependsOn(
-//        core % "compile->compile;test->test",
-//        macros % "compile->test",
-//        predef % "compile->test"
-//    )
-//
+lazy val circe = project
+    .settings( Settings.common )
+    .settings(
+        addCompilerPlugin( Dependencies.paradise % "test" cross CrossVersion.full ),
+        libraryDependencies ++=
+            Dependencies.circe.core ::
+            Dependencies.circe.parser ::
+            Dependencies.circe.generic % "test" ::
+            Nil
+    )
+    .dependsOn(
+        core % "compile->compile;test->test",
+        report,
+        macros % "compile->test",
+        predef % "compile->test"
+    )
+
+lazy val doobie = project
+    .settings( Settings.common )
+    .settings(
+        libraryDependencies ++=
+            Dependencies.doobie ::
+            Nil
+    )
+    .dependsOn(
+        core % "compile->compile;test->test",
+        macros % "compile->test",
+        predef % "compile->test"
+    )
+
 //lazy val android = project
 //    .enablePlugins( AndroidLib )
 //    .settings( Settings.common )

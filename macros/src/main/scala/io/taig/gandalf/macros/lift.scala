@@ -13,7 +13,7 @@ object lift {
         implicit
         v: Validation[R, I, O],
         s: Serialization[R]
-    ): Obey[R, I, O] = macro inference[R, I, O]
+    ): Obeys[R, I, O] = macro inference[R, I, O]
 
     def inference[R <: Rule, I, O](
         c: blackbox.Context
@@ -29,7 +29,7 @@ object lift {
         wttr: c.WeakTypeTag[R],
         wtti: c.WeakTypeTag[I],
         wtto: c.WeakTypeTag[O]
-    ): c.Expr[Obey[R, I, O]] = implementation[R, I, O]( c )( input )( v, s )
+    ): c.Expr[Obeys[R, I, O]] = implementation[R, I, O]( c )( input )( v, s )
 
     def implementation[R <: Rule, I, O](
         c: blackbox.Context
@@ -43,7 +43,7 @@ object lift {
         wttr: c.WeakTypeTag[R],
         wtti: c.WeakTypeTag[I],
         wtto: c.WeakTypeTag[O]
-    ): c.Expr[Obey[R, I, O]] = {
+    ): c.Expr[Obeys[R, I, O]] = {
         import c.universe._
 
         val validation = reify( v.splice.confirm( input.splice ) )
@@ -56,9 +56,9 @@ object lift {
         } )
 
         tryN( 2, c.eval( expression ) ) match {
-            case Some( _ ) ⇒ c.Expr[Obey[R, I, O]](
+            case Some( _ ) ⇒ c.Expr[Obeys[R, I, O]](
                 q"""
-                _root_.io.taig.gandalf.macros.Obey.applyUnsafe[$wttr, $wtti, $wtto](
+                _root_.io.taig.gandalf.Obeys.applyUnsafe[$wttr, $wtti, $wtto](
                     $expression.getOrElse {
                         throw new _root_.java.lang.IllegalStateException(
                             "Runtime-rule failed. What the heck are you doing?!"

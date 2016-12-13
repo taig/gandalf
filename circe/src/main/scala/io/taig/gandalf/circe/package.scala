@@ -2,14 +2,12 @@ package io.taig.gandalf
 
 import cats.data.NonEmptyList
 import cats.syntax.either._
-import cats.data.Validated.{Invalid, Valid}
 import io.circe.CursorOp.DownField
 import io.circe.Decoder.Result
-import io.circe.{Decoder, DecodingFailure, Encoder, Error, Json, ParsingFailure}
+import io.circe.{ Decoder, DecodingFailure, Encoder, Error, Json, ParsingFailure }
 import io.circe.parser._
 import io.circe.syntax._
-import io.taig.gandalf.core.goaway.Validation
-import io.taig.gandalf.core.{Container, Obeys}
+import io.taig.gandalf.report._
 
 package object circe {
     implicit val gandalfCirceEncoderDecodingFailure: Encoder[DecodingFailure] = {
@@ -44,30 +42,31 @@ package object circe {
         }
     }
 
-    implicit final def gandalfCirceDecoderObeys[L, C <: Container](
+    implicit final def gandalfCirceDecoderObeys[R <: Rule, I, O](
         implicit
-        d: Decoder[C#Kind#Input],
-        v: Validation[C]
-    ): Decoder[L Obeys C] = Decoder.instance { cursor ⇒
+        d: Decoder[I],
+        v: Validation[R, I, O],
+        r: Report[R, I, O]
+    ): Decoder[Obeys[R, I, O]] = Decoder.instance { cursor ⇒
         d( cursor ) match {
-            case Right( input ) ⇒ v.validate( input ) match {
-                case Valid( output ) ⇒
-                    Right( Obeys.applyUnsafe[L, C]( output ) )
-                case Invalid( errors ) ⇒
-                    val failure = DecodingFailure(
-                        errors.asJson.noSpaces,
-                        cursor.history
-                    )
-                    Left( failure )
-            }
-            case l @ Left( _ ) ⇒ l.asInstanceOf[Result[L Obeys C]]
+            case Right( input ) ⇒
+                v.confirm( input ) match {
+                    case Some( output ) ⇒
+                        Right( Obeys.applyUnsafe[R, I, O]( output ) )
+                    case None ⇒
+                        val errors = r.show( input )
+                        val failure = DecodingFailure(
+                            errors.asJson.noSpaces,
+                            cursor.history
+                        )
+                        Left( failure )
+                }
+            case l @ Left( _ ) ⇒ l.asInstanceOf[Result[Obeys[R, I, O]]]
         }
     }
 
-    implicit final def gandalfCirceEncoderObeys[L, C <: Container](
+    implicit final def gandalfCirceEncoderObeys[R <: Rule, I, O](
         implicit
-        e: Encoder[C#Kind#Output]
-    ): Encoder[L Obeys C] = Encoder.instance {
-        case Obeys( value ) ⇒ e.apply( value )
-    }
+        e: Encoder[O]
+    ): Encoder[Obeys[R, I, O]] = Encoder.instance( e( _ ) )
 }

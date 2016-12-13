@@ -1,24 +1,10 @@
 package io.taig.gandalf.macros
 
 import io.taig.gandalf._
+import io.taig.gandalf.macros.conversion.obeys._
 import shapeless.test.illTyped
 
-class ObeysTest extends Suite {
-    it should "forward toString to the underlying value" in {
-        Obey.applyUnsafe[condition.success, String, String]( "foo" ).toString shouldBe
-            "foo"
-    }
-
-    it should "convert implicitly unwrap" in {
-        val value: String = Obey.applyUnsafe[condition.success, String, String]( "foo" )
-        value shouldBe "foo"
-    }
-
-    it should "provide unapply" in {
-        val Obey( value ) = Obey.applyUnsafe[condition.success, String, String]( "foo" )
-        value shouldBe "foo"
-    }
-
+class MacrosTest extends Suite {
     "lift" should "lift values at compile time" in {
         lift( "foo" )( condition.success ).value shouldBe "foo"
     }

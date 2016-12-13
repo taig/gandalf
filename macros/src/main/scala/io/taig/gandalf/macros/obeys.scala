@@ -96,7 +96,7 @@ private object obeys {
 
     def obey( c: whitebox.Context )( r: c.Tree, i: c.Tree, o: c.Tree ) = {
         import c.universe._
-        tq"io.taig.gandalf.macros.Obey[$r, $i, $o]"
+        tq"io.taig.gandalf.Obeys[$r, $i, $o]"
     }
 
     def tryN[T]( n: Int, t: ⇒ T ): T = {
