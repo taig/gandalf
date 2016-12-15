@@ -6,11 +6,11 @@ import shapeless.test.illTyped
 
 class MacrosTest extends Suite {
     "lift" should "lift values at compile time into types" in {
-        lift.fromType[condition.success, String, String]( "foo" ).value shouldBe "foo"
+        lift.fromType[condition.success]( "foo" ).value shouldBe "foo"
     }
 
     it should "fail to lift values at compile time into types" in {
-        illTyped( """lift.fromType[condition.failure, String, String]( "foo" )""" )
+        illTyped( """lift.fromType[condition.failure]( "foo" )""" )
     }
 
     it should "lift values at compile time into rules" in {

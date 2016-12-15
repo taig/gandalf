@@ -57,11 +57,15 @@ object lift {
         wtto: c.WeakTypeTag[O]
     ): c.Expr[Obeys[R, I, O]] = implementation[R, I, O]( c )( input )( v, s )
 
-    def fromType[R <: Rule, I, O]( input: I )(
-        implicit
-        v: Validation[R, I, O],
-        s: Serialization[R]
-    ): Obeys[R, I, O] = macro implementation[R, I, O]
+    def fromType[R <: Rule]: FromType[R] = new FromType[R]
+
+    class FromType[R <: Rule] {
+        def apply[I, O]( input: I )(
+            implicit
+            v: Validation[R, I, O],
+            s: Serialization[R]
+        ): Obeys[R, I, O] = macro implementation[R, I, O]
+    }
 
     def implementation[R <: Rule, I, O](
         c: blackbox.Context
