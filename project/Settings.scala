@@ -19,9 +19,6 @@ object Settings {
         githubProject := "gandalf",
         name := s"gandalf-${name.value}",
         organization := "io.taig",
-        resolvers ++=
-            Resolver.sonatypeRepo( "snapshots" ) ::
-            Nil,
         scalacOptions ++=
             "-deprecation" ::
             "-encoding" :: "UTF-8" ::
