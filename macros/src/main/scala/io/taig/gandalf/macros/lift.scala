@@ -7,9 +7,13 @@ import scala.reflect.macros.blackbox
 import scala.util.{ Success, Try }
 
 object lift {
-    def apply[R <: Rule, I, O]( input: I )(
-        rule: R
-    )(
+    def fromType[R <: Rule, I, O]( input: I )(
+        implicit
+        v: Validation[R, I, O],
+        s: Serialization[R]
+    ): Obeys[R, I, O] = macro implementation[R, I, O]
+
+    def fromRule[R <: Rule, I, O]( rule: R )( input: I )(
         implicit
         v: Validation[R, I, O],
         s: Serialization[R]
@@ -18,9 +22,9 @@ object lift {
     def inference[R <: Rule, I, O](
         c: blackbox.Context
     )(
-        input: c.Expr[I]
-    )(
         rule: c.Expr[R]
+    )(
+        input: c.Expr[I]
     )(
         v: c.Expr[Validation[R, I, O]],
         s: c.Expr[Serialization[R]]

@@ -19,6 +19,7 @@ private object obeys {
 
         val input = annottees.head.tree match {
             case valDef: ValOrDefDef ⇒ valDef.tpt
+            case q"type $lhs = $rhs" ⇒ rhs
             case tree ⇒
                 c.abort(
                     c.enclosingPosition,
@@ -35,6 +36,8 @@ private object obeys {
         }
 
         trees match {
+            case List( tree @ q"type $lhs = $rhs" ) ⇒
+                expandTypeAlias( c )( tree, rule, output )
             case List( tree ) ⇒ expandDef( c )( tree, rule, output )
             case _            ⇒ expandClass( c )( trees, rule, output )
         }
@@ -92,6 +95,14 @@ private object obeys {
         }
 
         c.Expr( valDef )
+    }
+
+    def expandTypeAlias( c: whitebox.Context )( tree: c.Tree, rule: c.Tree, output: c.Tree ): c.Expr[Any] = {
+        import c.universe._
+
+        val q"type $lhs = $rhs" = tree
+
+        c.Expr( q"type $lhs = ${obey( c )( rule, rhs, output )}" )
     }
 
     def obey( c: whitebox.Context )( r: c.Tree, i: c.Tree, o: c.Tree ) = {
