@@ -34,7 +34,7 @@ object Dependencies {
         val macros = scala( "macros" )
     }
 
-    object circe extends Configuration( "io.circe", "circe", "0.6.0" ) {
+    object circe extends Configuration( "io.circe", "circe", "0.6.1" ) {
         val core = scala( "core" )
 
         val generic = scala( "generic" )
