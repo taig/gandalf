@@ -9,12 +9,24 @@ class MacrosTest extends Suite {
         lift.fromType[condition.success, String, String]( "foo" ).value shouldBe "foo"
     }
 
+    it should "fail to lift values at compile time into types" in {
+        illTyped( """lift.fromType[condition.failure, String, String]( "foo" )""" )
+    }
+
     it should "lift values at compile time into rules" in {
         lift.fromRule( condition.success )( "foo" ).value shouldBe "foo"
     }
 
-    it should "fail to lift values at compile time" in {
-        illTyped( """lift( "foo" )( condition.failure )""" )
+    it should "fail to lift values at compile time into rules" in {
+        illTyped( """lift.fromRule( condition.failure )( "foo" )""" )
+    }
+
+    it should "lift values at compile time into Obeys" in {
+        lift.into[Name]( "foo" ).value shouldBe "foo"
+    }
+
+    it should "fail to lift values at compile time into Obeys" in {
+        illTyped( """lift.into[Name]( 3 )""" )
     }
 
     "@obeys" should "lift case class parameters at compile time" in {
