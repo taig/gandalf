@@ -6,4 +6,9 @@ package object macros {
 
     case class ClassSuccess( @obeys( condition.success ) value:String )
     case class ClassFailure( @obeys( condition.failure ) value:String )
+    case class ClassMultiple(
+        @obeys( condition.success ) a:String,
+        b:                           String,
+        @obeys( condition.success ) c:String
+    )
 }

@@ -33,6 +33,13 @@ class MacrosTest extends Suite {
         ClassSuccess( "foo" ).value.value shouldBe "foo"
     }
 
+    it should "lift case classes with multiple parameters" in {
+        val value = ClassMultiple( "foo", "bar", "baz" )
+        value.a.value shouldBe "foo"
+        value.b shouldBe "bar"
+        value.c.value shouldBe "baz"
+    }
+
     it should "fail to lift case class parameters at compile time" in {
         illTyped( """ClassFailure( "foo" )""" )
     }
