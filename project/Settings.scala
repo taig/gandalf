@@ -4,7 +4,7 @@ import io.taig.sbt.sonatype.SonatypeHouserulePlugin.autoImport._
 
 object Settings {
     val common = Def.settings(
-//        crossScalaVersions := Seq( "2.11.8", "2.12.1" ),
+//        crossScalaVersions := Seq( "2.11.8", "2.12.0" ),
         exportJars := true,
         incOptions := incOptions.value.withLogRecompileOnMacro( false ),
         javacOptions ++= {

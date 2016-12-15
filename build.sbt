@@ -3,7 +3,7 @@ lazy val gandalf = project.in( file( "." ) )
     .settings(
         name := "gandalf"
     )
-    .aggregate( core, report, macros, predef, circe, doobie )
+    .aggregate( core, report, macros, predef, circe )
     .dependsOn( core, report, macros, predef )
 
 lazy val core = project
@@ -48,19 +48,6 @@ lazy val circe = project
     .dependsOn(
         core % "compile->compile;test->test",
         report,
-        macros % "compile->test",
-        predef % "compile->test"
-    )
-
-lazy val doobie = project
-    .settings( Settings.common )
-    .settings(
-        libraryDependencies ++=
-            Dependencies.doobie ::
-            Nil
-    )
-    .dependsOn(
-        core % "compile->compile;test->test",
         macros % "compile->test",
         predef % "compile->test"
     )
