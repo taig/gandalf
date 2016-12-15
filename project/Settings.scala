@@ -24,7 +24,7 @@ object Settings {
             "-encoding" :: "UTF-8" ::
             "-feature" ::
             "-unchecked" ::
-            "-Xfatal-warnings" ::
+            // TODO "-Xfatal-warnings" ::
             "-Xfuture" ::
             // TODO "-Xlint" ::
             "-Yliteral-types" ::
