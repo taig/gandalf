@@ -15,20 +15,20 @@ abstract class NumericComparison[R[_] <: Rule.Condition](
         Validation.condition( input ⇒ f( lhs( input ), value ) )
 
     implicit def byte[T <: Byte: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        instance( valueOf[T] )
+        instance( valueOf[T].toDouble )
 
     implicit def double[T <: Double: ValueOf, U: Numeric]: Validation[R[T], U, U] =
         instance( valueOf[T] )
 
     implicit def float[T <: Float: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        instance( valueOf[T] )
+        instance( valueOf[T].toDouble )
 
     implicit def int[T <: Int: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        instance( valueOf[T] )
+        instance( valueOf[T].toDouble )
 
     implicit def long[T <: Long: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        instance( valueOf[T] )
+        instance( valueOf[T].toDouble )
 
     implicit def short[T <: Short: ValueOf, U: Numeric]: Validation[R[T], U, U] =
-        instance( valueOf[T] )
+        instance( valueOf[T].toDouble )
 }

@@ -1,9 +1,7 @@
 package io.taig.gandalf
 
 import io.taig.gandalf.macros._
-import io.taig.gandalf.syntax.dsl._
-
-import scala.language.existentials
+import io.taig.gandalf.implicits._
 
 package object predef {
     @rule( matches( "^[^@]+@[^@]+\\.[^@]+$" ) )

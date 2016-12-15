@@ -4,7 +4,7 @@ import cats.data.NonEmptyList
 import io.taig.gandalf._
 import io.taig.gandalf.report.Report.static
 
-import scala.language.{ existentials, higherKinds }
+import scala.language.higherKinds
 import scala.reflect._
 
 trait Report[-R <: Rule, I, O] {

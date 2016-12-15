@@ -24,9 +24,19 @@ object Settings {
             Nil,
         scalacOptions ++=
             "-deprecation" ::
+            "-encoding" :: "UTF-8" ::
             "-feature" ::
+            "-unchecked" ::
+            "-Xfatal-warnings" ::
+            "-Xfuture" ::
+            // TODO "-Xlint" ::
             "-Yliteral-types" ::
+            "-Yno-adapted-args" ::
             "-Ypartial-unification" ::
+            "-Ywarn-unused-import" ::
+            "-Ywarn-dead-code" ::
+            "-Ywarn-numeric-widen" ::
+            "-Ywarn-value-discard" ::
             Nil,
         scalacOptions ++= {
             scalaVersion.value match {

@@ -1,7 +1,5 @@
 package io.taig.gandalf
 
-import scala.language.existentials
-
 class And[L <: Rule, R <: Rule] extends Operator
 
 object And extends Operator.Implicits[And, Rule.Entity, Rule.Transformation] {

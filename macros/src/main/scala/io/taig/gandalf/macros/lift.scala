@@ -3,7 +3,6 @@ package io.taig.gandalf.macros
 import io.taig.gandalf._
 
 import scala.language.experimental.macros
-import scala.language.higherKinds
 import scala.reflect.macros.blackbox
 import scala.util.{ Success, Try }
 
