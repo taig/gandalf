@@ -3,8 +3,12 @@ import sbt.Keys._
 import io.taig.sbt.sonatype.SonatypeHouserulePlugin.autoImport._
 
 object Settings {
+    val scala211 = "2.11.8"
+    
+    val scala212 = "2.12.0"
+    
     val common = Def.settings(
-//        crossScalaVersions := Seq( "2.11.8", "2.12.0" ),
+        crossScalaVersions := scala211 :: scala212 :: Nil,
         exportJars := true,
         incOptions := incOptions.value.withLogRecompileOnMacro( false ),
         javacOptions ++= {
@@ -44,7 +48,7 @@ object Settings {
             }
         },
         scalaOrganization := "org.typelevel",
-        scalaVersion := "2.11.8",
+        scalaVersion := scala211,
         testOptions in ThisBuild += Tests.Argument( "-oDF" )
     )
 }
