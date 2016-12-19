@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.13
+
+_2016-12-19_
+
+ * Upgrade to viewvalue 1.5.0
+ * Upgrade to sbt-android 1.7.2
+ * Upgrade to sbt-scoverage 1.5.0
+
 ## 0.3.12
 
 _2016-11-17_

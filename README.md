@@ -9,9 +9,9 @@
 
 ```scala
 libraryDependencies ++=
-    "io.taig" %% "gandalf-core" % "0.3.12" ::
-    "io.taig" %% "gandalf-predef" % "0.3.12" ::
-    "io.taig" %% "gandalf-report" % "0.3.12" ::
-    "io.taig" %% "gandalf-android" % "0.3.12" ::
+    "io.taig" %% "gandalf-core" % "0.3.13" ::
+    "io.taig" %% "gandalf-predef" % "0.3.13" ::
+    "io.taig" %% "gandalf-report" % "0.3.13" ::
+    "io.taig" %% "gandalf-android" % "0.3.13" ::
     Nil
 ```
