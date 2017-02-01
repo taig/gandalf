@@ -1,4 +1,4 @@
-# Gandalf
+# Gandalf (deprecated)
 
 [![Circle CI](https://circleci.com/gh/Taig/gandalf.svg?style=shield)](https://circleci.com/gh/Taig/gandalf)
 [![codecov.io](https://codecov.io/github/Taig/gandalf/coverage.svg?branch=master)](https://codecov.io/github/Taig/gandalf?branch=master)
